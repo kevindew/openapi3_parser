@@ -2,6 +2,8 @@
 
 require "openapi_parser/factory"
 require "openapi_parser/document"
+require "openapi_parser/node"
+Dir[File.join(__dir__, "openapi_parser", "node", "*.rb")].each { |f| require f }
 
 require "yaml"
 require "json"

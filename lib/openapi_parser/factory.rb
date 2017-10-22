@@ -3,12 +3,13 @@
 module OpenapiParser
   class Factory
     def initialize(input, working_directory:)
+      # @TODO maybe we'll recursively clone and freeze this input?
       @input = input
       @working_directory = working_directory
     end
 
     def document
-      Document.new
+      Node::OpenapiParser::Factory.new(input, self)
     end
 
     private
