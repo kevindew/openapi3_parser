@@ -31,7 +31,7 @@ module OpenapiParser
     if extension == ".json" || contents.strip[0] == "{"
       JSON.parse(contents)
     else
-      YAML.safe_load(contents)
+      YAML.safe_load(contents, [], [], true)
     end
   end
 
