@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "openapi_parser/error"
 require "openapi_parser/factory"
 require "openapi_parser/document"
 require "openapi_parser/node"

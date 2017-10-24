@@ -2,7 +2,7 @@
 
 module OpenapiParser
   class Node
-    class Paths
+    class Paths < Node
     end
   end
 end

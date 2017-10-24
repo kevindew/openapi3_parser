@@ -2,7 +2,7 @@
 
 module OpenapiParser
   class Node
-    class License
+    class License < Node
     end
   end
 end

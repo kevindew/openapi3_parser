@@ -2,7 +2,7 @@
 
 module OpenapiParser
   class Node
-    class Contact
+    class Contact < Node
     end
   end
 end

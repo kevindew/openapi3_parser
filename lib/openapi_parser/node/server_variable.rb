@@ -2,7 +2,7 @@
 
 module OpenapiParser
   class Node
-    class ServerVariable
+    class ServerVariable < Node
     end
   end
 end

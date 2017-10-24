@@ -3,9 +3,22 @@
 module OpenapiParser
   class Node
     class Openapi < Node
-      def openapi
-        attributes["openapi"]
-      end
+      allow_extensions
+
+      attribute :openapi,
+                required: true,
+                string: true
+
+      attribute :components,
+                required: true,
+                object: true,
+                build: ->(input, document, namespace) do
+                  Components.new(input, document, namespace)
+                end
+
+      # def openapi
+      #   attributes["openapi"]
+      # end
 
       def info
         attributes["info"]
@@ -37,9 +50,14 @@ module OpenapiParser
 
       private
 
-      def build_info_node(input)
-        return input unless input.respond_to?(:keys)
-        Info.new(input, openapi_version)
+      def build_info_node(input, namespace)
+        return nil if input.nil?
+        raise_unless_hash_like(input, namespace)
+        Info.new(input, document, namespace)
+      end
+
+      def build_components_node(input, document, namespace)
+        Components.new(input, document, namespace)
       end
     end
   end
