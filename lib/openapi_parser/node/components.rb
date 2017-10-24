@@ -3,15 +3,22 @@
 module OpenapiParser
   class Node
     class Components < Node
-      def schemas
-        attributes["schemas"]
-      end
+      allow_extensions
+
+      attribute :schemas,
+                object: true,
+                build: :build_schemas_map
 
       private
 
-      def build_schemas_node(input, namespace)
-        return nil if input.nil?
-        raise_unless_hash_like(input, namespace)
+      def build_schemas_map(input, document, namespace)
+        Fields::ReferenceableMap.call(
+          input,
+          document,
+          namespace
+        ) do |new_input, new_document, new_namespace|
+          Schema.new(new_input, new_document, new_namespace)
+        end
       end
     end
   end

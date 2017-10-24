@@ -3,6 +3,7 @@
 require "openapi_parser/error"
 require "openapi_parser/factory"
 require "openapi_parser/document"
+Dir[File.join(__dir__, "openapi_parser", "fields", "*.rb")].each { |f|  require f }
 require "openapi_parser/node"
 Dir[File.join(__dir__, "openapi_parser", "node", "*.rb")].each { |f| require f }
 

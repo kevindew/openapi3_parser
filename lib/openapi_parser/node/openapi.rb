@@ -10,7 +10,6 @@ module OpenapiParser
                 string: true
 
       attribute :components,
-                required: true,
                 object: true,
                 build: ->(input, document, namespace) do
                   Components.new(input, document, namespace)
