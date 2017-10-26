@@ -1,28 +1,15 @@
 # frozen_string_literal: true
 
+require "openapi_parser/node/field_config"
+
 module OpenapiParser
-  class Node
-    class << self
-      attr_reader :attribute_configs
+  module Node
+    module ClassMethods
+      attr_reader :field_configs
 
-      def attribute(field, **options)
-        @attribute_configs ||= {}
-        opts = {
-          field_name: field.to_s,
-          required: false,
-          string: false,
-          object: false,
-          build: nil,
-        }.merge(options)
-
-        # @TODO maybe this attribute config stuff should be a class to
-        # encapsulate the logic?
-
-        @attribute_configs[field] = opts
-
-        self.send(:define_method, field) do
-          @attributes[opts[:field_name]]
-        end
+      def field(name, **options)
+        @field_configs ||= {}
+        @field_configs[name] = FieldConfig.new(options)
       end
 
       def allow_extensions
@@ -38,25 +25,27 @@ module OpenapiParser
       end
     end
 
+    def self.included(base)
+      base.extend(ClassMethods)
+    end
+
     EXTENSION_REGEX = /^x-(.*)/
 
-    # using SnakeCase
-    attr_reader :input, :document, :namespace, :attributes, :extensions
+    attr_reader :input, :document, :namespace, :fields
 
     def initialize(input, document, namespace = [])
       @input = input
       @document = document
       @namespace = namespace.freeze
-      @attributes = build_attributes(input)
-      @extensions = allowed_extensions? ? extract_extensions(input) : {}
+      @fields = build_fields(input)
     end
 
     def [](value)
-      attributes[value]
+      fields[value]
     end
 
     def extension(value)
-      extensions[value]
+      fields["x-#{value}"]
     end
 
     def stringify_namespace(append = nil)
@@ -70,64 +59,59 @@ module OpenapiParser
 
     private
 
-    def build_attributes(input)
-      check_for_unexpected_attributes(input)
-      create_attributes(input)
+    def build_fields(input)
+      check_for_unexpected_fields(input)
+      create_fields(input)
     end
 
-    def check_for_unexpected_attributes(input)
-      allowed_attributes = attribute_configs.map { |_, c| c[:field_name] }
-      remaining_attributes = input.keys - allowed_attributes
-      return if remaining_attributes.empty?
+    def check_for_unexpected_fields(input)
+      allowed_fields = field_configs.keys
+      remaining_fields = input.keys - allowed_fields
+      return if remaining_fields.empty?
 
       if allowed_extensions?
-        remaining_attributes.reject! { |key| key =~ EXTENSION_REGEX }
+        remaining_fields.reject! { |key| key =~ EXTENSION_REGEX }
       end
 
-      unless remaining_attributes.empty?
+      unless remaining_fields.empty?
         raise Error,
           "Unexpected attributes for #{stringify_namespace}: "\
           "#{remaining_attributes.join(', ')}"
       end
     end
 
-    def create_attributes(input)
-      attribute_configs.each_with_object({}) do |(field, config), memo|
-        required_attribute(input, config)
-        memo[config[:field_name]] = build_attribute(input, config)
+    def create_fields(input)
+      check_required(input)
+      check_types(input)
+      fields = field_configs.each_with_object({}) do |(field, config), memo|
+        memo[field] = config.build(input[field], self, namespace + [field])
+      end
+      extensions = input.select { |(k, _)| k =~ EXTENSION_REGEX }
+      fields.merge(extensions)
+    end
+
+    def check_required(input)
+      missing = field_configs.reject do |field, config|
+        config.valid_presence(input[field])
+      end
+
+      unless missing.empty?
+        raise Error,
+          "Missing required fields for #{stringify_namespace}: "\
+            "#{missing.keys}"
       end
     end
 
-    def required_attribute(input, config)
-      if input[config[:field_name]].nil? && config[:required]
-        raise Error,
-          "Missing required attributes for #{stringify_namespace}: "\
-          "#{config[:field_name]}"
-      end
-    end
-
-    def build_attribute(input, config)
-      field_name = config[:field_name]
-      attribute = input[field_name]
-
-      return if attribute.nil?
-
-      if config[:string] && !attribute.is_a?(String)
-        raise Error,
-          "#{stringify_namespace(field_name)} is expected to be a string"
+    # @TODO this might be better handled within FieldConfig
+    def check_types(input)
+      invalid = field_configs.reject do |field, config|
+        config.valid_input_type(input[field])
       end
 
-      if config[:object] && !attribute.respond_to?(:keys)
+      unless invalid.empty?
         raise Error,
-          "#{stringify_namespace(field_name)} is expected to be an object"
-      end
-
-      if config[:build].is_a?(Proc)
-        config[:build].call(attribute, document, namespace + [field_name])
-      elsif config[:build]
-        send(config[:build], attribute, document, namespace + [field_name])
-      else
-        input[field_name]
+          "Invalid fields for #{stringify_namespace}: "\
+            "#{invalid.keys}"
       end
     end
 
@@ -135,14 +119,8 @@ module OpenapiParser
       self.class.allowed_extensions?
     end
 
-    def attribute_configs
-      self.class.attribute_configs || {}
-    end
-
-    def extract_extensions(input)
-      input.each_with_object({}) do |(key, value), memo|
-        memo[Regexp.last_match[1]] = value if key =~ EXTENSION_REGEX
-      end
+    def field_configs
+      self.class.field_configs || {}
     end
   end
 end

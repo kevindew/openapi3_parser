@@ -1,13 +1,23 @@
 # frozen_string_literal: true
 
+require "openapi_parser/node"
+require "openapi_parser/fields/referenceable_map"
+require "openapi_parser/nodes/schema"
+
 module OpenapiParser
-  class Node
-    class Components < Node
+  module Nodes
+    class Components
+      include Node
+
       allow_extensions
 
-      attribute :schemas,
-                object: true,
-                build: :build_schemas_map
+      field "schemas",
+            input_type: Hash,
+            build: :build_schemas_map
+
+      def schemas
+        fields["schemas"]
+      end
 
       private
 
