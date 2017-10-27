@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi_parser/node"
-require "openapi_parser/fields/referenceable_map"
+require "openapi_parser/fields/map"
 require "openapi_parser/nodes/schema"
 
 module OpenapiParser
@@ -22,8 +22,7 @@ module OpenapiParser
       private
 
       def build_schemas_map(input, context)
-        Fields::ReferenceableMap
-          .call(input, context) { |i, c| Schema.new(i, c) }
+        Fields::Map.call(input, context) { |i, c| Schema.new(i, c) }
       end
     end
   end

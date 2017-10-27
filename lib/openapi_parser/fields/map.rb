@@ -2,28 +2,33 @@ require "openapi_parser/error"
 
 module OpenapiParser
   module Fields
-    class ReferenceableMap
+    class Map
       private_class_method :new
 
-      VALID_FIELD_FORMAT = /^[a-zA-Z0-9\.\-_]+$/
-
-      def initialize(input, context, require_objects)
+      def initialize(input, context, require_objects, key_format)
         @input = input
         @context = context
         @require_objects = require_objects
+        @key_format = key_format
       end
 
-      def self.call(input, context, require_objects: true, &block)
-        new(input, context, require_objects).call(&block)
+      def self.call(
+        input,
+        context,
+        require_objects: true,
+        key_format: nil,
+        &block
+      )
+        new(input, context, require_objects, key_format).call(&block)
       end
 
       def call(&block)
-        validate_keys
+        validate_keys if key_format
         validate_objects if require_objects
 
         input.each_with_object({}) do |(key, value), memo|
           memo[key] = if block
-                        block.call(value, context.next_namespace(key))
+                        block.call(value, context.next_namespace(key), key)
                       else
                         value
                       end
@@ -32,10 +37,10 @@ module OpenapiParser
 
       private
 
-      attr_reader :input, :context, :require_objects
+      attr_reader :input, :context, :require_objects, :key_format
 
       def validate_keys
-        invalid_keys = input.keys.reject { |key| key =~ VALID_FIELD_FORMAT }
+        invalid_keys = input.keys.reject { |key| key =~ key_format }
         unless invalid_keys.empty?
           raise OpenapiParser::Error, "Invalid field names for "\
             "#{context.stringify_namespace}: #{invalid_keys.join(', ')}"

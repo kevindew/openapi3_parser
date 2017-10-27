@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi_parser/node"
+require "openapi_parser/fields/map"
 
 module OpenapiParser
   module Nodes
@@ -41,16 +42,26 @@ module OpenapiParser
         input_type: -> (i) { i.is_a?(Array) && i.uniq.count == i.count }
 
       field "type", input_type: String
-      field "allOf", input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT
-      field "oneOf", input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT
-      field "anyOf", input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT
-      field "not", input_type: Hash
-      field "items", input_type: Hash
-      field "properties", input_type: Hash
+      field "allOf",
+        input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
+        build: :build_schema_array
+      field "oneOf",
+        input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
+        build: :build_schema_array
+      field "anyOf", input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
+        build: :build_schema_array
+      field "not",
+        input_type: Hash,
+        build: ->(input, context) { Schema.new(input, context) }
+      field "items",
+        input_type: Hash,
+        build: ->(input, context) { Schema.new(input, context) }
+      field "properties", input_type: Hash, build: :build_properties
       field "additionalProperties",
         input_type: -> (i) {
           [true, false].include?(i) || i.is_a?(Hash)
-        }
+        },
+        build: :build_additional_properties
       field "description", input_type: String
       field "format", input_type: String
       field "default"
@@ -202,6 +213,27 @@ module OpenapiParser
 
       def deprecated
         fields["deprecated"]
+      end
+
+      private
+
+      def build_schema_array(input, context)
+        input.map.with_index do |schema_input, index|
+          Schema.new(schema_input, context.next_namespace(index))
+        end
+      end
+
+      def build_additional_properties(input, context)
+        return input unless input.is_a?(Hash)
+        Schema.new(input, context)
+      end
+
+      def build_properties(input, context)
+        Fields::Map.call(input, context, require_objects: true) do |i, c|
+          c.possible_reference(i) do |resolved_input, context|
+            Schema.new(resolved_input, context)
+          end
+        end
       end
     end
   end
