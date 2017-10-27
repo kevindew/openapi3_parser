@@ -5,11 +5,13 @@ require "openapi_parser/node/field_config"
 module OpenapiParser
   module Node
     module ClassMethods
-      attr_reader :field_configs
-
       def field(name, **options)
         @field_configs ||= {}
         @field_configs[name] = FieldConfig.new(options)
+      end
+
+      def field_configs
+        @field_configs || {}
       end
 
       def allow_extensions
@@ -31,12 +33,11 @@ module OpenapiParser
 
     EXTENSION_REGEX = /^x-(.*)/
 
-    attr_reader :input, :document, :namespace, :fields
+    attr_reader :input, :context, :fields
 
-    def initialize(input, document, namespace = [])
+    def initialize(input, context)
       @input = input
-      @document = document
-      @namespace = namespace.freeze
+      @context = context
       @fields = build_fields(input)
     end
 
@@ -46,15 +47,6 @@ module OpenapiParser
 
     def extension(value)
       fields["x-#{value}"]
-    end
-
-    def stringify_namespace(append = nil)
-      ns = append ? namespace + [append] : namespace
-      if ns.empty?
-        "root"
-      else
-        ns.join("/")
-      end
     end
 
     private
@@ -75,7 +67,7 @@ module OpenapiParser
 
       unless remaining_fields.empty?
         raise Error,
-          "Unexpected attributes for #{stringify_namespace}: "\
+          "Unexpected attributes for #{context.stringify_namespace}: "\
           "#{remaining_attributes.join(', ')}"
       end
     end
@@ -84,7 +76,7 @@ module OpenapiParser
       check_required(input)
       check_types(input)
       fields = field_configs.each_with_object({}) do |(field, config), memo|
-        memo[field] = config.build(input[field], self, namespace + [field])
+        memo[field] = config.build(input[field], self, context.next_namespace(field))
       end
       extensions = input.select { |(k, _)| k =~ EXTENSION_REGEX }
       fields.merge(extensions)
@@ -97,7 +89,7 @@ module OpenapiParser
 
       unless missing.empty?
         raise Error,
-          "Missing required fields for #{stringify_namespace}: "\
+          "Missing required fields for #{context.stringify_namespace}: "\
             "#{missing.keys}"
       end
     end
@@ -110,7 +102,7 @@ module OpenapiParser
 
       unless invalid.empty?
         raise Error,
-          "Invalid fields for #{stringify_namespace}: "\
+          "Invalid fields for #{context.stringify_namespace}: "\
             "#{invalid.keys}"
       end
     end

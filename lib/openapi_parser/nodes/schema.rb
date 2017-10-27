@@ -8,7 +8,7 @@ module OpenapiParser
       include Node
 
       HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT = -> (i) {
-        i.is_a?(Array) && i.map(:class).uniq == [Hash] && i.count > 0
+        i.is_a?(Array) && i.map(&:class).uniq == [Hash] && i.count > 0
       }
 
       allow_extensions

@@ -16,9 +16,7 @@ module OpenapiParser
 
       field "components",
             input_type: Hash,
-            build: ->(input, document, namespace) do
-              Components.new(input, document, namespace)
-            end
+            build: ->(input, context) { Components.new(input, context) }
 
       def openapi
         fields["openapi"]

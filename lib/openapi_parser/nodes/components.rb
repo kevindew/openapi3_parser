@@ -21,14 +21,9 @@ module OpenapiParser
 
       private
 
-      def build_schemas_map(input, document, namespace)
-        Fields::ReferenceableMap.call(
-          input,
-          document,
-          namespace
-        ) do |new_input, new_document, new_namespace|
-          Schema.new(new_input, new_document, new_namespace)
-        end
+      def build_schemas_map(input, context)
+        Fields::ReferenceableMap
+          .call(input, context) { |i, c| Schema.new(i, c) }
       end
     end
   end

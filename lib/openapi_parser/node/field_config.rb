@@ -12,13 +12,13 @@ module OpenapiParser
         @build_func = build
       end
 
-      # @TODO would be nice to have a context object or something passed in
-      # instead
-      def build(input, node, namespace)
-        value = if build_func.is_a?(Proc)
-                  build_func.call(input, node.document, namespace)
+      def build(input, node, context)
+        value = if input.nil?
+                  nil
+                elsif build_func.is_a?(Proc)
+                  build_func.call(input, context)
                 elsif build_func
-                  node.send(build_func, input, node.document, namespace)
+                  node.send(build_func, input, context)
                 else
                   input
                 end

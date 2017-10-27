@@ -7,15 +7,14 @@ module OpenapiParser
 
       VALID_FIELD_FORMAT = /^[a-zA-Z0-9\.\-_]+$/
 
-      def initialize(input, document, namespace, require_objects)
+      def initialize(input, context, require_objects)
         @input = input
-        @document = document
-        @namespace = namespace
+        @context = context
         @require_objects = require_objects
       end
 
-      def self.call(input, document, namespace, require_objects: true, &block)
-        new(input, document, namespace, require_objects).call(&block)
+      def self.call(input, context, require_objects: true, &block)
+        new(input, context, require_objects).call(&block)
       end
 
       def call(&block)
@@ -24,7 +23,7 @@ module OpenapiParser
 
         input.each_with_object({}) do |(key, value), memo|
           memo[key] = if block
-                        block.call(value, document, namespace + [key])
+                        block.call(value, context.next_namespace(key))
                       else
                         value
                       end
@@ -33,13 +32,13 @@ module OpenapiParser
 
       private
 
-      attr_reader :input, :document, :namespace, :require_objects
+      attr_reader :input, :context, :require_objects
 
       def validate_keys
         invalid_keys = input.keys.reject { |key| key =~ VALID_FIELD_FORMAT }
         unless invalid_keys.empty?
           raise OpenapiParser::Error, "Invalid field names for "\
-            "#{namespace.join('/')}: #{invalid_keys.join(', ')}"
+            "#{context.stringify_namespace}: #{invalid_keys.join(', ')}"
         end
       end
 
@@ -47,7 +46,7 @@ module OpenapiParser
         non_objects = input.reject { |_, value| value.respond_to?(:keys) }
         unless non_objects.empty?
           raise OpenapiParser::Error, "Expected objects for "\
-            "#{namespace.join('/')}: #{non_objects.keys.join(', ')}"
+            "#{context.stringify_namespace}: #{non_objects.keys.join(', ')}"
         end
       end
     end

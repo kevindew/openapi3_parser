@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi_parser/nodes/openapi"
+require "openapi_parser/context"
 
 module OpenapiParser
   class Document
@@ -8,7 +9,7 @@ module OpenapiParser
 
     def initialize(input)
       @input = input
-      @root = Nodes::Openapi.new(input, self, [])
+      @root = Nodes::Openapi.new(input, Context.root(self))
     end
   end
 end
