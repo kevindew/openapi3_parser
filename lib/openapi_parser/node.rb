@@ -68,7 +68,7 @@ module OpenapiParser
       unless remaining_fields.empty?
         raise Error,
           "Unexpected attributes for #{context.stringify_namespace}: "\
-          "#{remaining_attributes.join(', ')}"
+          "#{remaining_fields.join(', ')}"
       end
     end
 

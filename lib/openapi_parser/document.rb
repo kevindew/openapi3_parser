@@ -6,11 +6,14 @@ require "openapi_parser/error"
 
 module OpenapiParser
   class Document
-    attr_reader :input, :root
+    attr_reader :input
 
     def initialize(input)
       @input = input
-      @root = Nodes::Openapi.new(input, Context.root(self))
+    end
+
+    def root
+      @root ||= Nodes::Openapi.new(input, Context.root(self))
     end
 
     def resolve_reference(reference)
