@@ -52,10 +52,10 @@ module OpenapiParser
         build: :build_schema_array
       field "not",
         input_type: Hash,
-        build: ->(input, context) { Schema.new(input, context) }
+        build: :build_referenceable_schema
       field "items",
         input_type: Hash,
-        build: ->(input, context) { Schema.new(input, context) }
+        build: :build_referenceable_schema
       field "properties", input_type: Hash, build: :build_properties
       field "additionalProperties",
         input_type: -> (i) {
@@ -217,22 +217,26 @@ module OpenapiParser
 
       private
 
+      def build_referenceable_schema(input, context)
+        context.possible_reference(input) do |resolved_input, resolved_context|
+          Schema.new(resolved_input, resolved_context)
+        end
+      end
+
       def build_schema_array(input, context)
         input.map.with_index do |schema_input, index|
-          Schema.new(schema_input, context.next_namespace(index))
+          build_referenceable_schema(schema_input, context.next_namespace(index))
         end
       end
 
       def build_additional_properties(input, context)
         return input unless input.is_a?(Hash)
-        Schema.new(input, context)
+        build_referenceable_schema(input, context)
       end
 
       def build_properties(input, context)
-        Fields::Map.call(input, context, require_objects: true) do |i, c|
-          c.possible_reference(i) do |resolved_input, context|
-            Schema.new(resolved_input, context)
-          end
+        Fields::Map.call(input, context) do |next_input, next_context|
+          Schema.new(next_input, next_context)
         end
       end
     end
