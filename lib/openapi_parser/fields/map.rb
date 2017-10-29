@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "openapi_parser/error"
 
 module OpenapiParser
@@ -5,30 +7,30 @@ module OpenapiParser
     class Map
       private_class_method :new
 
-      def initialize(input, context, require_objects, key_format)
+      def initialize(input, context, value_type, key_format)
         @input = input
         @context = context
-        @require_objects = require_objects
+        @value_type = value_type
         @key_format = key_format
       end
 
       def self.call(
         input,
         context,
-        require_objects: true,
+        value_type: Hash,
         key_format: nil,
         &block
       )
-        new(input, context, require_objects, key_format).call(&block)
+        new(input, context, value_type, key_format).call(&block)
       end
 
       def call(&block)
-        validate_keys if key_format
-        validate_objects if require_objects
+        validate_keys
+        validate_values
 
         input.each_with_object({}) do |(key, value), memo|
           memo[key] = if block
-                        block.call(value, context.next_namespace(key), key)
+                        yield(value, context.next_namespace(key), key)
                       else
                         value
                       end
@@ -37,22 +39,30 @@ module OpenapiParser
 
       private
 
-      attr_reader :input, :context, :require_objects, :key_format
+      attr_reader :input, :context, :value_type, :key_format
 
       def validate_keys
+        return unless key_format
         invalid_keys = input.keys.reject { |key| key =~ key_format }
-        unless invalid_keys.empty?
-          raise OpenapiParser::Error, "Invalid field names for "\
-            "#{context.stringify_namespace}: #{invalid_keys.join(', ')}"
-        end
+        return if invalid_keys.empty?
+
+        raise OpenapiParser::Error, "Invalid field names for "\
+          "#{context.stringify_namespace}: #{invalid_keys.join(', ')}"
       end
 
-      def validate_objects
-        non_objects = input.reject { |_, value| value.respond_to?(:keys) }
-        unless non_objects.empty?
-          raise OpenapiParser::Error, "Expected objects for "\
-            "#{context.stringify_namespace}: #{non_objects.keys.join(', ')}"
+      def validate_values
+        return unless value_type
+        invalid = input.reject do |key, value|
+          if value_type.is_a?(Proc)
+            value.call(value, key)
+          else
+            value.is_a?(value_type)
+          end
         end
+        return if invalid.empty?
+
+        raise OpenapiParser::Error, "Unexpected type for "\
+          "#{context.stringify_namespace}: #{invalid.keys.join(', ')}"
       end
     end
   end
