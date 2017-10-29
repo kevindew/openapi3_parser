@@ -4,6 +4,7 @@ require "openapi_parser/node"
 require "openapi_parser/fields/map"
 require "openapi_parser/nodes/discriminator"
 require "openapi_parser/nodes/xml"
+require "openapi_parser/nodes/external_docs"
 
 module OpenapiParser
   module Nodes
@@ -73,9 +74,11 @@ module OpenapiParser
       field "readOnly", input_type: :boolean, default: false
       field "writeOnly", input_type: :boolean, default: false
       field "xml",
-            input_type: Hash
+            input_type: Hash,
             build: ->(input, context) { Xml.new(input, context) }
-      field "externalDocs", input_type: Hash
+      field "externalDocs",
+            input_type: Hash,
+            build: ->(input, context) { ExternalDocs.new(input, context) }
       field "example"
       field "deprecated", input_type: :boolean, default: false
 
