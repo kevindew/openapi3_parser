@@ -5,11 +5,12 @@ require "openapi_parser/fields/map"
 
 module OpenapiParser
   module Nodes
+    # rubocop:disable ClassLength
     class Schema
       include Node
 
-      HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT = -> (i) {
-        i.is_a?(Array) && i.map(&:class).uniq == [Hash] && i.count > 0
+      HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT = lambda { |i|
+        i.is_a?(Array) && i.map(&:class).uniq == [Hash] && i.count.positive?
       }
 
       allow_extensions
@@ -20,48 +21,50 @@ module OpenapiParser
       field "exclusiveMaximum", input_type: :boolean, default: false
       field "minimum", input_type: Integer
       field "exclusiveMinimum", input_type: :boolean, default: false
-      field "maxLength", input_type: -> (i) { i.is_a?(Integer) && i > 0 }
+      field "maxLength", input_type: ->(i) { i.is_a?(Integer) && i.positive? }
       field "minLength",
-        input_type: -> (i) { i.is_a?(Integer) && i >= 0 },
-        default: 0
+            input_type: ->(i) { i.is_a?(Integer) && i >= 0 },
+            default: 0
       field :pattern, input_type: String
-      field "maxItems", input_type: -> (i) { i.is_a?(Integer) && i > 0 }
+      field "maxItems", input_type: ->(i) { i.is_a?(Integer) && i.positive? }
       field "minItems",
-        input_type: -> (i) { i.is_a?(Integer) && i >= 0 },
-        default: 0
+            input_type: ->(i) { i.is_a?(Integer) && i >= 0 },
+            default: 0
       field "uniqueItems", input_type: :boolean, default: false
-      field "maxProperties", input_type: -> (i) { i.is_a?(Integer) && i > 0 }
+      field "maxProperties",
+            input_type: ->(i) { i.is_a?(Integer) && i.positive? }
       field "minProperties",
-        input_type: -> (i) { i.is_a?(Integer) && i >= 0 },
-        default: 0
+            input_type: ->(i) { i.is_a?(Integer) && i >= 0 },
+            default: 0
       field "required",
-        input_type: -> (i) {
-          i.is_a?(Array) && i.count > 0 && i.map(:class).uniq == [String]
-        }
+            input_type: lambda do |i|
+              return false unless i.is_a?(Array)
+              i.count.positive? && i.map(:class).uniq == [String]
+            end
       field "enum",
-        input_type: -> (i) { i.is_a?(Array) && i.uniq.count == i.count }
+            input_type: ->(i) { i.is_a?(Array) && i.uniq.count == i.count }
 
       field "type", input_type: String
       field "allOf",
-        input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
-        build: :build_schema_array
+            input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
+            build: :build_schema_array
       field "oneOf",
-        input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
-        build: :build_schema_array
+            input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
+            build: :build_schema_array
       field "anyOf", input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
-        build: :build_schema_array
+                     build: :build_schema_array
       field "not",
-        input_type: Hash,
-        build: :build_referenceable_schema
+            input_type: Hash,
+            build: :build_referenceable_schema
       field "items",
-        input_type: Hash,
-        build: :build_referenceable_schema
+            input_type: Hash,
+            build: :build_referenceable_schema
       field "properties", input_type: Hash, build: :build_properties
       field "additionalProperties",
-        input_type: -> (i) {
-          [true, false].include?(i) || i.is_a?(Hash)
-        },
-        build: :build_additional_properties
+            build: :build_additional_properties,
+            input_type: lambda do |i|
+              [true, false].include?(i) || i.is_a?(Hash)
+            end
       field "description", input_type: String
       field "format", input_type: String
       field "default"
@@ -87,7 +90,7 @@ module OpenapiParser
         fields["maximum"]
       end
 
-      def exclusiveMaximum
+      def exclusive_maximum
         fields["exclusiveMaximum"]
       end
 
@@ -95,15 +98,15 @@ module OpenapiParser
         fields["minimum"]
       end
 
-      def exclusiveMinimum
+      def exclusive_minimum
         fields["exclusiveMinimum"]
       end
 
-      def maxLength
+      def max_length
         fields["maxLength"]
       end
 
-      def minLength
+      def min_length
         fields["minLength"]
       end
 
@@ -111,23 +114,23 @@ module OpenapiParser
         fields["pattern"]
       end
 
-      def maxItems
+      def max_items
         fields["maxItems"]
       end
 
-      def minItems
+      def min_items
         fields["minItems"]
       end
 
-      def uniqueItems
+      def unique_items
         fields["uniqueItems"]
       end
 
-      def maxProperties
+      def max_properties
         fields["maxProperties"]
       end
 
-      def minProperties
+      def min_properties
         fields["minProperties"]
       end
 
@@ -225,7 +228,8 @@ module OpenapiParser
 
       def build_schema_array(input, context)
         input.map.with_index do |schema_input, index|
-          build_referenceable_schema(schema_input, context.next_namespace(index))
+          next_namespace = context.next_namespace(index)
+          build_referenceable_schema(schema_input, next_namespace)
         end
       end
 

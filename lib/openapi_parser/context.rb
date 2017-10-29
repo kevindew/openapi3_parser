@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module OpenapiParser
   class Context
     attr_reader :document, :namespace
@@ -14,7 +16,7 @@ module OpenapiParser
     def stringify_namespace
       return "root" if namespace.empty?
       namespace
-        .map { |i| i.include?("/") ?  %{"#{i}"} : i }
+        .map { |i| i.include?("/") ? %("#{i}") : i }
         .join("/")
     end
 

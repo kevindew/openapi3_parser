@@ -65,18 +65,18 @@ module OpenapiParser
         remaining_fields.reject! { |key| key =~ EXTENSION_REGEX }
       end
 
-      unless remaining_fields.empty?
-        raise Error,
-          "Unexpected attributes for #{context.stringify_namespace}: "\
-          "#{remaining_fields.join(', ')}"
-      end
+      return if remaining_fields.empty?
+      raise Error,
+            "Unexpected attributes for #{context.stringify_namespace}: "\
+            "#{remaining_fields.join(', ')}"
     end
 
     def create_fields(input)
       check_required(input)
       check_types(input)
       fields = field_configs.each_with_object({}) do |(field, config), memo|
-        memo[field] = config.build(input[field], self, context.next_namespace(field))
+        next_context = context.next_namespace(field)
+        memo[field] = config.build(input[field], self, next_context)
       end
       extensions = input.select { |(k, _)| k =~ EXTENSION_REGEX }
       fields.merge(extensions)
@@ -87,11 +87,10 @@ module OpenapiParser
         config.valid_presence(input[field])
       end
 
-      unless missing.empty?
-        raise Error,
-          "Missing required fields for #{context.stringify_namespace}: "\
-            "#{missing.keys}"
-      end
+      return if missing.empty?
+      raise Error,
+            "Missing required fields for #{context.stringify_namespace}: "\
+              "#{missing.keys}"
     end
 
     # @TODO this might be better handled within FieldConfig
@@ -100,11 +99,10 @@ module OpenapiParser
         config.valid_input_type(input[field])
       end
 
-      unless invalid.empty?
-        raise Error,
-          "Invalid fields for #{context.stringify_namespace}: "\
-            "#{invalid.keys}"
-      end
+      return if invalid.empty?
+      raise Error,
+            "Invalid fields for #{context.stringify_namespace}: "\
+              "#{invalid.keys}"
     end
 
     def allowed_extensions?

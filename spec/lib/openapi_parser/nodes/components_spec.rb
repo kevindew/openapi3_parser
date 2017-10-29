@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 require "openapi_parser/nodes/components"
 require "openapi_parser/context"
 require "openapi_parser/document"
 require "openapi_parser/error"
 
 RSpec.describe OpenapiParser::Nodes::Components do
-
   let(:schema_input) do
     {
       "field" => { "title" => "Test" }
@@ -39,9 +40,9 @@ RSpec.describe OpenapiParser::Nodes::Components do
       let(:schema_input) { "not a hash" }
 
       it "raises an error" do
-        expect {
+        expect do
           described_class.new(input, context).schemas
-        }.to raise_error(OpenapiParser::Error)
+        end.to raise_error(OpenapiParser::Error)
       end
     end
 
@@ -53,9 +54,10 @@ RSpec.describe OpenapiParser::Nodes::Components do
       end
 
       it "is a hash of schema objects" do
-        expect(schemas).to match(a_hash_including(
+        expected = a_hash_including(
           "field" => an_instance_of(OpenapiParser::Nodes::Schema)
-        ))
+        )
+        expect(schemas).to match(expected)
       end
     end
 
@@ -74,9 +76,10 @@ RSpec.describe OpenapiParser::Nodes::Components do
       end
 
       it "is a hash of schema objects" do
-        expect(schemas).to match(a_hash_including(
+        expected = a_hash_including(
           "field" => an_instance_of(OpenapiParser::Nodes::Schema)
-        ))
+        )
+        expect(schemas).to match(expected)
       end
     end
   end

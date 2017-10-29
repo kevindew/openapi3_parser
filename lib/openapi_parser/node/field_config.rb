@@ -13,21 +13,7 @@ module OpenapiParser
       end
 
       def build(input, node, context)
-        value = if input.nil?
-                  nil
-                elsif build_func.is_a?(Proc)
-                  build_func.call(input, context)
-                elsif build_func
-                  node.send(build_func, input, context)
-                else
-                  input
-                end
-
-        if value.nil?
-          default.is_a?(Proc) ? default.call() : default
-        else
-          value
-        end
+        determine_value(input, node, context) || determine_default
       end
 
       def valid_presence(input)
@@ -40,7 +26,19 @@ module OpenapiParser
         return input_type.call(input) if input_type.is_a?(Proc)
         input.is_a?(input_type)
       end
+
+      private
+
+      def determine_value(input, node, context)
+        return if input.nil?
+        return build_func.call(input, context) if build_func.is_a?(Proc)
+        return node.send(build_func, input, context) if build_func
+        input
+      end
+
+      def determine_default
+        default.is_a?(Proc) ? default.call : default
+      end
     end
   end
 end
-
