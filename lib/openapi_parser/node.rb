@@ -84,7 +84,7 @@ module OpenapiParser
 
     def check_required(input)
       missing = field_configs.reject do |field, config|
-        config.valid_presence(input[field])
+        config.valid_presence?(input[field])
       end
 
       return if missing.empty?
@@ -93,10 +93,9 @@ module OpenapiParser
               "#{missing.keys}"
     end
 
-    # @TODO this might be better handled within FieldConfig
     def check_types(input)
       invalid = field_configs.reject do |field, config|
-        config.valid_input_type(input[field])
+        config.valid_input_type?(input[field], self)
       end
 
       return if invalid.empty?

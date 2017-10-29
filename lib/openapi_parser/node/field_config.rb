@@ -16,14 +16,16 @@ module OpenapiParser
         determine_value(input, node, context) || determine_default
       end
 
-      def valid_presence(input)
+      def valid_presence?(input)
         !required || !input.nil?
       end
 
-      def valid_input_type(input)
+      # rubocop:disable Metrics/AbcSize
+      def valid_input_type?(input, node)
         return true if !input_type || input.nil?
         return [true, false].include?(input) if input_type == :boolean
         return input_type.call(input) if input_type.is_a?(Proc)
+        return node.send(input_type, input) if input_type.is_a?(Symbol)
         input.is_a?(input_type)
       end
 

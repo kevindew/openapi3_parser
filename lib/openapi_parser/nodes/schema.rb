@@ -2,6 +2,7 @@
 
 require "openapi_parser/node"
 require "openapi_parser/fields/map"
+require "openapi_parser/nodes/discriminator"
 
 module OpenapiParser
   module Nodes
@@ -36,11 +37,7 @@ module OpenapiParser
       field "minProperties",
             input_type: ->(i) { i.is_a?(Integer) && i >= 0 },
             default: 0
-      field "required",
-            input_type: lambda do |i|
-              return false unless i.is_a?(Array)
-              i.count.positive? && i.map(:class).uniq == [String]
-            end
+      field "required", input_type: :required_input_type
       field "enum",
             input_type: ->(i) { i.is_a?(Array) && i.uniq.count == i.count }
 
@@ -51,8 +48,9 @@ module OpenapiParser
       field "oneOf",
             input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
             build: :build_schema_array
-      field "anyOf", input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
-                     build: :build_schema_array
+      field "anyOf",
+            input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
+            build: :build_schema_array
       field "not",
             input_type: Hash,
             build: :build_referenceable_schema
@@ -62,15 +60,15 @@ module OpenapiParser
       field "properties", input_type: Hash, build: :build_properties
       field "additionalProperties",
             build: :build_additional_properties,
-            input_type: lambda do |i|
-              [true, false].include?(i) || i.is_a?(Hash)
-            end
+            input_type: ->(i) { [true, false].include?(i) || i.is_a?(Hash) }
       field "description", input_type: String
       field "format", input_type: String
       field "default"
 
       field "nullable", input_type: :boolean, default: false
-      field "discriminator", input_type: Hash
+      field "discriminator",
+            input_type: Hash,
+            build: ->(input, context) { Discriminator.new(input, context) }
       field "readOnly", input_type: :boolean, default: false
       field "writeOnly", input_type: :boolean, default: false
       field "xml", input_type: Hash
@@ -219,6 +217,11 @@ module OpenapiParser
       end
 
       private
+
+      def required_input_type(input)
+        return false unless input.is_a?(Array)
+        input.count.positive? && input.map(:class).uniq == [String]
+      end
 
       def build_referenceable_schema(input, context)
         context.possible_reference(input) do |resolved_input, resolved_context|
