@@ -8,7 +8,9 @@ module OpenapiParser
       include Node
 
       field "propertyName", input_type: String, required: true
-      field "mapping", input_type: :mapping_input_type, default: ->{ {}.freeze }
+      field "mapping",
+            input_type: :mapping_input_type,
+            default: -> { {}.freeze }
 
       def property_name
         fields["propertyName"]

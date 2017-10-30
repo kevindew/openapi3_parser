@@ -20,7 +20,9 @@ RSpec.describe OpenapiParser::Nodes::Discriminator do
   let(:context) { OpenapiParser::Context.root(document) }
 
   describe ".property_name" do
-    subject(:property_name) { described_class.new(input, context).property_name }
+    subject(:property_name) do
+      described_class.new(input, context).property_name
+    end
 
     context "when input is nil" do
       let(:property_name_input) { nil }

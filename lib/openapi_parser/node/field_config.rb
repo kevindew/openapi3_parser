@@ -28,6 +28,7 @@ module OpenapiParser
         return node.send(input_type, input) if input_type.is_a?(Symbol)
         input.is_a?(input_type)
       end
+      # rubocop:enable Metrics/AbcSize
 
       private
 

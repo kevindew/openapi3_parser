@@ -4,6 +4,6 @@ Metrics/MethodLength:
   Max: 30
 Documentation:
   Enabled: false
-Style/BlockLength:
+Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
