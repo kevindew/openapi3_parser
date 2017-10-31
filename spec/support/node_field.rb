@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "openapi_parser/error"
+
 RSpec.shared_examples "node field" do |field, options|
   options = {
     required: nil,
