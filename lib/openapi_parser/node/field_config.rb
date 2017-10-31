@@ -13,7 +13,8 @@ module OpenapiParser
       end
 
       def build(input, node, context)
-        determine_value(input, node, context) || determine_default
+        value = determine_value(input, node, context)
+        value.nil? ? determine_default : value
       end
 
       def valid_presence?(input)
