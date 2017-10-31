@@ -4,7 +4,7 @@ require "openapi_parser/node"
 
 module OpenapiParser
   module Nodes
-    class ExternalDocs
+    class ExternalDocumentation
       include Node
 
       allow_extensions
@@ -12,11 +12,11 @@ module OpenapiParser
       field "description", input_type: String
       field "url", required: true, input_type: String
 
-      def name
+      def description
         fields["description"]
       end
 
-      def namespace
+      def url
         fields["url"]
       end
     end

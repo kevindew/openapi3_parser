@@ -5,6 +5,9 @@ require "openapi_parser/context"
 require "openapi_parser/document"
 require "openapi_parser/error"
 
+require "support/extendable_node"
+require "support/node_field"
+
 RSpec.describe OpenapiParser::Nodes::Components do
   let(:schema_input) do
     {
@@ -15,8 +18,10 @@ RSpec.describe OpenapiParser::Nodes::Components do
   let(:input) do
     {
       "schemas" => schema_input
-    }
+    }.merge(extensions)
   end
+
+  let(:extensions) { {} }
 
   let(:document_input) do
     {
@@ -27,39 +32,18 @@ RSpec.describe OpenapiParser::Nodes::Components do
   let(:context) { OpenapiParser::Context.root(document) }
   let(:document) { OpenapiParser::Document.new(document_input) }
 
-  describe ".schemas" do
-    subject(:schemas) { described_class.new(input, context).schemas }
+  it "initializes with valid input" do
+    expect { described_class.new(input, context) }.to_not raise_error
+  end
 
-    context "when input is nil" do
-      let(:schema_input) { nil }
+  it_behaves_like "a extendable node"
 
-      it { is_expected.to be_nil }
-    end
-
-    context "when input is not a hash" do
-      let(:schema_input) { "not a hash" }
-
-      it "raises an error" do
-        expect do
-          described_class.new(input, context).schemas
-        end.to raise_error(OpenapiParser::Error)
-      end
-    end
-
-    context "when input is a hash of schemas" do
-      let(:schema_input) do
-        {
-          "field" => { "title" => "Test" }
-        }
-      end
-
-      it "is a hash of schema objects" do
-        expected = a_hash_including(
-          "field" => an_instance_of(OpenapiParser::Nodes::Schema)
-        )
-        expect(schemas).to match(expected)
-      end
-    end
+  describe "schemas field" do
+    include_examples "node field", "schemas",
+                     required: false,
+                     valid_input: { "field" => { "title" => "Test" } },
+                     invalid_input: "not a hash",
+                     let_name: :schema_input
 
     context "when input is a hash with references" do
       let(:schema_input) do
@@ -75,12 +59,21 @@ RSpec.describe OpenapiParser::Nodes::Components do
         }
       end
 
-      it "is a hash of schema objects" do
-        expected = a_hash_including(
+      it "is expected not to raise an error" do
+        expect { described_class.new(input, context) }.not_to raise_error
+      end
+    end
+  end
+
+  describe ".schemas" do
+    subject(:schemas) { described_class.new(input, context).schemas }
+
+    it "returns a hash of Schema Objects" do
+      expect(schemas).to match(
+        a_hash_including(
           "field" => an_instance_of(OpenapiParser::Nodes::Schema)
         )
-        expect(schemas).to match(expected)
-      end
+      )
     end
   end
 end

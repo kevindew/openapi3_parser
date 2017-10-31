@@ -9,7 +9,7 @@ module OpenapiParser
 
       field "propertyName", input_type: String, required: true
       field "mapping",
-            input_type: :mapping_input_type,
+            input_type: :valid_mapping_input_type?,
             default: -> { {}.freeze }
 
       def property_name
@@ -22,7 +22,7 @@ module OpenapiParser
 
       private
 
-      def mapping_input_type(input)
+      def valid_mapping_input_type?(input)
         return false unless input.is_a?(Hash)
         return true if input.empty?
         string_keys = input.keys.map(&:class).uniq == [String]

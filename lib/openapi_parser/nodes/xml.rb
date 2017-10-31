@@ -12,8 +12,8 @@ module OpenapiParser
       field "name", input_type: String
       field "namespace", input_type: String
       field "prefix", input_type: String
-      field "attribute", input_type: :boolean
-      field "wrapped", input_type: :boolean
+      field "attribute", input_type: :boolean, default: false
+      field "wrapped", input_type: :boolean, default: false
 
       def name
         fields["name"]

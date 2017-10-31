@@ -4,7 +4,7 @@ require "openapi_parser/node"
 require "openapi_parser/fields/map"
 require "openapi_parser/nodes/discriminator"
 require "openapi_parser/nodes/xml"
-require "openapi_parser/nodes/external_docs"
+require "openapi_parser/nodes/external_documentation"
 
 module OpenapiParser
   module Nodes
@@ -78,7 +78,7 @@ module OpenapiParser
             build: ->(input, context) { Xml.new(input, context) }
       field "externalDocs",
             input_type: Hash,
-            build: ->(input, context) { ExternalDocs.new(input, context) }
+            build: :build_external_docs
       field "example"
       field "deprecated", input_type: :boolean, default: false
 
@@ -245,6 +245,10 @@ module OpenapiParser
       def build_additional_properties(input, context)
         return input unless input.is_a?(Hash)
         build_referenceable_schema(input, context)
+      end
+
+      def build_external_docs(input, context)
+        ExternalDocumentation.new(input, context)
       end
 
       def build_properties(input, context)

@@ -2,8 +2,8 @@
 
 require "openapi_parser/nodes/discriminator"
 require "openapi_parser/context"
-require "openapi_parser/document"
-require "openapi_parser/error"
+
+require "support/node_field"
 
 RSpec.describe OpenapiParser::Nodes::Discriminator do
   let(:property_name_input) { "My Property" }
@@ -19,65 +19,33 @@ RSpec.describe OpenapiParser::Nodes::Discriminator do
   let(:document) { instance_double("OpenapiParser::Document") }
   let(:context) { OpenapiParser::Context.root(document) }
 
+  it "initializes with valid input" do
+    expect { described_class.new(input, context) }.to_not raise_error
+  end
+
+  describe "propertyName field" do
+    include_examples "node field", "propertyName",
+                     required: true,
+                     valid_input: "property input",
+                     invalid_input: 123,
+                     let_name: :property_name_input
+  end
+
   describe ".property_name" do
-    subject(:property_name) do
-      described_class.new(input, context).property_name
-    end
+    subject { described_class.new(input, context).property_name }
+    it { is_expected.to be property_name_input }
+  end
 
-    context "when input is nil" do
-      let(:property_name_input) { nil }
-
-      it "raises an error" do
-        expect do
-          described_class.new(input, context)
-        end.to raise_error(OpenapiParser::Error)
-      end
-    end
-
-    context "when input is not a string" do
-      let(:property_name_input) { 123 }
-
-      it "raises an error" do
-        expect do
-          described_class.new(input, context)
-        end.to raise_error(OpenapiParser::Error)
-      end
-    end
-
-    context "when input is a string" do
-      let(:property_name_input) { "property_input" }
-
-      it { is_expected.to eq property_name_input }
-    end
+  describe "mapping field" do
+    include_examples "node field", "mapping",
+                     required: false,
+                     valid_input: { "test" => "test" },
+                     invalid_input: 123
   end
 
   describe ".mapping" do
-    subject(:mapping) { described_class.new(input, context).mapping }
-
-    context "when input is nil" do
-      let(:mapping_input) { nil }
-
-      it { is_expected.to match({}) }
-    end
-
-    context "when input is not a hash" do
-      let(:mapping_input) { 123 }
-
-      it "raises an error" do
-        expect do
-          described_class.new(input, context)
-        end.to raise_error(OpenapiParser::Error)
-      end
-    end
-
-    context "when input is a hash of strings" do
-      let(:mapping_input) { { "test" => "test" } }
-
-      it "doesn't raise an error" do
-        expect do
-          described_class.new(input, context)
-        end.to_not raise_error
-      end
-    end
+    let(:mapping_input) { { "test" => "test" } }
+    subject { described_class.new(input, context).mapping }
+    it { is_expected.to be mapping_input }
   end
 end
