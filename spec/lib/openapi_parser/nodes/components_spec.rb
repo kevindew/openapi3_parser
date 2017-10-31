@@ -9,15 +9,22 @@ require "support/extendable_node"
 require "support/node_field"
 
 RSpec.describe OpenapiParser::Nodes::Components do
-  let(:schema_input) do
+  let(:schemas_input) do
     {
       "field" => { "title" => "Test" }
     }
   end
 
+  let(:responses_input) do
+    {
+      "field" => { "description" => "Test" }
+    }
+  end
+
   let(:input) do
     {
-      "schemas" => schema_input
+      "schemas" => schemas_input,
+      "responses" => responses_input
     }.merge(extensions)
   end
 
@@ -42,11 +49,10 @@ RSpec.describe OpenapiParser::Nodes::Components do
     include_examples "node field", "schemas",
                      required: false,
                      valid_input: { "field" => { "title" => "Test" } },
-                     invalid_input: "not a hash",
-                     let_name: :schema_input
+                     invalid_input: "not a hash"
 
     context "when input is a hash with references" do
-      let(:schema_input) do
+      let(:schemas_input) do
         {
           "field" => { "$ref" => "#/reference" }
         }
@@ -68,12 +74,38 @@ RSpec.describe OpenapiParser::Nodes::Components do
   describe ".schemas" do
     subject(:schemas) { described_class.new(input, context).schemas }
 
-    it "returns a hash of Schema Objects" do
+    it "returns a hash of Schema objects" do
       expect(schemas).to match(
         a_hash_including(
           "field" => an_instance_of(OpenapiParser::Nodes::Schema)
         )
       )
+    end
+  end
+
+  describe "responses field" do
+    include_examples "node field", "responses",
+                     required: false,
+                     valid_input: { "field" => { "description" => "Test" } },
+                     invalid_input: "not a hash"
+
+    context "when input is a hash with references" do
+      let(:responses_input) do
+        {
+          "field" => { "$ref" => "#/reference" }
+        }
+      end
+
+      let(:document_input) do
+        {
+          "components" => input,
+          "reference" => { "description" => "Test" }
+        }
+      end
+
+      it "is expected not to raise an error" do
+        expect { described_class.new(input, context) }.not_to raise_error
+      end
     end
   end
 end
