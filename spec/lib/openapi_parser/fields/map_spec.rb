@@ -8,42 +8,69 @@ RSpec.describe OpenapiParser::Fields::Map do
     instance_double(
       "OpenapiParser::Context",
       stringify_namespace: "",
-      next_namespace: instance_double("OpenapiParser::Context")
+      next_namespace: next_context
     )
   end
 
-  it "returns a hash" do
-    result = described_class.call({}, context)
-    expect(result).to be_a Hash
-  end
+  let(:next_context) { instance_double("OpenapiParser::Context") }
 
-  it "can be passed a proc to transform results" do
-    result = described_class.call(
-      { "key" => 1 },
-      context,
-      value_type: nil
-    ) { |value, _, _| value * 2 }
+  describe ".call" do
+    it "returns a hash" do
+      result = described_class.call({}, context)
+      expect(result).to be_a Hash
+    end
 
-    expect(result).to match a_hash_including("key" => 2)
-  end
+    it "can be passed a block to transform results" do
+      result = described_class.call(
+        { "key" => 1 },
+        context,
+        value_type: nil
+      ) { |value| value * 2 }
 
-  context "when value_type is Hash and a string is passed in" do
-    let(:input) { { "key" => "non-object" } }
+      expect(result).to match a_hash_including("key" => 2)
+    end
 
-    it "raises an error" do
-      expect do
-        described_class.call(input, context, value_type: Hash)
-      end.to raise_error(OpenapiParser::Error)
+    context "when value_type is Hash and a string is passed in" do
+      let(:input) { { "key" => "non-object" } }
+
+      it "raises an error" do
+        expect do
+          described_class.call(input, context, value_type: Hash)
+        end.to raise_error(OpenapiParser::Error)
+      end
+    end
+
+    context "when value_type is Hash and a hash is not passed in" do
+      let(:input) { { "key" => { "object" => "like" } } }
+
+      it "doesn't raise an error" do
+        expect do
+          described_class.call(input, context, value_type: Hash)
+        end.not_to raise_error
+      end
     end
   end
 
-  context "when value_type is Hash and a hash is not passed in" do
-    let(:input) { { "key" => { "object" => "like" } } }
+  describe ".reference_input" do
+    let(:reference) { 2 }
 
-    it "doesn't raise an error" do
-      expect do
-        described_class.call(input, context, value_type: Hash)
-      end.not_to raise_error
+    before do
+      allow(next_context).to receive(:possible_reference).and_yield(reference)
+    end
+
+    it "returns a hash" do
+      result = described_class.reference_input({}, context) { |x| x * 2 }
+      expect(result).to be_a Hash
+    end
+
+    it "can return a reference" do
+      result = described_class.reference_input(
+        { "key" => 1 },
+        context,
+        value_type: nil
+      ) { |x| x * 2 }
+
+      expect(result).to match a_hash_including("key" => 4)
     end
   end
 end

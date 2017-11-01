@@ -40,10 +40,10 @@ module OpenapiParser
       private
 
       def build_headers_map(input, context)
-        Fields::Map.call(input, context) do |i, c|
-          c.possible_reference(i) do |resolved_input, resolved_context|
-            Header.new(resolved_input, resolved_context)
-          end
+        Fields::Map.reference_input(
+          input, context
+        ) do |next_input, next_context|
+          Header.new(next_input, next_context)
         end
       end
     end

@@ -24,6 +24,20 @@ module OpenapiParser
         new(input, context, value_type, key_format).call(&block)
       end
 
+      def self.reference_input(
+        input,
+        context,
+        value_type: Hash,
+        key_format: nil,
+        &block
+      )
+        call(
+          input, context, value_type: value_type, key_format: key_format
+        ) do |field_input, field_context|
+          field_context.possible_reference(field_input, &block)
+        end
+      end
+
       def call(&block)
         validate_keys
         validate_values
