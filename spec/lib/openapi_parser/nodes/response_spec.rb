@@ -3,6 +3,7 @@
 require "openapi_parser/nodes/response"
 require "openapi_parser/nodes/header"
 require "openapi_parser/nodes/media_type"
+require "openapi_parser/nodes/link"
 require "openapi_parser/context"
 require "openapi_parser/document"
 
@@ -13,12 +14,14 @@ RSpec.describe OpenapiParser::Nodes::Response do
   let(:description_input) { "A response" }
   let(:headers_input) { nil }
   let(:content_input) { nil }
+  let(:links_input) { nil }
 
   let(:input) do
     {
       "description" => description_input,
       "headers" => headers_input,
-      "content" => content_input
+      "content" => content_input,
+      "links" => links_input
     }.merge(extensions)
   end
 
@@ -128,6 +131,49 @@ RSpec.describe OpenapiParser::Nodes::Response do
       expect(content).to match(
         a_hash_including(
           "field" => an_instance_of(OpenapiParser::Nodes::MediaType)
+        )
+      )
+    end
+  end
+
+  describe "links field" do
+    include_examples "node field", "links",
+                     required: false,
+                     valid_input: { "key" => { "operationId" => "anAction" } },
+                     invalid_input: 123
+
+    context "when input is a hash with references" do
+      let(:links_input) do
+        {
+          "field" => { "$ref" => "#/reference" }
+        }
+      end
+
+      let(:document_input) do
+        {
+          "reference" => { "operationId" => "anAction" }
+        }
+      end
+
+      it "is expected not to raise an error" do
+        expect { described_class.new(input, context) }.not_to raise_error
+      end
+    end
+  end
+
+  describe ".links" do
+    let(:links_input) do
+      {
+        "field" => { "operationId" => "someOperation" }
+      }
+    end
+
+    subject(:links) { described_class.new(input, context).links }
+
+    it "returns a hash of Link objects" do
+      expect(links).to match(
+        a_hash_including(
+          "field" => an_instance_of(OpenapiParser::Nodes::Link)
         )
       )
     end

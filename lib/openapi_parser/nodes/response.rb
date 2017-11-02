@@ -3,6 +3,7 @@
 require "openapi_parser/node"
 require "openapi_parser/nodes/header"
 require "openapi_parser/nodes/media_type"
+require "openapi_parser/nodes/link"
 
 module OpenapiParser
   module Nodes
@@ -14,6 +15,7 @@ module OpenapiParser
       field "description", input_type: String, required: true
       field "headers", input_type: Hash, build: :build_headers_map
       field "content", input_type: Hash, build: :build_content_map
+      field "links", input_type: Hash, build: :build_links_map
 
       def description
         fields["description"]
@@ -27,6 +29,10 @@ module OpenapiParser
         fields["content"]
       end
 
+      def links
+        fields["links"]
+      end
+
       private
 
       def build_headers_map(i, c)
@@ -38,6 +44,12 @@ module OpenapiParser
       def build_content_map(i, c)
         Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
           MediaType.new(resolved_input, resolved_context)
+        end
+      end
+
+      def build_links_map(i, c)
+        Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
+          Link.new(resolved_input, resolved_context)
         end
       end
     end
