@@ -24,21 +24,21 @@ module OpenapiParser
         fields["schemas"]
       end
 
+      def responses
+        fields["responses"]
+      end
+
       private
 
-      def build_schemas_map(input, context)
-        Fields::Map.call(input, context) do |i, c|
-          c.possible_reference(i) do |resolved_input, resolved_context|
-            Schema.new(resolved_input, resolved_context)
-          end
+      def build_schemas_map(i, c)
+        Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
+          Schema.new(resolved_input, resolved_context)
         end
       end
 
-      def build_responses_map(input, context)
-        Fields::Map.call(input, context) do |i, c|
-          c.possible_reference(i) do |resolved_input, resolved_context|
-            Response.new(resolved_input, resolved_context)
-          end
+      def build_responses_map(i, c)
+        Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
+          Response.new(resolved_input, resolved_context)
         end
       end
     end

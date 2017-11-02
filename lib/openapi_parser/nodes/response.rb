@@ -23,11 +23,9 @@ module OpenapiParser
 
       private
 
-      def build_headers_map(input, context)
-        Fields::Map.call(input, context) do |i, c|
-          c.possible_reference(i) do |resolved_input, resolved_context|
-            Header.new(resolved_input, resolved_context)
-          end
+      def build_headers_map(i, c)
+        Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
+          Header.new(resolved_input, resolved_context)
         end
       end
     end

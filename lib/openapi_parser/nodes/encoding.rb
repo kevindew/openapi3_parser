@@ -39,10 +39,8 @@ module OpenapiParser
 
       private
 
-      def build_headers_map(input, context)
-        Fields::Map.reference_input(
-          input, context
-        ) do |next_input, next_context|
+      def build_headers_map(i, c)
+        Fields::Map.reference_input(i, c) do |next_input, next_context|
           Header.new(next_input, next_context)
         end
       end
