@@ -226,7 +226,7 @@ module OpenapiParser
 
       def required_input_type(input)
         return false unless input.is_a?(Array)
-        input.count.positive? && input.map(:class).uniq == [String]
+        input.count.positive? && input.map(&:class).uniq == [String]
       end
 
       def build_referenceable_schema(input, context)
