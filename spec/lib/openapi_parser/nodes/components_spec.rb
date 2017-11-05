@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require "openapi_parser/nodes/components"
+require "openapi_parser/nodes/schema"
+require "openapi_parser/nodes/response"
+require "openapi_parser/nodes/parameter"
 require "openapi_parser/context"
 require "openapi_parser/document"
 require "openapi_parser/error"
@@ -21,10 +24,17 @@ RSpec.describe OpenapiParser::Nodes::Components do
     }
   end
 
+  let(:parameters_input) do
+    {
+      "field" => { "name" => "test", "in" => "query" }
+    }
+  end
+
   let(:input) do
     {
       "schemas" => schemas_input,
-      "responses" => responses_input
+      "responses" => responses_input,
+      "parameters" => parameters_input
     }.merge(extensions)
   end
 
@@ -106,6 +116,58 @@ RSpec.describe OpenapiParser::Nodes::Components do
       it "is expected not to raise an error" do
         expect { described_class.new(input, context) }.not_to raise_error
       end
+    end
+  end
+
+  describe ".responses" do
+    subject(:responses) { described_class.new(input, context).responses }
+
+    it "returns a hash of Response objects" do
+      expect(responses).to match(
+        a_hash_including(
+          "field" => an_instance_of(OpenapiParser::Nodes::Response)
+        )
+      )
+    end
+  end
+
+  describe "parameters field" do
+    include_examples "node field", "parameters",
+                     required: false,
+                     valid_input: {
+                       "field" => { "name" => "test", "in" => "query" }
+                     },
+                     invalid_input: "not a hash"
+
+    context "when input is a hash with references" do
+      let(:parameters_input) do
+        {
+          "field" => { "$ref" => "#/reference" }
+        }
+      end
+
+      let(:document_input) do
+        {
+          "components" => input,
+          "reference" => { "name" => "test", "in" => "query" }
+        }
+      end
+
+      it "is expected not to raise an error" do
+        expect { described_class.new(input, context) }.not_to raise_error
+      end
+    end
+  end
+
+  describe ".parameters" do
+    subject(:parameters) { described_class.new(input, context).parameters }
+
+    it "returns a hash of Parameter objects" do
+      expect(parameters).to match(
+        a_hash_including(
+          "field" => an_instance_of(OpenapiParser::Nodes::Parameter)
+        )
+      )
     end
   end
 end

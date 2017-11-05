@@ -14,7 +14,7 @@ module OpenapiParser
 
       def build(input, node, context)
         value = determine_value(input, node, context)
-        value.nil? ? determine_default : value
+        value.nil? ? determine_default(node) : value
       end
 
       def valid_presence?(input)
@@ -40,8 +40,10 @@ module OpenapiParser
         input
       end
 
-      def determine_default
-        default.is_a?(Proc) ? default.call : default
+      def determine_default(node)
+        return default.call if default.is_a?(Proc)
+        return node.send(default) if default.is_a?(Symbol)
+        default
       end
     end
   end

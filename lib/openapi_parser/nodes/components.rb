@@ -4,6 +4,7 @@ require "openapi_parser/node"
 require "openapi_parser/fields/map"
 require "openapi_parser/nodes/schema"
 require "openapi_parser/nodes/response"
+require "openapi_parser/nodes/parameter"
 
 module OpenapiParser
   module Nodes
@@ -20,12 +21,20 @@ module OpenapiParser
             input_type: Hash,
             build: :build_responses_map
 
+      field "parameters",
+            input_type: Hash,
+            build: :build_parameters_map
+
       def schemas
         fields["schemas"]
       end
 
       def responses
         fields["responses"]
+      end
+
+      def parameters
+        fields["parameters"]
       end
 
       private
@@ -39,6 +48,12 @@ module OpenapiParser
       def build_responses_map(i, c)
         Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
           Response.new(resolved_input, resolved_context)
+        end
+      end
+
+      def build_parameters_map(i, c)
+        Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
+          Parameter.new(resolved_input, resolved_context)
         end
       end
     end
