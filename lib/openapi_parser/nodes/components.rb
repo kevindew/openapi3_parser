@@ -6,6 +6,7 @@ require "openapi_parser/nodes/schema"
 require "openapi_parser/nodes/response"
 require "openapi_parser/nodes/parameter"
 require "openapi_parser/nodes/example"
+require "openapi_parser/nodes/request_body"
 
 module OpenapiParser
   module Nodes
@@ -30,6 +31,10 @@ module OpenapiParser
             input_type: Hash,
             build: :build_examples_map
 
+      field "requestBodies",
+            input_type: Hash,
+            build: :build_request_bodies_map
+
       def schemas
         fields["schemas"]
       end
@@ -44,6 +49,10 @@ module OpenapiParser
 
       def examples
         fields["examples"]
+      end
+
+      def request_bodies
+        fields["requestBodies"]
       end
 
       private
@@ -67,6 +76,12 @@ module OpenapiParser
       end
 
       def build_examples_map(i, c)
+        Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
+          Example.new(resolved_input, resolved_context)
+        end
+      end
+
+      def build_request_bodies_map(i, c)
         Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
           Example.new(resolved_input, resolved_context)
         end
