@@ -4,6 +4,7 @@ require "openapi_parser/nodes/components"
 require "openapi_parser/nodes/schema"
 require "openapi_parser/nodes/response"
 require "openapi_parser/nodes/parameter"
+require "openapi_parser/nodes/example"
 require "openapi_parser/context"
 require "openapi_parser/document"
 require "openapi_parser/error"
@@ -30,11 +31,18 @@ RSpec.describe OpenapiParser::Nodes::Components do
     }
   end
 
+  let(:examples_input) do
+    {
+      "field" => { "summary" => "My Summary" }
+    }
+  end
+
   let(:input) do
     {
       "schemas" => schemas_input,
       "responses" => responses_input,
-      "parameters" => parameters_input
+      "parameters" => parameters_input,
+      "examples" => examples_input
     }.merge(extensions)
   end
 
@@ -166,6 +174,46 @@ RSpec.describe OpenapiParser::Nodes::Components do
       expect(parameters).to match(
         a_hash_including(
           "field" => an_instance_of(OpenapiParser::Nodes::Parameter)
+        )
+      )
+    end
+  end
+
+  describe "examples field" do
+    include_examples "node field", "examples",
+                     required: false,
+                     valid_input: {
+                       "field" => { "summary" => "My summary" }
+                     },
+                     invalid_input: "not a hash"
+
+    context "when input is a hash with references" do
+      let(:examples_input) do
+        {
+          "field" => { "$ref" => "#/reference" }
+        }
+      end
+
+      let(:document_input) do
+        {
+          "components" => input,
+          "reference" => { "summary" => "My summary" }
+        }
+      end
+
+      it "is expected not to raise an error" do
+        expect { described_class.new(input, context) }.not_to raise_error
+      end
+    end
+  end
+
+  describe ".examples" do
+    subject(:examples) { described_class.new(input, context).examples }
+
+    it "returns a hash of Example objects" do
+      expect(examples).to match(
+        a_hash_including(
+          "field" => an_instance_of(OpenapiParser::Nodes::Example)
         )
       )
     end
