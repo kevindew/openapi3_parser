@@ -9,6 +9,7 @@ require "openapi_parser/nodes/example"
 require "openapi_parser/nodes/request_body"
 require "openapi_parser/nodes/header"
 require "openapi_parser/nodes/security_scheme"
+require "openapi_parser/nodes/link"
 
 module OpenapiParser
   module Nodes
@@ -45,6 +46,10 @@ module OpenapiParser
             input_type: Hash,
             build: :build_security_schemes_map
 
+      field "links",
+            input_type: Hash,
+            build: :build_links_map
+
       def schemas
         fields["schemas"]
       end
@@ -71,6 +76,10 @@ module OpenapiParser
 
       def security_schemes
         fields["securitySchemes"]
+      end
+
+      def links
+        fields["links"]
       end
 
       private
@@ -114,6 +123,12 @@ module OpenapiParser
       def build_security_schemes_map(i, c)
         Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
           SecurityScheme.new(resolved_input, resolved_context)
+        end
+      end
+
+      def build_links_map(i, c)
+        Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
+          Link.new(resolved_input, resolved_context)
         end
       end
     end
