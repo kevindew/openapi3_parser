@@ -14,6 +14,10 @@ module OpenapiParser
             required: true,
             input_type: String
 
+      field "info",
+            input_type: Hash,
+            build: ->(input, context) { Info.new(input, context) }
+
       field "components",
             input_type: Hash,
             build: ->(input, context) { Components.new(input, context) }
@@ -22,9 +26,9 @@ module OpenapiParser
         fields["openapi"]
       end
 
-      # def info
-      #   fields["info"]
-      # end
+      def info
+        fields["info"]
+      end
       #
       # def servers
       #   attributes["servers"]
