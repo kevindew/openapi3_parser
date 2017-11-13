@@ -12,6 +12,14 @@ module OpenapiParser
       @input = input
     end
 
+    def valid?
+      true
+    end
+
+    def errors
+      []
+    end
+
     def root
       @root ||= Nodes::Openapi.new(input, Context.root(self))
     end
@@ -29,6 +37,12 @@ module OpenapiParser
       raise Error, "Could not resolve reference #{reference}" unless result
 
       yield(result)
+    end
+
+    private
+
+    def root_factory
+
     end
   end
 end
