@@ -7,39 +7,35 @@ require "openapi_parser/nodes/license"
 module OpenapiParser
   module Nodes
     class Info
-      include Node
+      attr_reader :data, :context
 
-      allow_extensions
-
-      field "title", input_type: String, required: true
-      field "description", input_type: String
-      field "termsOfService", input_type: String
-      field "contact", input_type: Hash, build: ->(i, c) { Contact.new(i, c) }
-      field "license", input_type: Hash, build: ->(i, c) { License.new(i, c) }
-      field "version", input_type: String, required: true
+      def initialize(data, context)
+        @data = data
+        @context = context
+      end
 
       def title
-        fields["title"]
+        data["title"]
       end
 
       def description
-        fields["description"]
+        data["description"]
       end
 
       def terms_of_service
-        fields["termsOfService"]
+        data["termsOfService"]
       end
 
       def contact
-        fields["contact"]
+        data["contact"]
       end
 
       def license
-        fields["license"]
+        data["license"]
       end
 
       def version
-        fields["version"]
+        data["version"]
       end
     end
   end

@@ -17,7 +17,7 @@ module OpenapiParser
 
         private
 
-        def build_node(input, context)
+        def build_node(input)
           data = input.each_with_object({}) do |memo, (key, value)|
             memo[key] = value.respond_to?(:node) ? value.node : value
           end

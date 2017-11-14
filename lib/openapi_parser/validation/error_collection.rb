@@ -3,8 +3,6 @@
 module OpenapiParser
   module Validation
     class ErrorCollection
-      attr_reader :errors
-
       def initialize(*errors)
         reset
         append(*errors)
@@ -18,17 +16,21 @@ module OpenapiParser
         @errors = []
       end
 
-      def errors
-        @errors.dup
-      end
-
       def merge(error_collection)
-        append(*error_collection.errors)
+        append(*error_collection.to_a)
       end
 
       def empty?
-        @errors.empty?
+        errors.empty?
       end
+
+      def to_a
+        errors.dup
+      end
+
+      private
+
+      attr_reader :errors
     end
   end
 end

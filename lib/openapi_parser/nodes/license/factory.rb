@@ -10,8 +10,8 @@ module OpenapiParser
         include Node::Factory::Object
 
         allow_extensions
-        field "name", type: String, required: true
-        field "url", type: String
+        field "name", input_type: String, required: true
+        field "url", input_type: String
 
         private
 

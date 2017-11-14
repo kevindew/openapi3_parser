@@ -4,30 +4,21 @@ require "openapi_parser/node"
 
 module OpenapiParser
   module Nodes
-    class Example
-      include Node
+    class License
 
-      allow_extensions
+      attr_reader :data, :context
 
-      field "summary", input_type: String
-      field "description", input_type: String
-      field "value"
-      field "externalValue", input_type: String
-
-      def summary
-        fields["summary"]
+      def initialize(data, context)
+        @data = data
+        @context = context
       end
 
-      def description
-        fields["description"]
+      def name
+        data["name"]
       end
 
-      def value
-        fields["value"]
-      end
-
-      def external_value
-        fields["externalValue"]
+      def url
+        data["url"]
       end
     end
   end
