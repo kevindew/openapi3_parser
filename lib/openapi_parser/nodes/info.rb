@@ -1,41 +1,34 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
-require "openapi_parser/nodes/contact"
-require "openapi_parser/nodes/license"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class Info
-      attr_reader :data, :context
-
-      def initialize(data, context)
-        @data = data
-        @context = context
-      end
+      include Node::Object
 
       def title
-        data["title"]
+        node_data["title"]
       end
 
       def description
-        data["description"]
+        node_data["description"]
       end
 
       def terms_of_service
-        data["termsOfService"]
+        node_data["termsOfService"]
       end
 
       def contact
-        data["contact"]
+        node_data["contact"]
       end
 
       def license
-        data["license"]
+        node_data["license"]
       end
 
       def version
-        data["version"]
+        node_data["version"]
       end
     end
   end

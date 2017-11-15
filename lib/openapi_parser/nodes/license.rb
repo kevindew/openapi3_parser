@@ -1,24 +1,18 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class License
-
-      attr_reader :data, :context
-
-      def initialize(data, context)
-        @data = data
-        @context = context
-      end
+      include Node::Object
 
       def name
-        data["name"]
+        node_data["name"]
       end
 
       def url
-        data["url"]
+        node_data["url"]
       end
     end
   end
