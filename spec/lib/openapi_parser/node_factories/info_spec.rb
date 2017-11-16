@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require "openapi_parser/nodes/info/factory"
+require "openapi_parser/node_factories/info"
 require "openapi_parser/nodes/info"
 
 require "support/node_object_factory"
 require "support/helpers/context"
 
-RSpec.describe OpenapiParser::Nodes::Info::Factory do
+RSpec.describe OpenapiParser::NodeFactories::Info do
   include Helpers::Context
 
   it_behaves_like "node object factory", OpenapiParser::Nodes::Info do
