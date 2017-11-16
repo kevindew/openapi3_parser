@@ -1,17 +1,11 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class Contact
-      include Node
-
-      allow_extensions
-
-      field "name", input_type: String
-      field "url", input_type: String
-      field "email", input_type: String
+      include Node::Object
 
       def name
         fields["name"]
