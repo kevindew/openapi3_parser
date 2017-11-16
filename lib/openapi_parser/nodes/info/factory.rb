@@ -14,7 +14,7 @@ module OpenapiParser
         field "title", input_type: String, required: true
         field "description", input_type: String
         field "termsOfService", input_type: String
-        # field "contact", factory: Contact::Factory
+        field "contact", factory: Contact::Factory
         field "license", factory: License::Factory
         field "version", input_type: String, required: true
 
