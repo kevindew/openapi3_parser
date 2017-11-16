@@ -134,7 +134,7 @@ module OpenapiParser
                     "#{field_context.stringify_namespace}: #{error}"
           end
 
-          def raise_validation_error(name, field_config)
+          def check_validation_errors(name, field_config)
             field_context = context.next_namespace(name)
             errors = field_config.validation_errors(input[name], factory)
 
