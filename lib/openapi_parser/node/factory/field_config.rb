@@ -7,7 +7,7 @@ module OpenapiParser
     module Factory
       class FieldConfig
         attr_reader :given_input_type, :given_factory, :given_required,
-          :given_default, :given_validate
+                    :given_default, :given_validate
 
         def initialize(
           input_type: nil,
@@ -37,7 +37,7 @@ module OpenapiParser
           end
         end
 
-        def required?(factory)
+        def required?(_factory)
           given_required
         end
 

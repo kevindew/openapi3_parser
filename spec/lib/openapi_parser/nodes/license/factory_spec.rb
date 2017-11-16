@@ -6,7 +6,6 @@ require "openapi_parser/nodes/license"
 require "support/node_object_factory"
 require "support/helpers/context"
 
-
 RSpec.describe OpenapiParser::Nodes::License::Factory do
   include Helpers::Context
 

@@ -19,8 +19,7 @@ module OpenapiParser
           end
         end
 
-        def validate(input, context)
-        end
+        def validate(input, context); end
 
         def build_object(data, context)
           Paths.new(data, context)

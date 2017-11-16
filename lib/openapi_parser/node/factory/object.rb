@@ -105,43 +105,48 @@ module OpenapiParser
             fields = Validator.missing_required_fields(input, factory)
             return if fields.empty?
             raise OpenapiParser::Error,
-              "Missing required fields for #{context.stringify_namespace}: "\
-                "#{fields.join(', ')}"
+                  "Missing required fields for "\
+                    "#{context.stringify_namespace}: #{fields.join(', ')}"
           end
 
           def check_unexpected_fields
             fields = Validator.unexpected_fields(input, factory)
             return if fields.empty?
             raise OpenapiParser::Error,
-              "Unexpected fields for #{context.stringify_namespace}: "\
-                "#{fields.join(', ')}"
+                  "Unexpected fields for #{context.stringify_namespace}: "\
+                    "#{fields.join(', ')}"
           end
 
           def check_fields_valid
             factory.field_configs.each do |name, field_config|
-              field_context = context.next_namespace(name)
-
-              type_error = field_config.input_type_error(input[name], factory)
-              if type_error
-                raise OpenapiParser::Error,
-                  "Invalid type for #{field_context.stringify_namespace}: "\
-                    "#{type_error}"
-              end
-
-              validation_errors = field_config.validation_errors(
-                input[name], factory
-              )
-              if validation_errors.any?
-                raise OpenapiParser::Error,
-                  "Invalid field for #{field_context.stringify_namespace}: "\
-                  "#{validation_errors.join(', ')}"
-              end
+              check_type_error(name, field_config)
+              check_validation_errors(name, field_config)
             end
+          end
+
+          def check_type_error(name, field_config)
+            field_context = context.next_namespace(name)
+            error = field_config.input_type_error(input[name], factory)
+
+            return unless error
+            raise OpenapiParser::Error,
+                  "Invalid type for "\
+                    "#{field_context.stringify_namespace}: #{error}"
+          end
+
+          def raise_validation_error(name, field_config)
+            field_context = context.next_namespace(name)
+            errors = field_config.validation_errors(input[name], factory)
+
+            return unless errors.any?
+            raise OpenapiParser::Error,
+                  "Invalid field for #{field_context.stringify_namespace}: "\
+                  "#{errors.join(', ')}"
           end
 
           def apply_defaults(data)
             configs = factory.field_configs
-            configs.each_with_object(data) do |(name, field_config), memo|
+            configs.each_with_object(data) do |(name, field_config), _memo|
               data[name] = field_config.default(factory) if data[name].nil?
             end
           end
@@ -149,11 +154,11 @@ module OpenapiParser
 
         class Validator
           def self.missing_required_fields(input, factory)
-            factory.field_configs.inject([]) do |memo, (name, field_config)|
+            configs = factory.field_configs
+            configs.each_with_object([]) do |(name, field_config), memo|
               if field_config.required?(factory) && input[name].nil?
                 memo << name
               end
-              memo
             end
           end
 
@@ -230,14 +235,14 @@ module OpenapiParser
           end
 
           def build_validation_errors(name, field_config)
-              field_config.validation_errors(
-                input[name], factory
-              ).map do |error|
-                Validation::Error.new(
-                  context.next_namespace(name),
-                  "Invalid field: #{error}"
-                )
-              end
+            field_config.validation_errors(
+              input[name], factory
+            ).map do |error|
+              Validation::Error.new(
+                context.next_namespace(name),
+                "Invalid field: #{error}"
+              )
+            end
           end
         end
       end

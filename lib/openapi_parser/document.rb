@@ -41,8 +41,6 @@ module OpenapiParser
 
     private
 
-    def root_factory
-
-    end
+    def root_factory; end
   end
 end

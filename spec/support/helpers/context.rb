@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "openapi_parser/context"
 require "openapi_parser/document"
 

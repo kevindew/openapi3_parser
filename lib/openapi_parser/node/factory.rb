@@ -48,8 +48,7 @@ module OpenapiParser
 
       private
 
-      def validate(_input, _context)
-      end
+      def validate(_input, _context); end
 
       def validate_input(error_collection)
         add_validation_errors(
@@ -72,10 +71,10 @@ module OpenapiParser
       def build_errors
         error_collection = Validation::ErrorCollection.new
         unless valid_type?
-          error_collection.append(Validation::Error.new(
+          error = Validation::Error.new(
             context.namespace, "Invalid type. #{validate_type}"
-          ))
-          return error_collection
+          )
+          error_collection.tap { |ec| ec.append(error) }
         end
         validate_input(error_collection)
         error_collection
