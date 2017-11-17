@@ -2,15 +2,17 @@
 
 module OpenapiParser
   class Context
-    attr_reader :document, :namespace
+    attr_reader :input, :namespace, :document, :parent
 
-    def initialize(document, namespace)
-      @document = document
+    def initialize(input:, namespace: [], document:, parent: nil)
+      @input = input
       @namespace = namespace.freeze
+      @document = document
+      @parent = parent
     end
 
-    def self.root(document)
-      new(document, [])
+    def self.root(input, document)
+      new(input: input, document: document)
     end
 
     def stringify_namespace
@@ -20,8 +22,14 @@ module OpenapiParser
         .join("/")
     end
 
-    def next_namespace(segment)
-      self.class.new(document, namespace + [segment.to_s])
+    def next_namespace(segment, next_input = nil)
+      next_input ||= input[segment]
+      self.class.new(
+        input: next_input,
+        namespace: namespace + [segment],
+        document: document,
+        parent: self
+      )
     end
 
     def possible_reference(input)

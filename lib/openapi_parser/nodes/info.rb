@@ -1,45 +1,34 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
-require "openapi_parser/nodes/contact"
-require "openapi_parser/nodes/license"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class Info
-      include Node
-
-      allow_extensions
-
-      field "title", input_type: String, required: true
-      field "description", input_type: String
-      field "termsOfService", input_type: String
-      field "contact", input_type: Hash, build: ->(i, c) { Contact.new(i, c) }
-      field "license", input_type: Hash, build: ->(i, c) { License.new(i, c) }
-      field "version", input_type: String, required: true
+      include Node::Object
 
       def title
-        fields["title"]
+        node_data["title"]
       end
 
       def description
-        fields["description"]
+        node_data["description"]
       end
 
       def terms_of_service
-        fields["termsOfService"]
+        node_data["termsOfService"]
       end
 
       def contact
-        fields["contact"]
+        node_data["contact"]
       end
 
       def license
-        fields["license"]
+        node_data["license"]
       end
 
       def version
-        fields["version"]
+        node_data["version"]
       end
     end
   end

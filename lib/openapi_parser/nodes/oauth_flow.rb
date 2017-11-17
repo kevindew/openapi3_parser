@@ -1,18 +1,11 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class OauthFlow
-      include Node
-
-      allow_extensions
-
-      field "authorizationUrl", input_type: String, required: true
-      field "tokenUrl", input_type: String, required: true
-      field "refreshUrl", input_type: String
-      field "scopes", input_type: Hash, required: true
+      include Node::Object
 
       def authorization_url
         fields["authorizationUrl"]

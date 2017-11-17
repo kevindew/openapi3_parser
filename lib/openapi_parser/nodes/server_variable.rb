@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class ServerVariable
-      include Node
+      include Node::Object
 
-      allow_extensions
-
-      field "enum", input_type: :enum_input_type
-      field "default", input_type: String, required: true
-      field "description", input_type: String
+      def enum
+        fields["enum"]
+      end
 
       def default
         fields["default"]
@@ -19,16 +17,6 @@ module OpenapiParser
 
       def description
         fields["description"]
-      end
-
-      def enum
-        fields["enum"]
-      end
-
-      private
-
-      def enum_input_type(input)
-        input.is_a?(Array) && input.map(&:class).uniq == [String]
       end
     end
   end

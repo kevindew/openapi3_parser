@@ -1,16 +1,11 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class ExternalDocumentation
-      include Node
-
-      allow_extensions
-
-      field "description", input_type: String
-      field "url", required: true, input_type: String
+      include Node::Object
 
       def description
         fields["description"]

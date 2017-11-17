@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi_parser/nodes/openapi"
+# require "openapi_parser/nodes/openapi"
 require "openapi_parser/context"
 require "openapi_parser/error"
 
@@ -10,6 +10,14 @@ module OpenapiParser
 
     def initialize(input)
       @input = input
+    end
+
+    def valid?
+      true
+    end
+
+    def errors
+      []
     end
 
     def root
@@ -30,5 +38,9 @@ module OpenapiParser
 
       yield(result)
     end
+
+    private
+
+    def root_factory; end
   end
 end

@@ -1,23 +1,18 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class License
-      include Node
-
-      allow_extensions
-
-      field "name", input_type: String, required: true
-      field "url", input_type: String
+      include Node::Object
 
       def name
-        fields["name"]
+        node_data["name"]
       end
 
       def url
-        fields["url"]
+        node_data["url"]
       end
     end
   end
