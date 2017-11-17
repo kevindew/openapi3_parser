@@ -1,19 +1,11 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class Xml
-      include Node
-
-      allow_extensions
-
-      field "name", input_type: String
-      field "namespace", input_type: String
-      field "prefix", input_type: String
-      field "attribute", input_type: :boolean, default: false
-      field "wrapped", input_type: :boolean, default: false
+      include Node::Object
 
       def name
         fields["name"]
