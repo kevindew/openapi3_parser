@@ -1,16 +1,11 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class Discriminator
-      include Node
-
-      field "propertyName", input_type: String, required: true
-      field "mapping",
-            input_type: :valid_mapping_input_type?,
-            default: -> { {}.freeze }
+      include Node::Object
 
       def property_name
         fields["propertyName"]
@@ -18,16 +13,6 @@ module OpenapiParser
 
       def mapping
         fields["mapping"]
-      end
-
-      private
-
-      def valid_mapping_input_type?(input)
-        return false unless input.is_a?(Hash)
-        return true if input.empty?
-        string_keys = input.keys.map(&:class).uniq == [String]
-        string_values = input.values.map(&:class).uniq == [String]
-        string_keys && string_values
       end
     end
   end
