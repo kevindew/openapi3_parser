@@ -73,7 +73,7 @@ module OpenapiParser
         error = Validation::Error.new(
           context.namespace, "Invalid type. #{validate_type}"
         )
-        error_collection.tap { |ec| ec.append(error) }
+        return error_collection.tap { |ec| ec.append(error) }
       end
       validate_input(error_collection)
       error_collection
