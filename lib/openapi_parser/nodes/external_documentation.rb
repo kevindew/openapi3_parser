@@ -8,11 +8,11 @@ module OpenapiParser
       include Node::Object
 
       def description
-        fields["description"]
+        node_data["description"]
       end
 
       def url
-        fields["url"]
+        node_data["url"]
       end
     end
   end

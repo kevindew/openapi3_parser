@@ -8,15 +8,15 @@ module OpenapiParser
       include Node::Object
 
       def enum
-        fields["enum"]
+        node_data["enum"]
       end
 
       def default
-        fields["default"]
+        node_data["default"]
       end
 
       def description
-        fields["description"]
+        node_data["description"]
       end
     end
   end

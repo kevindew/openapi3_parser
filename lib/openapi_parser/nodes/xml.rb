@@ -8,23 +8,23 @@ module OpenapiParser
       include Node::Object
 
       def name
-        fields["name"]
+        node_data["name"]
       end
 
       def namespace
-        fields["namespace"]
+        node_data["namespace"]
       end
 
       def prefix
-        fields["prefix"]
+        node_data["prefix"]
       end
 
       def attribute
-        fields["attribute"]
+        node_data["attribute"]
       end
 
       def wrapped
-        fields["wrapped"]
+        node_data["wrapped"]
       end
     end
   end

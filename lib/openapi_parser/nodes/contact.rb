@@ -8,15 +8,15 @@ module OpenapiParser
       include Node::Object
 
       def name
-        fields["name"]
+        data["name"]
       end
 
       def url
-        fields["url"]
+        data["url"]
       end
 
       def email
-        fields["email"]
+        data["email"]
       end
     end
   end

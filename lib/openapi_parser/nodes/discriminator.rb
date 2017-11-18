@@ -8,11 +8,11 @@ module OpenapiParser
       include Node::Object
 
       def property_name
-        fields["propertyName"]
+        node_data["propertyName"]
       end
 
       def mapping
-        fields["mapping"]
+        node_data["mapping"]
       end
     end
   end

@@ -8,19 +8,19 @@ module OpenapiParser
       include Node::Object
 
       def authorization_url
-        fields["authorizationUrl"]
+        node_data["authorizationUrl"]
       end
 
       def token_url
-        fields["tokenUrl"]
+        node_data["tokenUrl"]
       end
 
       def refresh_url
-        fields["refreshUrl"]
+        node_data["refreshUrl"]
       end
 
       def scopes
-        fields["scopes"]
+        node_data["scopes"]
       end
     end
   end
