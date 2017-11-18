@@ -8,7 +8,7 @@ module OpenapiParser
       include NodeFactory
 
       def self.included(base)
-        base.extend(Factory::ClassMethods)
+        base.extend(NodeFactory::ClassMethods)
         base.class_eval do
           input_type Hash
         end
@@ -17,7 +17,7 @@ module OpenapiParser
       private
 
       def build_node(input)
-        data = input.each_with_object({}) do |memo, (key, value)|
+        data = input.each_with_object({}) do |(key, value), memo|
           memo[key] = value.respond_to?(:node) ? value.node : value
         end
         build_map(data, context)

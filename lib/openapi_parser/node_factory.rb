@@ -86,8 +86,16 @@ module OpenapiParser
               "#{validate_type}"
       end
 
-      # some sort of validate step that throws an exception
+      validate_before_build
       build_node(processed_input)
+    end
+
+    def validate_before_build
+      errors = Array(validate(context.input, context))
+      return unless errors.any?
+      raise OpenapiParser::Error,
+            "Invalid data for #{context.stringify_namespace}. "\
+            "#{errors.join(', ')}"
     end
 
     def valid_type?
