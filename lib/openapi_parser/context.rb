@@ -32,13 +32,23 @@ module OpenapiParser
       )
     end
 
-    def possible_reference(input)
-      return yield(input, self) unless input["$ref"]
-
-      document.resolve_reference(input["$ref"]) do |resolved_input|
+    def resolve_reference
+      document.resolve_reference(input["$ref"]) do |resolved_input, namespace|
         # @TODO track reference for cyclic depenendies
-        yield(resolved_input, self)
+        next_context = resolved_reference(resolved_input, namespace)
+        yield(next_context)
       end
+    end
+
+    private
+
+    def resolved_reference(input, namespace)
+      self.class.new(
+        input: input,
+        namespace: namespace,
+        document: document,
+        parent: parent
+      )
     end
   end
 end

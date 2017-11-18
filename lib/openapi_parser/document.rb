@@ -36,7 +36,7 @@ module OpenapiParser
       result = input.dig(*parts)
       raise Error, "Could not resolve reference #{reference}" unless result
 
-      yield(result)
+      yield(result, parts)
     end
 
     private
