@@ -1,261 +1,153 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
-require "openapi_parser/fields/map"
-require "openapi_parser/nodes/discriminator"
-require "openapi_parser/nodes/xml"
-require "openapi_parser/nodes/external_documentation"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     # rubocop:disable ClassLength
     class Schema
-      include Node
-
-      HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT = lambda { |i|
-        i.is_a?(Array) && i.map(&:class).uniq == [Hash] && i.count.positive?
-      }
-
-      allow_extensions
-
-      field "title", input_type: String
-      field "multipleOf", input_type: Numeric
-      field "maximum", input_type: Integer
-      field "exclusiveMaximum", input_type: :boolean, default: false
-      field "minimum", input_type: Integer
-      field "exclusiveMinimum", input_type: :boolean, default: false
-      field "maxLength", input_type: ->(i) { i.is_a?(Integer) && i.positive? }
-      field "minLength",
-            input_type: ->(i) { i.is_a?(Integer) && i >= 0 },
-            default: 0
-      field :pattern, input_type: String
-      field "maxItems", input_type: ->(i) { i.is_a?(Integer) && i.positive? }
-      field "minItems",
-            input_type: ->(i) { i.is_a?(Integer) && i >= 0 },
-            default: 0
-      field "uniqueItems", input_type: :boolean, default: false
-      field "maxProperties",
-            input_type: ->(i) { i.is_a?(Integer) && i.positive? }
-      field "minProperties",
-            input_type: ->(i) { i.is_a?(Integer) && i >= 0 },
-            default: 0
-      field "required", input_type: :required_input_type
-      field "enum",
-            input_type: ->(i) { i.is_a?(Array) && i.uniq.count == i.count }
-
-      field "type", input_type: String
-      field "allOf",
-            input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
-            build: :build_schema_array
-      field "oneOf",
-            input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
-            build: :build_schema_array
-      field "anyOf",
-            input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
-            build: :build_schema_array
-      field "not",
-            input_type: Hash,
-            build: :build_referenceable_schema
-      field "items",
-            input_type: Hash,
-            build: :build_referenceable_schema
-      field "properties", input_type: Hash, build: :build_properties
-      field "additionalProperties",
-            build: :build_additional_properties,
-            input_type: ->(i) { [true, false].include?(i) || i.is_a?(Hash) }
-      field "description", input_type: String
-      field "format", input_type: String
-      field "default"
-
-      field "nullable", input_type: :boolean, default: false
-      field "discriminator",
-            input_type: Hash,
-            build: ->(input, context) { Discriminator.new(input, context) }
-      field "readOnly", input_type: :boolean, default: false
-      field "writeOnly", input_type: :boolean, default: false
-      field "xml",
-            input_type: Hash,
-            build: ->(input, context) { Xml.new(input, context) }
-      field "externalDocs",
-            input_type: Hash,
-            build: :build_external_docs
-      field "example"
-      field "deprecated", input_type: :boolean, default: false
+      include Node::Object
 
       def title
-        fields["title"]
+        node_data["title"]
       end
 
       def multiple_of
-        fields["multipleOf"]
+        node_data["multipleOf"]
       end
 
       def maximum
-        fields["maximum"]
+        node_data["maximum"]
       end
 
       def exclusive_maximum
-        fields["exclusiveMaximum"]
+        node_data["exclusiveMaximum"]
       end
 
       def minimum
-        fields["minimum"]
+        node_data["minimum"]
       end
 
       def exclusive_minimum
-        fields["exclusiveMinimum"]
+        node_data["exclusiveMinimum"]
       end
 
       def max_length
-        fields["maxLength"]
+        node_data["maxLength"]
       end
 
       def min_length
-        fields["minLength"]
+        node_data["minLength"]
       end
 
       def pattern
-        fields["pattern"]
+        node_data["pattern"]
       end
 
       def max_items
-        fields["maxItems"]
+        node_data["maxItems"]
       end
 
       def min_items
-        fields["minItems"]
+        node_data["minItems"]
       end
 
       def unique_items
-        fields["uniqueItems"]
+        node_data["uniqueItems"]
       end
 
       def max_properties
-        fields["maxProperties"]
+        node_data["maxProperties"]
       end
 
       def min_properties
-        fields["minProperties"]
+        node_data["minProperties"]
       end
 
       def required
-        fields["required"]
+        node_data["required"]
       end
 
       def enum
-        fields["enum"]
+        node_data["enum"]
       end
 
       def type
-        fields["type"]
+        node_data["type"]
       end
 
       def all_of
-        fields["allOf"]
+        node_data["allOf"]
       end
 
       def one_of
-        fields["oneOf"]
+        node_data["oneOf"]
       end
 
       def any_of
-        fields["anyOf"]
+        node_data["anyOf"]
       end
 
       def not
-        fields["not"]
+        node_data["not"]
       end
 
       def items
-        fields["items"]
+        node_data["items"]
       end
 
       def properties
-        fields["properties"]
+        node_data["properties"]
       end
 
       def additional_properties
-        fields["additionalProperties"]
+        node_data["additionalProperties"]
       end
 
       def description
-        fields["description"]
+        node_data["description"]
       end
 
       def format
-        fields["format"]
+        node_data["format"]
       end
 
       def default
-        fields["default"]
+        node_data["default"]
       end
 
       def nullable
-        fields["nullable"]
+        node_data["nullable"]
       end
 
       def disciminator
-        fields["discriminator"]
+        node_data["discriminator"]
       end
 
       def read_only
-        fields["readOnly"]
+        node_data["readOnly"]
       end
 
       def write_only
-        fields["writeOnly"]
+        node_data["writeOnly"]
       end
 
       def xml
-        fields["xml"]
+        node_data["xml"]
       end
 
       def external_docs
-        fields["externalDocs"]
+        node_data["externalDocs"]
       end
 
       def example
-        fields["example"]
+        node_data["example"]
       end
 
       def deprecated
-        fields["deprecated"]
-      end
-
-      private
-
-      def required_input_type(input)
-        return false unless input.is_a?(Array)
-        input.count.positive? && input.map(&:class).uniq == [String]
-      end
-
-      def build_referenceable_schema(input, context)
-        context.possible_reference(input) do |resolved_input, resolved_context|
-          Schema.new(resolved_input, resolved_context)
-        end
-      end
-
-      def build_schema_array(input, context)
-        input.map.with_index do |schema_input, index|
-          next_namespace = context.next_namespace(index)
-          build_referenceable_schema(schema_input, next_namespace)
-        end
-      end
-
-      def build_additional_properties(input, context)
-        return input unless input.is_a?(Hash)
-        build_referenceable_schema(input, context)
-      end
-
-      def build_external_docs(input, context)
-        ExternalDocumentation.new(input, context)
-      end
-
-      def build_properties(input, context)
-        Fields::Map.call(input, context) do |next_input, next_context|
-          Schema.new(next_input, next_context)
-        end
+        node_data["deprecated"]
       end
     end
+    # rubocop:enable ClassLength
   end
 end
