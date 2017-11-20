@@ -2,7 +2,9 @@
 
 require "openapi_parser/nodes/schema"
 require "openapi_parser/node_factory/object"
+require "openapi_parser/node_factory/optional_reference"
 require "openapi_parser/node_factories/map"
+require "openapi_parser/node_factories/array"
 
 module OpenapiParser
   module NodeFactories
@@ -24,29 +26,19 @@ module OpenapiParser
       field "uniqueItems", input_type: :boolean, default: false
       field "maxProperties", input_type: Integer
       field "minProperties", input_type: Integer, default: 0
-      field "required", input_type: Array
-      field "enum", input_type: Array
+      field "required", input_type: ::Array
+      field "enum", input_type: ::Array
 
       field "type", input_type: String
-      # field "allOf",
-      #       input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
-      #       build: :build_schema_array
-      # field "oneOf",
-      #       input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
-      #       build: :build_schema_array
-      # field "anyOf",
-      #       input_type: HASH_ARRAY_WITH_ATLEAST_ONE_ELEMENT,
-      #       build: :build_schema_array
-      # field "not",
-      #       input_type: Hash,
-      #       build: :build_referenceable_schema
-      # field "items",
-      #       input_type: Hash,
-      #       build: :build_referenceable_schema
+      field "allOf", factory: :referenceable_schema_array
+      field "oneOf", factory: :referenceable_schema_array
+      field "anyOf", factory: :referenceable_schema_array
+      field "not", factory: :referenceable_schema
+      field "items", factory: :referenceable_schema
       field "properties", factory: :properties_factory
-      # field "additionalProperties",
-      #       build: :build_additional_properties,
-      #       input_type: ->(i) { [true, false].include?(i) || i.is_a?(Hash) }
+      field "additionalProperties",
+            input_type: :additional_properties_input_type,
+            factory: :additional_properties_factory
       field "description", input_type: String
       field "format", input_type: String
       field "default"
@@ -83,6 +75,27 @@ module OpenapiParser
           context,
           value_factory: NodeFactories::Schema
         )
+      end
+
+      def referenceable_schema(context)
+        NodeFactory::OptionalReference.new(self.class).call(context)
+      end
+
+      def referenceable_schema_array(context)
+        NodeFactories::Array.new(
+          context,
+          value_factory: NodeFactory::OptionalReference.new(self.class)
+        )
+      end
+
+      def additional_properties_input_type(input)
+        return if [true, false].include?(input) || input.is_a?(Hash)
+        "Expected a boolean or an object"
+      end
+
+      def additional_properties_factory(context)
+        return input if [true, false].include?(input)
+        referenceable_schema(context)
       end
     end
   end

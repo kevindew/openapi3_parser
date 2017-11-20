@@ -9,7 +9,7 @@ module OpenapiParser
       include NodeFactory::Object
 
       allow_extensions
-      field "enum", input_type: Array, validate: :validate_enum
+      field "enum", input_type: ::Array, validate: :validate_enum
       field "default", input_type: String, required: true
       field "description", input_type: String
 
