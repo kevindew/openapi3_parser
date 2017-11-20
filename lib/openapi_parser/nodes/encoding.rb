@@ -1,48 +1,30 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
-require "openapi_parser/fields/map"
-require "openapi_parser/nodes/header"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class Encoding
-      include Node
-
-      allow_extensions
-
-      field "contentType", input_type: String
-      field "headers", input_type: Hash, build: :build_headers_map
-      field "style", input_type: String
-      field "explode", input_type: :boolean, default: true
-      field "allowReserved", input_type: :boolean, default: false
+      include Node::Object
 
       def content_type
-        fields["contentType"]
+        node_data["contentType"]
       end
 
       def headers
-        fields["headers"]
+        node_data["headers"]
       end
 
       def style
-        fields["style"]
+        node_data["style"]
       end
 
       def explode
-        fields["explode"]
+        node_data["explode"]
       end
 
       def allow_reserved
-        fields["allowReserved"]
-      end
-
-      private
-
-      def build_headers_map(i, c)
-        Fields::Map.reference_input(i, c) do |next_input, next_context|
-          Header.new(next_input, next_context)
-        end
+        node_data["allowReserved"]
       end
     end
   end
