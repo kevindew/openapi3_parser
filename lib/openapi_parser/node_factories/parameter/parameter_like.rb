@@ -4,6 +4,7 @@ require "openapi_parser/node_factory/optional_reference"
 require "openapi_parser/node_factories/schema"
 require "openapi_parser/node_factories/map"
 require "openapi_parser/node_factories/example"
+require "openapi_parser/node_factories/media_type"
 
 module OpenapiParser
   module NodeFactories
@@ -20,6 +21,13 @@ module OpenapiParser
 
         def examples_factory(context)
           factory = NodeFactory::OptionalReference.new(NodeFactories::Schema)
+          NodeFactories::Map.new(context, value_factory: factory)
+        end
+
+        def content_factory(context)
+          factory = NodeFactory::OptionalReference.new(
+            NodeFactories::MediaType
+          )
           NodeFactories::Map.new(context, value_factory: factory)
         end
       end

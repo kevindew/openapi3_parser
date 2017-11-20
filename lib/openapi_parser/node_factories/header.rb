@@ -24,7 +24,7 @@ module OpenapiParser
       field "example"
       field "examples", factory: :examples_factory
 
-      # field "content", factory: :content_factory
+      field "content", factory: :content_factory
 
       private
 
