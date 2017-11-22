@@ -1,56 +1,26 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
-require "openapi_parser/nodes/header"
-require "openapi_parser/nodes/media_type"
-require "openapi_parser/nodes/link"
+require "openapi_parser/node/object"
 
 module OpenapiParser
   module Nodes
     class Response
-      include Node
-
-      allow_extensions
-
-      field "description", input_type: String, required: true
-      field "headers", input_type: Hash, build: :build_headers_map
-      field "content", input_type: Hash, build: :build_content_map
-      field "links", input_type: Hash, build: :build_links_map
+      include Node::Object
 
       def description
-        fields["description"]
+        node_data["description"]
       end
 
       def headers
-        fields["headers"]
+        node_data["headers"]
       end
 
       def content
-        fields["content"]
+        node_data["content"]
       end
 
       def links
-        fields["links"]
-      end
-
-      private
-
-      def build_headers_map(i, c)
-        Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
-          Header.new(resolved_input, resolved_context)
-        end
-      end
-
-      def build_content_map(i, c)
-        Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
-          MediaType.new(resolved_input, resolved_context)
-        end
-      end
-
-      def build_links_map(i, c)
-        Fields::Map.reference_input(i, c) do |resolved_input, resolved_context|
-          Link.new(resolved_input, resolved_context)
-        end
+        node_data["links"]
       end
     end
   end
