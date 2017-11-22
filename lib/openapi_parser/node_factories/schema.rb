@@ -94,7 +94,7 @@ module OpenapiParser
       end
 
       def additional_properties_factory(context)
-        return input if [true, false].include?(input)
+        return context.input if [true, false].include?(context.input)
         referenceable_schema(context)
       end
     end
