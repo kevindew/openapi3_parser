@@ -1,56 +1,43 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
+require "openapi_parser/node/object"
 require "openapi_parser/nodes/oauth_flows"
 
 module OpenapiParser
   module Nodes
     class SecurityScheme
-      include Node
-
-      allow_extensions
-
-      field "type", input_type: String, required: true
-      field "description", input_type: String
-      field "name", input_type: String
-      field "in", input_type: String
-      field "scheme", input_type: String
-      field "bearerFormat", input_type: String
-      field "flows",
-            input_type: Hash,
-            build: ->(i, c) { OauthFlows.new(i, c) }
-      field "openIdConnectUrl", input_type: String
+      include Node::Object
 
       def type
-        fields["type"]
+        node_data["type"]
       end
 
       def description
-        fields["description"]
+        node_data["description"]
       end
 
       def name
-        fields["name"]
+        node_data["name"]
       end
 
       def in
-        fields["in"]
+        node_data["in"]
       end
 
       def scheme
-        fields["scheme"]
+        node_data["scheme"]
       end
 
       def bearer_format
-        fields["bearerFormat"]
+        node_data["bearerFormat"]
       end
 
       def flows
-        fields["flows"]
+        node_data["flows"]
       end
 
       def open_id_connect_url
-        fields["openIdConnectUrl"]
+        node_data["openIdConnectUrl"]
       end
     end
   end
