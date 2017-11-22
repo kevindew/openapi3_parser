@@ -9,10 +9,10 @@ module OpenapiParser
       include NodeFactory::Object
 
       allow_extensions
-      field "authorizationUrl", input_type: String, required: true
-      field "tokenUrl", input_type: String, required: true
+      field "authorizationUrl", input_type: String
+      field "tokenUrl", input_type: String
       field "refreshUrl", input_type: String
-      field "scopes", input_type: Hash, required: true
+      field "scopes", input_type: Hash
 
       private
 
