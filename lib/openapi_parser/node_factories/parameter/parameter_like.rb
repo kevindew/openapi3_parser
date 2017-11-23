@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node_factory/optional_reference"
-require "openapi_parser/node_factories/schema"
-require "openapi_parser/node_factories/map"
-require "openapi_parser/node_factories/example"
-require "openapi_parser/node_factories/media_type"
-
 module OpenapiParser
   module NodeFactories
     class Parameter
@@ -34,3 +28,10 @@ module OpenapiParser
     end
   end
 end
+
+# These are in the footer as a cyclic dependency can stop this module loading
+require "openapi_parser/node_factory/optional_reference"
+require "openapi_parser/node_factories/schema"
+require "openapi_parser/node_factories/map"
+require "openapi_parser/node_factories/example"
+require "openapi_parser/node_factories/media_type"
