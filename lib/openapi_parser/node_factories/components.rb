@@ -12,6 +12,7 @@ require "openapi_parser/node_factories/request_body"
 require "openapi_parser/node_factories/header"
 require "openapi_parser/node_factories/security_scheme"
 require "openapi_parser/node_factories/link"
+require "openapi_parser/node_factories/callback"
 
 module OpenapiParser
   module NodeFactories
@@ -27,7 +28,7 @@ module OpenapiParser
       field "headers", factory: :headers_factory
       field "securitySchemes", factory: :security_schemes_factory
       field "links", factory: :links_factory
-      # @TODO callbakcs
+      field "callbacks", factory: :callbacks_factory
 
       private
 
@@ -65,6 +66,10 @@ module OpenapiParser
 
       def links_factory(context)
         referenceable_map_factory(context, NodeFactories::Link)
+      end
+
+      def callbacks_factory(context)
+        referenceable_map_factory(context, NodeFactories::Callback)
       end
 
       def referenceable_map_factory(context, factory)

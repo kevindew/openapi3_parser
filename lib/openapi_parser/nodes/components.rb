@@ -38,6 +38,10 @@ module OpenapiParser
       def links
         node_data["links"]
       end
+
+      def callbacks
+        node_data["callbacks"]
+      end
     end
   end
 end

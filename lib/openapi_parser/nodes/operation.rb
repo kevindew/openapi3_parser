@@ -39,6 +39,10 @@ module OpenapiParser
         node_data["responses"]
       end
 
+      def callbacks
+        node_data["callbacks"]
+      end
+
       def deprecated
         node_data["deprecated"]
       end

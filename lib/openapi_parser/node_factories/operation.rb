@@ -8,6 +8,7 @@ require "openapi_parser/node_factories/external_documentation"
 require "openapi_parser/node_factories/parameter"
 require "openapi_parser/node_factories/request_body"
 require "openapi_parser/node_factories/responses"
+require "openapi_parser/node_factories/callback"
 require "openapi_parser/node_factories/server"
 require "openapi_parser/node_factories/security_requirement"
 
@@ -26,7 +27,7 @@ module OpenapiParser
       field "requestBody", factory: :request_body_factory
       field "responses", factory: NodeFactories::Responses,
                          required: true
-      # @TODO callbacks
+      field "callbacks", factory: :callbacks_factory
       field "deprecated", input_type: :boolean, default: false
       field "security", factory: :security_factory
       field "servers", factory: :servers_factory
@@ -49,6 +50,11 @@ module OpenapiParser
       def request_body_factory(context)
         factory = NodeFactories::RequestBody
         NodeFactory::OptionalReference.new(factory).call(context)
+      end
+
+      def callbacks_factory(context)
+        factory = NodeFactory::OptionalReference.new(NodeFactories::Callback)
+        NodeFactories::Map.new(context, value_factory: factory)
       end
 
       def responses_factory(context)

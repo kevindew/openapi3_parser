@@ -60,6 +60,28 @@ RSpec.describe OpenapiParser::NodeFactories::Operation do
             }
           }
         },
+        "callbacks" => {
+          "myWebhook" => {
+            "http://notificationServer.com?transactionId={$request.body#/id}"\
+            "&email={$request.body#/email}" => {
+              "post" => {
+                "requestBody" => {
+                  "description" => "Callback payload",
+                  "content" => {
+                    "application/json" => {
+                      "schema" => { "type" => "string" }
+                    }
+                  }
+                },
+                "responses" => {
+                  "200" => {
+                    "description" => "webhook successfully processed"
+                  }
+                }
+              }
+            }
+          }
+        },
         "security" => [
           {
             "petstore_auth" => [
