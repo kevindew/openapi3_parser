@@ -13,6 +13,32 @@ RSpec.describe OpenapiParser::NodeFactories::PathItem do
     let(:input) do
       {
         "$ref" => "#/path_items/example",
+        "get" => {
+          "description" => "Returns pets based on ID",
+          "summary" => "Find pets by ID",
+          "operationId" => "getPetsById",
+          "responses" => {
+            "200" => {
+              "description" => "pet response",
+              "content" => {
+                "*/*" => {
+                  "schema" => {
+                    "type" => "array",
+                    "items" => { "type" => "string" }
+                  }
+                }
+              }
+            },
+            "default" => {
+              "description" => "error payload",
+              "content" => {
+                "text/html" => {
+                  "schema" => { "type" => "string" }
+                }
+              }
+            }
+          }
+        },
         "parameters" => [
           {
             "name" => "id",
