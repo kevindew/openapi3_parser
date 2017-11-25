@@ -39,6 +39,10 @@ module OpenapiParser
         node_data["deprecated"]
       end
 
+      def security
+        node_data["security"]
+      end
+
       def servers
         node_data["servers"]
       end

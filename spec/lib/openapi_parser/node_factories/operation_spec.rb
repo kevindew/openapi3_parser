@@ -60,14 +60,14 @@ RSpec.describe OpenapiParser::NodeFactories::Operation do
         #     }
         #   }
         # },
-        # "security" => [
-        #   {
-        #     "petstore_auth" => [
-        #       "write:pets",
-        #       "read:pets"
-        #     ]
-        #   }
-        # ]
+        "security" => [
+          {
+            "petstore_auth" => [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
       }
     end
 
