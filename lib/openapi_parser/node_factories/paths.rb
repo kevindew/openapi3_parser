@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-require "openapi_parser/nodes/paths"
 require "openapi_parser/node_factory/map"
+require "openapi_parser/node_factory/optional_reference"
+require "openapi_parser/node_factories/path_item"
+require "openapi_parser/nodes/paths"
 
 module OpenapiParser
   module NodeFactories
@@ -10,16 +12,19 @@ module OpenapiParser
 
       private
 
-      def process_input(input, context)
-        input.each_with_object({}) do |memo, (key, value)|
+      def process_input(input)
+        input.each_with_object({}) do |(key, value), memo|
           memo[key] = value if extension?(key)
-          memo[key] = PathItem.new(context.next_namespace(key))
+          memo[key] = child_factory(context.next_namespace(key))
         end
       end
 
-      def validate(input, context); end
+      def child_factory(child_context)
+        NodeFactory::OptionalReference.new(NodeFactories::PathItem)
+                                      .call(child_context)
+      end
 
-      def build_object(data, context)
+      def build_map(data, context)
         Nodes::Paths.new(data, context)
       end
     end
