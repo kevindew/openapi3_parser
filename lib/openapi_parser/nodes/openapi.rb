@@ -1,58 +1,44 @@
 # frozen_string_literal: true
 
-require "openapi_parser/node"
+require "openapi_parser/node/object"
 require "openapi_parser/nodes/components"
 
 module OpenapiParser
   module Nodes
     class Openapi
-      include Node
-
-      allow_extensions
-
-      field "openapi",
-            required: true,
-            input_type: String
-
-      field "info",
-            input_type: Hash,
-            build: ->(input, context) { Info.new(input, context) }
-
-      field "components",
-            input_type: Hash,
-            build: ->(input, context) { Components.new(input, context) }
+      include Node::Object
 
       def openapi
-        fields["openapi"]
+        node_data["openapi"]
       end
 
       def info
-        fields["info"]
+        node_data["info"]
       end
-      #
-      # def servers
-      #   attributes["servers"]
-      # end
-      #
-      # def paths
-      #   attributes["paths"]
-      # end
+
+      def servers
+        node_data["servers"]
+      end
+
+      def paths
+        node_data["paths"]
+      end
 
       def components
-        fields["components"]
+        node_data["components"]
       end
 
-      # def security
-      #   attributes["security"]
-      # end
-      #
-      # def tags
-      #   attributes["tags"]
-      # end
-      #
-      # def external_docs
-      #   attributes["externalDocs"]
-      # end
+      def security
+        node_data["security"]
+      end
+
+      def tags
+        node_data["tags"]
+      end
+
+      def external_docs
+        node_data["externalDocs"]
+      end
     end
   end
 end
