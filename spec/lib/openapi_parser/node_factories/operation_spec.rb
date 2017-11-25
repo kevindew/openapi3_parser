@@ -44,22 +44,22 @@ RSpec.describe OpenapiParser::NodeFactories::Operation do
             }
           }
         },
-        # "responses" => {
-        #   "200" => {
-        #     "description" => "Pet updated.",
-        #     "content" => {
-        #       "application/json" => {},
-        #       "application/xml" => {}
-        #     }
-        #   },
-        #   "405" => {
-        #     "description" => "Invalid input",
-        #     "content" => {
-        #       "application/json" => {},
-        #       "application/xml" => {}
-        #     }
-        #   }
-        # },
+        "responses" => {
+          "200" => {
+            "description" => "Pet updated.",
+            "content" => {
+              "application/json" => {},
+              "application/xml" => {}
+            }
+          },
+          "405" => {
+            "description" => "Invalid input",
+            "content" => {
+              "application/json" => {},
+              "application/xml" => {}
+            }
+          }
+        },
         "security" => [
           {
             "petstore_auth" => [
