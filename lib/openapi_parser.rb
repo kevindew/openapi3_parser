@@ -2,20 +2,19 @@
 
 require "openapi_parser/error"
 require "openapi_parser/document"
-require "openapi_parser/factory"
 
 require "yaml"
 require "json"
 
 module OpenapiParser
-  def self.load(input, working_directory: nil)
-    working_directory ||= if input.respond_to?(:read)
-                            File.dirname(input)
-                          else
-                            Dir.pwd
-                          end
+  def self.load(input)
+    # working_directory ||= if input.respond_to?(:read)
+    #                         File.dirname(input)
+    #                       else
+    #                         Dir.pwd
+    #                       end
 
-    Factory.new(parse_input(input), working_directory: working_directory)
+    Document.new(parse_input(input))
   end
 
   def self.load_file(path)

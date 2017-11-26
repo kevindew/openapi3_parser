@@ -1,27 +1,27 @@
 # frozen_string_literal: true
 
-# require "openapi_parser/nodes/openapi"
 require "openapi_parser/context"
 require "openapi_parser/error"
+require "openapi_parser/node_factories/openapi"
+
+require "forwardable"
 
 module OpenapiParser
   class Document
+    extend Forwardable
+
     attr_reader :input
+
+    def_delegators :factory, :valid?, :errors
+    def_delegators :root, :openapi, :info, :servers, :paths, :components,
+                   :security, :tags, :external_docs, :extension, :[], :each
 
     def initialize(input)
       @input = input
     end
 
-    def valid?
-      true
-    end
-
-    def errors
-      []
-    end
-
     def root
-      @root ||= Nodes::Openapi.new(input, Context.root(self))
+      factory.node
     end
 
     def resolve_reference(reference)
@@ -41,6 +41,8 @@ module OpenapiParser
 
     private
 
-    def root_factory; end
+    def factory
+      @factory ||= NodeFactories::Openapi.new(Context.root(input, self))
+    end
   end
 end
