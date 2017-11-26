@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "openapi_parser"
+require "openapi3_parser"
 
 RSpec.describe "Open a YAML Document" do
   let(:path) { File.join(__dir__, "..", "support", "examples", "uber.yaml") }
-  subject(:document) { OpenapiParser.load_file(path) }
+  subject(:document) { Openapi3Parser.load_file(path) }
 
   it { is_expected.to be_valid }
 

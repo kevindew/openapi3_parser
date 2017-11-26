@@ -1,4 +1,4 @@
-# OpenAPI Parser
+# OpenAPI 3 Parser
 
 [![Build Status](https://travis-ci.org/kevindew/openapi_parser.svg?branch=master)](https://travis-ci.org/kevindew/openapi_parser)
 
