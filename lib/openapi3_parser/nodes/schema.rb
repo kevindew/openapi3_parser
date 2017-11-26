@@ -100,8 +100,14 @@ module Openapi3Parser
         node_data["properties"]
       end
 
-      def additional_properties
-        node_data["additionalProperties"]
+      def additional_properties?
+        node_data["additionalProperties"] != false
+      end
+
+      def additional_properties_schema
+        properties = node_data["additionalProperties"]
+        return if [true, false].include?(properties)
+        properties
       end
 
       def description

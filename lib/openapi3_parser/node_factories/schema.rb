@@ -41,7 +41,8 @@ module Openapi3Parser
       field "properties", factory: :properties_factory
       field "additionalProperties",
             input_type: :additional_properties_input_type,
-            factory: :additional_properties_factory
+            factory: :additional_properties_factory,
+            default: false
       field "description", input_type: String
       field "format", input_type: String
       field "default"
