@@ -5,6 +5,9 @@ require "openapi_parser/node_factory/object"
 require "openapi_parser/node_factory/optional_reference"
 require "openapi_parser/node_factories/map"
 require "openapi_parser/node_factories/array"
+require "openapi_parser/node_factories/external_documentation"
+require "openapi_parser/node_factories/discriminator"
+require "openapi_parser/node_factories/xml"
 
 module OpenapiParser
   module NodeFactories

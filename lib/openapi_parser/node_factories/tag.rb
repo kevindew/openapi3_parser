@@ -2,6 +2,7 @@
 
 require "openapi_parser/nodes/tag"
 require "openapi_parser/node_factory/object"
+require "openapi_parser/node_factories/external_documentation"
 
 module OpenapiParser
   module NodeFactories
