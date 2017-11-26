@@ -19,11 +19,11 @@ module Openapi3Parser
         node_data["style"]
       end
 
-      def explode
+      def explode?
         node_data["explode"]
       end
 
-      def allow_reserved
+      def allow_reserved?
         node_data["allowReserved"]
       end
     end

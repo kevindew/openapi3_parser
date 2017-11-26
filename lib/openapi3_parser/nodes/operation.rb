@@ -43,7 +43,7 @@ module Openapi3Parser
         node_data["callbacks"]
       end
 
-      def deprecated
+      def deprecated?
         node_data["deprecated"]
       end
 

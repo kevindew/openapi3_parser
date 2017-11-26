@@ -15,7 +15,7 @@ module Openapi3Parser
         node_data["content"]
       end
 
-      def required
+      def required?
         node_data["required"]
       end
     end

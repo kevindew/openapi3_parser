@@ -20,7 +20,7 @@ module Openapi3Parser
         node_data["maximum"]
       end
 
-      def exclusive_maximum
+      def exclusive_maximum?
         node_data["exclusiveMaximum"]
       end
 
@@ -28,7 +28,7 @@ module Openapi3Parser
         node_data["minimum"]
       end
 
-      def exclusive_minimum
+      def exclusive_minimum?
         node_data["exclusiveMinimum"]
       end
 
@@ -52,7 +52,7 @@ module Openapi3Parser
         node_data["minItems"]
       end
 
-      def unique_items
+      def unique_items?
         node_data["uniqueItems"]
       end
 
@@ -116,7 +116,7 @@ module Openapi3Parser
         node_data["default"]
       end
 
-      def nullable
+      def nullable?
         node_data["nullable"]
       end
 
@@ -124,11 +124,11 @@ module Openapi3Parser
         node_data["discriminator"]
       end
 
-      def read_only
+      def read_only?
         node_data["readOnly"]
       end
 
-      def write_only
+      def write_only?
         node_data["writeOnly"]
       end
 
@@ -144,7 +144,7 @@ module Openapi3Parser
         node_data["example"]
       end
 
-      def deprecated
+      def deprecated?
         node_data["deprecated"]
       end
     end

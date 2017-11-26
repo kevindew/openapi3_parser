@@ -8,15 +8,15 @@ module Openapi3Parser
           node_data["description"]
         end
 
-        def required
+        def required?
           node_data["required"]
         end
 
-        def deprecated
+        def deprecated?
           node_data["deprecated"]
         end
 
-        def allow_empty_value
+        def allow_empty_value?
           node_data["allowEmptyValue"]
         end
 
@@ -24,11 +24,11 @@ module Openapi3Parser
           node_data["style"]
         end
 
-        def explode
+        def explode?
           node_data["explode"]
         end
 
-        def allow_reserved
+        def allow_reserved?
           node_data["allowReserved"]
         end
 
