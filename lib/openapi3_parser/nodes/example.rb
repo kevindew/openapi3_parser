@@ -8,19 +8,19 @@ module Openapi3Parser
       include Node::Object
 
       def summary
-        fields["summary"]
+        node_data["summary"]
       end
 
       def description
-        fields["description"]
+        node_data["description"]
       end
 
       def value
-        fields["value"]
+        node_data["value"]
       end
 
       def external_value
-        fields["externalValue"]
+        node_data["externalValue"]
       end
     end
   end
