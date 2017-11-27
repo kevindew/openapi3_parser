@@ -28,3 +28,4 @@ These are the steps defined to reach 1.0. Assistance is very welcome.
 - [ ] Improve the modelling of namespace
 - [ ] Set up nicer string representations of key classes to help them be
       debugged
+- [ ] Ensure Array and Map nodes return empty ones by default rather than nil
