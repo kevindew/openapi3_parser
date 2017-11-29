@@ -20,7 +20,7 @@ module Openapi3Parser
         node_data["info"]
       end
 
-      # @return [Nodes::Array] A collection of {Server}[../Server.html] objects
+      # @return [Nodes::Array] A collection of {Server}[./Server.html] objects
       def servers
         node_data["servers"]
       end
@@ -36,12 +36,12 @@ module Openapi3Parser
       end
 
       # @return [Nodes::Array] a collection of
-      #         {SecurityRequirement}[../SecurityRequirement.html] objects
+      #         {SecurityRequirement}[./SecurityRequirement.html] objects
       def security
         node_data["security"]
       end
 
-      # @return [Nodes::Array] A collection of {Tag}[../Tag.html] objects
+      # @return [Nodes::Array] A collection of {Tag}[./Tag.html] objects
       def tags
         node_data["tags"]
       end
