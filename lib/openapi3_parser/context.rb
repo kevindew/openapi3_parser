@@ -23,7 +23,7 @@ module Openapi3Parser
     end
 
     def next_namespace(segment, next_input = nil)
-      next_input ||= input[segment]
+      next_input ||= input.nil? ? nil : input[segment]
       self.class.new(
         input: next_input,
         namespace: namespace + [segment],
