@@ -78,6 +78,10 @@ module Openapi3Parser
           value_factory: NodeFactory::OptionalReference.new(factory)
         )
       end
+
+      def default
+        {}
+      end
     end
   end
 end

@@ -45,6 +45,10 @@ module Openapi3Parser
       @node ||= build_valid_node
     end
 
+    def nil_input?
+      context.input.nil?
+    end
+
     private
 
     def validate(_input, _context); end
@@ -69,6 +73,7 @@ module Openapi3Parser
 
     def build_errors
       error_collection = Validation::ErrorCollection.new
+      return error_collection if nil_input?
       unless valid_type?
         error = Validation::Error.new(
           context.namespace, "Invalid type. #{validate_type}"
@@ -80,6 +85,10 @@ module Openapi3Parser
     end
 
     def build_valid_node
+      if nil_input?
+        return default.nil? ? nil : build_node(processed_input)
+      end
+
       unless valid_type?
         raise Openapi3Parser::Error,
               "Invalid type for #{context.stringify_namespace}. "\
@@ -108,7 +117,10 @@ module Openapi3Parser
     end
 
     def processed_input
-      @processed_input ||= process_input(context.input)
+      @processed_input ||= begin
+                             input = nil_input? ? default : context.input
+                             process_input(input)
+                           end
     end
 
     def process_input(input)
@@ -117,6 +129,10 @@ module Openapi3Parser
 
     def build_node(input)
       input
+    end
+
+    def default
+      nil
     end
 
     def extension?(key)

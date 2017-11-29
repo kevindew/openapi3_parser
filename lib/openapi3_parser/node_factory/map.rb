@@ -34,6 +34,10 @@ module Openapi3Parser
       def build_map(data, _)
         data
       end
+
+      def default
+        {}
+      end
     end
   end
 end

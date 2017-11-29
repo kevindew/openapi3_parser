@@ -16,10 +16,9 @@ module Openapi3Parser
           check_required_fields
           check_unexpected_fields
           check_fields_valid
-          data = input.each_with_object({}) do |(key, value), memo|
-            memo[key] = value.respond_to?(:node) ? value.node : value
+          input.each_with_object({}) do |(key, value), memo|
+            memo[key] = resolve_value(key, value)
           end
-          apply_defaults(data)
         end
 
         private
@@ -55,7 +54,8 @@ module Openapi3Parser
 
         def check_type_error(name, field_config)
           field_context = context.next_namespace(name)
-          error = field_config.input_type_error(input[name], factory)
+          input = context.input.nil? ? nil : context.input[name]
+          error = field_config.input_type_error(input, factory)
 
           return unless error
           raise Openapi3Parser::Error,
@@ -73,10 +73,21 @@ module Openapi3Parser
                 "#{errors.join(', ')}"
         end
 
-        def apply_defaults(data)
+        def resolve_value(key, value)
           configs = factory.field_configs
-          configs.each_with_object(data) do |(name, field_config), _memo|
-            data[name] = field_config.default(factory) if data[name].nil?
+          return configs[key]&.default(factory) if value.nil?
+          default_value(configs[key], value)
+        end
+
+        def default_value(config, value)
+          resolved_value = value.respond_to?(:node) ? value.node : value
+
+          # let a field config default take precedence if value is a nil_input?
+          if value.respond_to?(:nil_input?) && value.nil_input?
+            default = config&.default(factory)
+            default.nil? ? resolved_value : default
+          else
+            resolved_value
           end
         end
       end

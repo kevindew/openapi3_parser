@@ -100,6 +100,10 @@ module Openapi3Parser
         return unless type
         "Expected #{type}" unless value.is_a?(type)
       end
+
+      def default
+        []
+      end
     end
   end
 end
