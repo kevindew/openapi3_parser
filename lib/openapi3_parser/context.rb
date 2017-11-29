@@ -18,7 +18,7 @@ module Openapi3Parser
     def stringify_namespace
       return "root" if namespace.empty?
       namespace
-        .map { |i| i.include?("/") ? %("#{i}") : i }
+        .map { |i| i.to_s.include?("/") ? %("#{i}") : i }
         .join("/")
     end
 
