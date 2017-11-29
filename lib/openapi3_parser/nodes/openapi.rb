@@ -30,7 +30,7 @@ module Openapi3Parser
         node_data["paths"]
       end
 
-      # @return [Components, nil]
+      # @return [Components]
       def components
         node_data["components"]
       end
