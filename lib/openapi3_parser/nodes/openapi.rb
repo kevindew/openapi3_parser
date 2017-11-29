@@ -5,6 +5,8 @@ require "openapi3_parser/nodes/components"
 
 module Openapi3Parser
   module Nodes
+    # OpenAPI Root Object
+    # @see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#oasObject
     class Openapi
       include Node::Object
 
