@@ -12,11 +12,13 @@ module Openapi3Parser
 
       def initialize(
         context,
+        default: [],
         value_input_type: nil,
         value_factory: nil,
         validate: nil
       )
         super(context)
+        @default = default
         @given_value_input_type = value_input_type
         @given_value_factory = value_factory
         @given_validate = validate
@@ -24,8 +26,8 @@ module Openapi3Parser
 
       private
 
-      attr_reader :given_value_input_type, :given_value_factory,
-                  :given_validate
+      attr_reader :default, :given_value_input_type,
+                  :given_value_factory, :given_validate
 
       def process_input(input)
         input.each_with_index.map do |value, i|
@@ -99,10 +101,6 @@ module Openapi3Parser
         type = given_value_input_type
         return unless type
         "Expected #{type}" unless value.is_a?(type)
-      end
-
-      def default
-        []
       end
     end
   end
