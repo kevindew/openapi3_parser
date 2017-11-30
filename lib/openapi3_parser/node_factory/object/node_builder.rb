@@ -65,7 +65,7 @@ module Openapi3Parser
 
         def check_validation_errors(name, field_config)
           field_context = context.next_namespace(name)
-          errors = field_config.validation_errors(input[name], factory)
+          errors = field_config.validation_errors(field_context.input, factory)
 
           return unless errors.any?
           raise Openapi3Parser::Error,
