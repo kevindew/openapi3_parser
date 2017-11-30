@@ -4,19 +4,22 @@ require "openapi3_parser/node/object"
 
 module Openapi3Parser
   module Nodes
+    # @see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#serverObject
     class Server
       include Node::Object
 
-      # @TODO there's scope for an interpolated_url method which can use the
-      # values from variables
+      # @return [String]
       def url
         node_data["url"]
       end
 
+      # @return [String, nil]
       def description
         node_data["description"]
       end
 
+      # @return [Map] a map of String: {ServerVariable}[./ServerVariable.html]
+      #         objects
       def variables
         node_data["variables"]
       end
