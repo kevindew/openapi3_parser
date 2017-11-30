@@ -63,11 +63,15 @@ module Openapi3Parser
       end
 
       def required_factory(context)
-        NodeFactories::Array.new(context, value_input_type: String)
+        NodeFactories::Array.new(
+          context,
+          default: nil,
+          value_input_type: String
+        )
       end
 
       def enum_factory(context)
-        NodeFactories::Array.new(context)
+        NodeFactories::Array.new(context, default: nil)
       end
 
       def disciminator_factory(context)
@@ -96,6 +100,7 @@ module Openapi3Parser
       def referenceable_schema_array(context)
         NodeFactories::Array.new(
           context,
+          default: nil,
           value_factory: NodeFactory::OptionalReference.new(self.class)
         )
       end
