@@ -29,8 +29,8 @@ module Openapi3Parser
       field "uniqueItems", input_type: :boolean, default: false
       field "maxProperties", input_type: Integer
       field "minProperties", input_type: Integer, default: 0
-      field "required", input_type: ::Array
-      field "enum", input_type: ::Array
+      field "required", factory: :required_factory
+      field "enum", factory: :enum_factory
 
       field "type", input_type: String
       field "allOf", factory: :referenceable_schema_array
@@ -60,6 +60,14 @@ module Openapi3Parser
 
       def build_object(data, context)
         Nodes::Schema.new(data, context)
+      end
+
+      def required_factory(context)
+        NodeFactories::Array.new(context, value_input_type: String)
+      end
+
+      def enum_factory(context)
+        NodeFactories::Array.new(context)
       end
 
       def disciminator_factory(context)
