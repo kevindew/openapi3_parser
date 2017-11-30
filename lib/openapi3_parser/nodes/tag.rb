@@ -4,17 +4,21 @@ require "openapi3_parser/node/object"
 
 module Openapi3Parser
   module Nodes
+    # @see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#tagObject
     class Tag
       include Node::Object
 
+      # @return [String]
       def name
         node_data["name"]
       end
 
+      # @return [String, nil]
       def description
         node_data["description"]
       end
 
+      # @return [ExternalDocumentation, nil]
       def external_docs
         node_data["externalDocs"]
       end
