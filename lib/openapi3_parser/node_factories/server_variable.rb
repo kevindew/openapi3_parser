@@ -2,6 +2,7 @@
 
 require "openapi3_parser/nodes/server_variable"
 require "openapi3_parser/node_factory/object"
+require "openapi3_parser/node_factories/array"
 
 module Openapi3Parser
   module NodeFactories
@@ -9,15 +10,22 @@ module Openapi3Parser
       include NodeFactory::Object
 
       allow_extensions
-      field "enum", input_type: ::Array, validate: :validate_enum
+      field "enum", factory: :enum_factory, validate: :validate_enum
       field "default", input_type: String, required: true
       field "description", input_type: String
 
       private
 
+      def enum_factory(context)
+        NodeFactories::Array.new(
+          context,
+          default: nil,
+          value_input_type: String
+        )
+      end
+
       def validate_enum(input)
         return "Expected atleast one value" if input.empty?
-        "Expected String values" unless input.map(&:class).uniq == [String]
       end
 
       def build_object(data, context)
