@@ -19,11 +19,11 @@ module Openapi3Parser
         node_data["prefix"]
       end
 
-      def attribute
+      def attribute?
         node_data["attribute"]
       end
 
-      def wrapped
+      def wrapped?
         node_data["wrapped"]
       end
     end
