@@ -1,4 +1,4 @@
-# Unreleased
+# 0.2.0
 
 - Allow defaulting to empty arrays and maps
 - Configure rubydoc
