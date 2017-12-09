@@ -25,6 +25,19 @@ Documentation for the API to navigate the OpenAPI nodes is available on
 [openapi-3]: https://github.com/OAI/OpenAPI-Specification
 [docs]: http://www.rubydoc.info/github/kevindew/openapi3_parser/Openapi3Parser/Nodes/Openapi
 
+## Installation
+
+You can install this gem into your bundler application by adding this line to
+your Gemfile:
+
+```
+gem "openapi3_parser", "~> 0.2.0"
+```
+
+and then running `$ bundle install`
+
+Or install the gem onto your machine via ` $ gem install openapi3_parser`
+
 ## Status
 
 This is currently a work in progress and will remain so until it reaches 1.0.
