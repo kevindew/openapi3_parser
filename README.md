@@ -19,7 +19,11 @@ document.valid?
 document.paths["/"]
 ```
 
+Documentation for the API to navigate the OpenAPI nodes is available on
+[rubydoc.info][docs].
+
 [openapi-3]: https://github.com/OAI/OpenAPI-Specification
+[docs]: http://www.rubydoc.info/github/kevindew/openapi3_parser/Openapi3Parser/Nodes/Openapi
 
 ## Status
 
