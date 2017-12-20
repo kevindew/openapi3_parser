@@ -17,11 +17,11 @@ module Openapi3Parser
         value_factory: nil,
         validate: nil
       )
-        super(context)
         @default = default
         @given_value_input_type = value_input_type
         @given_value_factory = value_factory
         @given_validate = validate
+        super(context)
       end
 
       private

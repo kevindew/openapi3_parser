@@ -31,6 +31,8 @@ module Openapi3Parser
 
     def initialize(context)
       @context = context
+      input = nil_input? ? default : context.input
+      @processed_input = input.nil? ? nil : process_input(input)
     end
 
     def valid?
@@ -50,6 +52,8 @@ module Openapi3Parser
     end
 
     private
+
+    attr_reader :processed_input
 
     def validate(_input, _context); end
 
@@ -114,13 +118,6 @@ module Openapi3Parser
     def validate_type
       valid_type = self.class.valid_input_type?(context.input)
       return "Expected #{self.class.expected_input_type}" unless valid_type
-    end
-
-    def processed_input
-      @processed_input ||= begin
-                             input = nil_input? ? default : context.input
-                             process_input(input)
-                           end
     end
 
     def process_input(input)
