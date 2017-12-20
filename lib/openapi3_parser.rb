@@ -2,6 +2,9 @@
 
 require "openapi3_parser/error"
 require "openapi3_parser/document"
+require "openapi3_parser/source_input/raw"
+require "openapi3_parser/source_input/file"
+require "openapi3_parser/source_input/url"
 
 require "yaml"
 require "json"
@@ -20,7 +23,7 @@ module Openapi3Parser
     #                         Dir.pwd
     #                       end
 
-    Document.new(parse_input(input))
+    Document.new(SourceInput::Raw.new(input))
   end
 
   # For a given string filename this will read the file and parse it as an
@@ -31,22 +34,10 @@ module Openapi3Parser
   #
   # @return [Document]
   def self.load_file(path)
-    file = File.open(path)
-    load(file)
+    Document.new(SourceInput::File.new(path))
   end
 
-  def self.parse_input(input)
-    return input if input.respond_to?(:keys)
-
-    extension = input.respond_to?(:extname) ? input.extname : nil
-    contents = input.respond_to?(:read) ? input.read : input
-
-    if extension == ".json" || contents.strip[0] == "{"
-      JSON.parse(contents)
-    else
-      YAML.safe_load(contents, [], [], true)
-    end
+  def self.load_url(url)
+    Document.new(SourceInput::Url.new(url.to_s))
   end
-
-  private_class_method :parse_input
 end
