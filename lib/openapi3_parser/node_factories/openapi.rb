@@ -17,6 +17,8 @@ module Openapi3Parser
       include NodeFactory::Object
 
       allow_extensions
+      disallow_default
+
       field "openapi", input_type: String, required: true
       field "info", factory: NodeFactories::Info, required: true
       field "servers", factory: :servers_factory

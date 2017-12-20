@@ -19,10 +19,26 @@ module Openapi3Parser
       def expected_input_type
         @input_type
       end
+
+      def allow_default
+        @allow_default = true
+      end
+
+      def disallow_default
+        @allow_default = false
+      end
+
+      def allowed_default?
+        @allow_default.nil? || @allow_default
+      end
     end
 
     def self.included(base)
       base.extend(ClassMethods)
+    end
+
+    def allowed_default?
+      self.class.allowed_default?
     end
 
     EXTENSION_REGEX = /^x-(.*)/
@@ -77,7 +93,7 @@ module Openapi3Parser
 
     def build_errors
       error_collection = Validation::ErrorCollection.new
-      return error_collection if nil_input?
+      return error_collection if nil_input? && allowed_default?
       unless valid_type?
         error = Validation::Error.new(
           context.namespace, "Invalid type. #{validate_type}"
@@ -89,7 +105,7 @@ module Openapi3Parser
     end
 
     def build_valid_node
-      if nil_input?
+      if nil_input? && allowed_default?
         return default.nil? ? nil : build_node(processed_input)
       end
 

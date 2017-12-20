@@ -23,4 +23,15 @@ RSpec.describe Openapi3Parser::NodeFactories::Openapi do
 
     let(:context) { create_context(input) }
   end
+
+  context "when input is nil" do
+    subject(:factory) { described_class.new(context) }
+    let(:input) { nil }
+    let(:context) { create_context(input) }
+
+    it { is_expected.to_not be_valid }
+    it "raises error accessing node" do
+      expect { subject.node }.to raise_error(Openapi3Parser::Error)
+    end
+  end
 end
