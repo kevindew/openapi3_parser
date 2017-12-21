@@ -3,20 +3,6 @@
 require "openapi3_parser/source/reference"
 
 RSpec.describe Openapi3Parser::Source::Reference do
-  describe ".valid?" do
-    subject { described_class.new(reference).valid? }
-
-    context "when reference is valid" do
-      let(:reference) { "test.yaml#/test" }
-      it { is_expected.to be true }
-    end
-
-    context "when reference is invalid" do
-      let(:reference) { "invalid reference" }
-      it { is_expected.to be false }
-    end
-  end
-
   describe ".only_fragment?" do
     subject { described_class.new(reference).only_fragment? }
 

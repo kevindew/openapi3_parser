@@ -27,12 +27,6 @@ module Openapi3Parser
         given_reference.to_s
       end
 
-      # @TODO this may not belong here, it may be better to have an expectation
-      # that we receieve a valid reference here
-      def valid?
-        validator.valid?
-      end
-
       def only_fragment?
         resource_uri.to_s == ""
       end
@@ -61,10 +55,6 @@ module Openapi3Parser
       private
 
       attr_reader :given_reference
-
-      def validator
-        @validator ||= Validators::Reference.new(given_reference)
-      end
 
       def uri
         @uri = URI.parse(given_reference)
