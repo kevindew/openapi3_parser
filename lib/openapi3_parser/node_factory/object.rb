@@ -61,7 +61,7 @@ module Openapi3Parser
 
       def validate_input(error_collection)
         super(error_collection)
-        validator = Validator.new(context.input, self)
+        validator = Validator.new(processed_input, self)
         error_collection.tap { |ec| ec.append(*validator.errors) }
       end
 

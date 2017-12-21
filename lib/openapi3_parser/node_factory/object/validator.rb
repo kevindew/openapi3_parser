@@ -10,7 +10,9 @@ module Openapi3Parser
         def self.missing_required_fields(input, factory)
           configs = factory.field_configs
           configs.each_with_object([]) do |(name, field_config), memo|
-            memo << name if field_config.required?(factory) && input[name].nil?
+            f = input[name]
+            is_nil = f.respond_to?(:nil_input?) ? f.nil_input? : f.nil?
+            memo << name if field_config.required?(factory) && is_nil
           end
         end
 
@@ -44,6 +46,10 @@ module Openapi3Parser
           factory.context
         end
 
+        def raw_input
+          context.input
+        end
+
         def missing_required_fields_error
           fields = self.class.missing_required_fields(input, factory)
           return unless fields.any?
@@ -64,21 +70,21 @@ module Openapi3Parser
 
         def invalid_field_errors
           factory.field_configs.inject([]) do |memo, (name, field_config)|
-            memo + field_errors(name, field_config)
+            memo + Array(field_errors(name, field_config))
           end
         end
 
         def field_errors(name, field_config)
           field = input[name]
-          return [] if field.nil?
+          return if field.nil?
           return field.errors.to_a if field.respond_to?(:errors)
           type_error = build_type_error(name, field_config)
-          return [type_error] if type_error
+          return type_error if type_error
           build_validation_errors(name, field_config)
         end
 
         def build_type_error(name, field_config)
-          type_error = field_config.input_type_error(input[name], factory)
+          type_error = field_config.input_type_error(raw_input[name], factory)
           return unless type_error
           Validation::Error.new(
             context.next_namespace(name),
@@ -88,7 +94,7 @@ module Openapi3Parser
 
         def build_validation_errors(name, field_config)
           field_config.validation_errors(
-            input[name], factory
+            raw_input[name], factory
           ).map do |error|
             Validation::Error.new(
               context.next_namespace(name),
