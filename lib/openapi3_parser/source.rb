@@ -72,7 +72,7 @@ module Openapi3Parser
       data.dig(*json_pointer) if data.respond_to?(:dig)
     end
 
-    def has_pointer?(json_pointer) # rubocop:disable Style/PredicateName
+    def has_pointer?(json_pointer) # rubocop:disable Naming/PredicateName
       !data_at_pointer(json_pointer).nil?
     end
 
