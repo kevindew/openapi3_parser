@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+module Openapi3Parser
+  class Context
+    # A class to decorate the array of fields that make up a pointer and
+    # pdovide common means to convert it into different representations.
+    class Pointer
+      attr_reader :segments
+
+      # @param [::Array] segments
+      def initialize(segments)
+        @segments = segments.freeze
+      end
+
+      def fragment
+        segments.map { |s| CGI.escape(s).gsub("+", "%20") }
+                .join("/")
+                .prepend("#/")
+      end
+
+      def to_s
+        fragment
+      end
+
+      def inspect
+        %{#{self.class.name}(segments: #{segments}, fragment: "#{fragment}")}
+      end
+    end
+  end
+end
