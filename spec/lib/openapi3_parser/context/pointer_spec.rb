@@ -20,5 +20,10 @@ RSpec.describe Openapi3Parser::Context::Pointer do
       let(:segments) { ["with/slash", "with space"] }
       it { is_expected.to eq "#/with%2Fslash/with%20space" }
     end
+
+    context "when segments contain numbers" do
+      let(:segments) { [0, 0.123] }
+      it { is_expected.to eq "#/0/0.123" }
+    end
   end
 end

@@ -13,7 +13,7 @@ module Openapi3Parser
       end
 
       def fragment
-        segments.map { |s| CGI.escape(s).gsub("+", "%20") }
+        segments.map { |s| CGI.escape(s.to_s).gsub("+", "%20") }
                 .join("/")
                 .prepend("#/")
       end
