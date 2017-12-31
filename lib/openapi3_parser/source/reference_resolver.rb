@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context"
 require "openapi3_parser/source"
 
 module Openapi3Parser
@@ -63,9 +64,11 @@ module Openapi3Parser
 
       def reference_factory
         @reference_factory ||= begin
-                                 next_context = context.reference_namespace(
-                                   source.data_at_pointer(json_pointer),
-                                   context.namespace
+                                 next_context = Context.reference_field(
+                                   context,
+                                   input: source.data_at_pointer(json_pointer),
+                                   source: source,
+                                   pointer_segments: json_pointer
                                  )
                                  build_factory(next_context)
                                end

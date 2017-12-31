@@ -29,7 +29,7 @@ module Openapi3Parser
 
     def factory
       @factory ||= begin
-                     context = Context.root(root_source.data, root_source, self)
+                     context = Context.root(root_source.data, root_source)
                      NodeFactories::Openapi.new(context)
                    end
     end

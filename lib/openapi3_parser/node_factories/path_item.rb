@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/nodes/path_item"
+require "openapi3_parser/node_factory/fields/reference"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/object/node_builder"
 require "openapi3_parser/node_factory/optional_reference"
@@ -15,7 +16,7 @@ module Openapi3Parser
       include NodeFactory::Object
 
       allow_extensions
-      field "$ref", input_type: String
+      field "$ref", input_type: String, factory: :ref_factory
       field "summary", input_type: String
       field "description", input_type: String
       field "get", factory: :operation_factory
@@ -36,9 +37,17 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        merged_data = merge_reference(data, context)
-        merged_data.delete("$ref")
-        Nodes::PathItem.new(merged_data, context)
+        ref = data.delete("$ref")
+        return Nodes::PathItem.new(data, context) unless ref
+
+        merged_data = ref.node_data.merge(data) do |_, new, old|
+          new.nil? ? old : new
+        end
+        Nodes::PathItem.new(merged_data, ref.node_context)
+      end
+
+      def ref_factory(context)
+        Fields::Reference.new(context, self.class)
       end
 
       def operation_factory(context)
@@ -55,20 +64,6 @@ module Openapi3Parser
       def parameters_factory(context)
         factory = NodeFactory::OptionalReference.new(NodeFactories::Parameter)
         NodeFactories::Array.new(context, value_factory: factory)
-      end
-
-      def merge_reference(data, context)
-        return data unless data["$ref"]
-        factory = context.resolve_reference do |ref_context|
-          self.class.new(ref_context)
-        end
-
-        # @TODO In this situation we're basically sacrificing the reference
-        # context as we don't know how to merge them. Should develop a system
-        # to have a dual context
-        factory.node_data.merge(data) do |_, new, old|
-          new.nil? ? old : new
-        end
       end
     end
   end

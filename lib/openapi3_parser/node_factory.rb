@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context"
 require "openapi3_parser/error"
 require "openapi3_parser/validation/error"
 require "openapi3_parser/validation/error_collection"

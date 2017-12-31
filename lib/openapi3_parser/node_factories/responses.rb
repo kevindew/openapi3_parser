@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context"
+require "openapi3_parser/node_factories/response"
 require "openapi3_parser/node_factory/map"
 require "openapi3_parser/node_factory/optional_reference"
 require "openapi3_parser/nodes/responses"
-require "openapi3_parser/node_factories/response"
 
 module Openapi3Parser
   module NodeFactories
@@ -15,7 +16,8 @@ module Openapi3Parser
       def process_input(input)
         input.each_with_object({}) do |(key, value), memo|
           memo[key] = value if extension?(key)
-          memo[key] = child_factory(context.next_namespace(key))
+          next_context = Context.next_field(context, key)
+          memo[key] = child_factory(next_context)
         end
       end
 

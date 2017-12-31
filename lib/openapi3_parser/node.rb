@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context"
 require "openapi3_parser/node/field_config"
 
 module Openapi3Parser
@@ -75,7 +76,7 @@ module Openapi3Parser
       check_required(input)
       check_types(input)
       fields = field_configs.each_with_object({}) do |(field, config), memo|
-        next_context = context.next_namespace(field)
+        next_context = Context.next_field(context, field)
         memo[field] = config.build(input[field], self, next_context)
       end
       extensions = input.select { |(k, _)| k =~ EXTENSION_REGEX }

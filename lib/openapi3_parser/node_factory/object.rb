@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context"
 require "openapi3_parser/node_factory"
 require "openapi3_parser/node_factory/field_config"
 require "openapi3_parser/node_factory/object/node_builder"
@@ -54,7 +55,7 @@ module Openapi3Parser
       def process_input(input)
         field_configs.each_with_object(input.dup) do |(field, config), memo|
           next unless config.factory?
-          next_context = context.next_namespace(field)
+          next_context = Context.next_field(context, field)
           memo[field] = config.initialize_factory(next_context, self)
         end
       end

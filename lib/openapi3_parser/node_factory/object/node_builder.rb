@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factory/object/validator"
+require "openapi3_parser/context"
 require "openapi3_parser/error"
+require "openapi3_parser/node_factory/object/validator"
 
 module Openapi3Parser
   module NodeFactory
@@ -53,7 +54,7 @@ module Openapi3Parser
         end
 
         def check_type_error(name, field_config)
-          field_context = context.next_namespace(name)
+          field_context = Context.next_field(context, name)
           input = context.input.nil? ? nil : context.input[name]
           error = field_config.input_type_error(input, factory)
 
@@ -64,7 +65,7 @@ module Openapi3Parser
         end
 
         def check_validation_errors(name, field_config)
-          field_context = context.next_namespace(name)
+          field_context = Context.next_field(context, name)
           errors = field_config.validation_errors(field_context.input, factory)
 
           return unless errors.any?

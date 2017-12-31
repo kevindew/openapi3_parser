@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context"
 require "openapi3_parser/node_factory"
 require "openapi3_parser/validation/error"
 
@@ -97,7 +98,7 @@ module Openapi3Parser
             raw_input[name], factory
           ).map do |error|
             Validation::Error.new(
-              context.next_namespace(name),
+              Context.next_field(context, name),
               "Invalid field: #{error}"
             )
           end

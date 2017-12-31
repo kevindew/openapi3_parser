@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context"
 require "openapi3_parser/node_factory/map"
 require "openapi3_parser/nodes/map"
 require "openapi3_parser/validation/error"
@@ -31,7 +32,8 @@ module Openapi3Parser
       def process_input(input)
         input.each_with_object({}) do |(key, value), memo|
           memo[key] = if value_factory?
-                        initialize_value_factory(context.next_namespace(key))
+                        next_context = Context.next_field(context, key)
+                        initialize_value_factory(next_context)
                       else
                         value
                       end
@@ -84,7 +86,7 @@ module Openapi3Parser
           error = error_for_value_input_type(value)
           next unless error
           memo << Validation::Error.new(
-            context.next_namespace(key), error
+            Context.next_field(context, key), error
           )
         end
       end
@@ -93,7 +95,7 @@ module Openapi3Parser
         input.each do |key, value|
           error = error_for_value_input_type(value)
           next unless error
-          next_context = context.next_namespace(key)
+          next_context = Context.next_field(context, key)
           raise Openapi3Parser::Error,
                 "Invalid type for #{next_context.stringify_namespace}. "\
                 "#{error}"

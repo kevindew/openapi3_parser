@@ -12,6 +12,10 @@ module Openapi3Parser
         @segments = segments.freeze
       end
 
+      def ==(other)
+        segments == other.segments
+      end
+
       def fragment
         segments.map { |s| CGI.escape(s.to_s).gsub("+", "%20") }
                 .join("/")

@@ -3,6 +3,7 @@
 require "openapi3_parser/node_factory"
 require "openapi3_parser/nodes/array"
 require "openapi3_parser/validation/error"
+require "openapi3_parser/context"
 
 module Openapi3Parser
   module NodeFactories
@@ -32,7 +33,7 @@ module Openapi3Parser
       def process_input(input)
         input.each_with_index.map do |value, i|
           if value_factory?
-            initialize_value_factory(context.next_namespace(i))
+            initialize_value_factory(Context.next_field(context, i))
           else
             value
           end
@@ -81,7 +82,7 @@ module Openapi3Parser
           error = error_for_value_input_type(value)
           next unless error
           memo << Validation::Error.new(
-            context.next_namespace(i), error
+            Context.next_field(context, i), error
           )
         end
       end
@@ -90,7 +91,7 @@ module Openapi3Parser
         input.each_with_index do |value, i|
           error = error_for_value_input_type(value)
           next unless error
-          next_context = context.next_namespace(i)
+          next_context = Context.next_field(context, i)
           raise Openapi3Parser::Error,
                 "Invalid type for #{next_context.stringify_namespace}. "\
                 "#{error}"

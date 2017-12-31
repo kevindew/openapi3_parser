@@ -22,28 +22,13 @@ module Openapi3Parser
       source_input.available?
     end
 
-    def resolve_reference(reference)
-      if reference[0..1] != "#/"
-        raise Error, "Only anchor references are currently supported"
-      end
-
-      parts = reference.split("/").drop(1).map do |field|
-        CGI.unescape(field.gsub("+", "%20"))
-      end
-
-      result = data.dig(*parts)
-      raise Error, "Could not resolve reference #{reference}" unless result
-
-      yield(result, parts)
-    end
-
     def register_reference(given_reference, factory, context)
       reference = Reference.new(given_reference)
       ReferenceResolver.new(
         reference, factory, context
       ).tap do |resolver|
         unless resolver.in_root_source?
-          # register reference with document
+          # @TODO register reference with document
         end
       end
     end

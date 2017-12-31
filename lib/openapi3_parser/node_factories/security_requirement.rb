@@ -13,7 +13,8 @@ module Openapi3Parser
 
       def process_input(input)
         input.keys.each_with_object({}) do |key, memo|
-          memo[key] = NodeFactories::Array.new(context.next_namespace(key))
+          next_context = Context.next_field(context, key)
+          memo[key] = NodeFactories::Array.new(next_context)
         end
       end
 

@@ -15,7 +15,8 @@ module Openapi3Parser
       def process_input(input)
         input.each_with_object({}) do |(key, value), memo|
           memo[key] = value if extension?(key)
-          memo[key] = child_factory(context.next_namespace(key))
+          next_context = Context.next_field(context, key)
+          memo[key] = child_factory(next_context)
         end
       end
 
