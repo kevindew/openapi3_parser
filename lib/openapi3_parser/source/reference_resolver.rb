@@ -25,7 +25,7 @@ module Openapi3Parser
       end
 
       def in_root_source?
-        # @TODO
+        # @todo
         true
       end
 
@@ -44,17 +44,17 @@ module Openapi3Parser
       end
 
       def source_unavailabe_error
-        # @TODO include a location
+        # @todo include a location
         "Source is unavailable"
       end
 
       def pointer_missing_error
-        # @TODO include a location and a pointer
+        # @todo include a location and a pointer
         "Source does not have pointer"
       end
 
       def resolution_error
-        # @TODO include exepected object
+        # @todo include exepected object
         "Reference does not resolve to a valid object"
       end
 

@@ -28,7 +28,7 @@ module Openapi3Parser
         reference, factory, context
       ).tap do |resolver|
         unless resolver.in_root_source?
-          # @TODO register reference with document
+          # @todo register reference with document
         end
       end
     end
@@ -41,11 +41,11 @@ module Openapi3Parser
         # fragment only reference only references current JSON document. This
         # could be incorrect though.
         #
-        # @TODO confirm this behaviour
+        # @todo confirm this behaviour
         self
       else
         next_source_input = source_input.resolve_next(reference)
-        # @TODO not needed yet
+        # @todo not needed yet
         # source = document.source_for_source_input(next_source_input)
         source = nil
         source || self.class.new(next_source_input, document, self)

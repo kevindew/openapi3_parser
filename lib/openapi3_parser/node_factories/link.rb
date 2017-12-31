@@ -12,7 +12,7 @@ module Openapi3Parser
 
       allow_extensions
 
-      # @TODO The link object in OAS is pretty meaty and there's lot of scope
+      # @todo The link object in OAS is pretty meaty and there's lot of scope
       # for further work here to make use of it's funcationality
 
       field "operationRef", input_type: String
