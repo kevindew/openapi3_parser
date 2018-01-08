@@ -77,5 +77,10 @@ RSpec.describe Openapi3Parser::SourceInput::Raw do
       let(:other) { described_class.new(unparsable_input) }
       it { is_expected.to be false }
     end
+
+    context "when class is different" do
+      let(:other) { Openapi3Parser::SourceInput::File.new("test.yml") }
+      it { is_expected.to be false }
+    end
   end
 end

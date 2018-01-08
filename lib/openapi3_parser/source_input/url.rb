@@ -21,6 +21,7 @@ module Openapi3Parser
       end
 
       def ==(other)
+        return false unless other.instance_of?(self.class)
         [request_url, resolved_url].include?(other.request_url) ||
           [request_url, resolved_url].include?(other.resolved_url)
       end

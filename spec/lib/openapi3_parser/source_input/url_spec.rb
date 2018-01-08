@@ -116,5 +116,10 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
       let(:other) { described_class.new("https://example.com/different") }
       it { is_expected.to be false }
     end
+
+    context "when class is different" do
+      let(:other) { Openapi3Parser::SourceInput::Raw.new({}) }
+      it { is_expected.to be false }
+    end
   end
 end

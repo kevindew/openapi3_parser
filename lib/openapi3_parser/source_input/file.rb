@@ -22,6 +22,7 @@ module Openapi3Parser
       end
 
       def ==(other)
+        return false unless other.instance_of?(self.class)
         path == other.path &&
           working_directory == other.working_directory
       end
