@@ -12,6 +12,18 @@ module Openapi3Parser
         @context = context
       end
 
+      def reference_factory
+        @reference_factory ||= begin
+                                 next_context = Context.reference_field(
+                                   context,
+                                   input: source.data_at_pointer(json_pointer),
+                                   source: source,
+                                   pointer_segments: json_pointer
+                                 )
+                                 build_factory(next_context)
+                               end
+      end
+
       def valid?
         errors.empty?
       end
@@ -25,8 +37,7 @@ module Openapi3Parser
       end
 
       def in_root_source?
-        # @todo
-        true
+        source == context.document.root_source
       end
 
       private
@@ -60,18 +71,6 @@ module Openapi3Parser
 
       def json_pointer
         reference.json_pointer
-      end
-
-      def reference_factory
-        @reference_factory ||= begin
-                                 next_context = Context.reference_field(
-                                   context,
-                                   input: source.data_at_pointer(json_pointer),
-                                   source: source,
-                                   pointer_segments: json_pointer
-                                 )
-                                 build_factory(next_context)
-                               end
       end
 
       def build_factory(context)

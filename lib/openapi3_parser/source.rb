@@ -6,11 +6,12 @@ require "openapi3_parser/source/reference_resolver"
 
 module Openapi3Parser
   class Source
-    attr_reader :source_input, :document, :parent
+    attr_reader :source_input, :document, :reference_register, :parent
 
-    def initialize(source_input, document, parent = nil)
+    def initialize(source_input, document, reference_register, parent = nil)
       @source_input = source_input
       @document = document
+      @reference_register = reference_register
       @parent = parent
     end
 
@@ -28,7 +29,7 @@ module Openapi3Parser
         reference, factory, context
       ).tap do |resolver|
         unless resolver.in_root_source?
-          # @todo register reference with document
+          reference_register.register(resolver.reference_factory)
         end
       end
     end
@@ -45,10 +46,11 @@ module Openapi3Parser
         self
       else
         next_source_input = source_input.resolve_next(reference)
-        # @todo not needed yet
-        # source = document.source_for_source_input(next_source_input)
-        source = nil
-        source || self.class.new(next_source_input, document, self)
+        source = document.source_for_source_input(next_source_input)
+        source || self.class.new(next_source_input,
+                                 document,
+                                 reference_register,
+                                 self)
       end
     end
 
