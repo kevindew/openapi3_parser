@@ -6,7 +6,7 @@ require "openapi3_parser/source_input/url"
 module Openapi3Parser
   class SourceInput
     class ResolveNext
-      # Wparam  reference            [Source::Reference]
+      # @param  reference            [Source::Reference]
       # @param  current_source_input [SourceInput]
       # @param  base_url             [String]
       # @param  working_directory    [String]
