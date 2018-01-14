@@ -28,9 +28,8 @@ module Openapi3Parser
       ReferenceResolver.new(
         reference, factory, context
       ).tap do |resolver|
-        unless resolver.in_root_source?
-          reference_register.register(resolver.reference_factory)
-        end
+        next if resolver.in_root_source?
+        reference_register.register(resolver.reference_factory)
       end
     end
 
