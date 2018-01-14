@@ -30,3 +30,5 @@ These are the steps defined to reach 1.0. Assistance is very welcome.
 - [ ] Set up nicer string representations of key classes to help them be
       debugged
 - [x] Ensure Array and Map nodes return empty ones by default rather than nil
+- [ ] Make JSON pointer public access to be consistent accepting string, array
+      or (potentially) a pointer class
