@@ -3,7 +3,7 @@
 module Openapi3Parser
   class Context
     # A class to decorate the array of fields that make up a pointer and
-    # pdovide common means to convert it into different representations.
+    # provide common means to convert it into different representations.
     class Pointer
       attr_reader :segments
 
