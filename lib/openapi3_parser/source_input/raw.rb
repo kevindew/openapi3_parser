@@ -6,9 +6,23 @@ require "openapi3_parser/source_input/resolve_next"
 
 module Openapi3Parser
   class SourceInput
+    # An input of data (typically a Hash) to for initialising an OpenAPI
+    # document. Most likely used in development scenarios when you want to
+    # test things without creating/tweaking an OpenAPI source file
+    #
+    # @attr_reader [Object]       raw_input         The data for the document
+    # @attr_reader [String, nil]  base_url          A url to be used for
+    #                                               resolving relative
+    #                                               references
+    # @attr_reader [String, nil]  working_directory A path to be used for
+    #                                               resolving relative
+    #                                               references
     class Raw < SourceInput
       attr_reader :raw_input, :base_url, :working_directory
 
+      # @param [Object]       raw_input
+      # @param [String, nil]  base_url
+      # @param [String, nil]  working_directory
       def initialize(raw_input, base_url = nil, working_directory = nil)
         @raw_input = raw_input
         @base_url = base_url
@@ -17,6 +31,9 @@ module Openapi3Parser
         initialize_contents
       end
 
+      # @see SourceInput#resolve_next
+      # @param  [Source::Reference] reference
+      # @return [SourceInput]
       def resolve_next(reference)
         ResolveNext.call(reference,
                          self,
@@ -24,6 +41,9 @@ module Openapi3Parser
                          working_directory: working_directory)
       end
 
+      # @see SourceInput#other
+      # @param  [SourceInput] other
+      # @return [Boolean]
       def ==(other)
         return false unless other.instance_of?(self.class)
         raw_input == other.raw_input &&

@@ -7,9 +7,22 @@ require "openapi3_parser/error"
 
 module Openapi3Parser
   class SourceInput
+    # An Input of a file on the file system
+    #
+    # @attr_reader [String] path              The absolute path to this file
+    # @attr_reader [String] working_directory The abolsute path of the
+    #                                         working directory to use when
+    #                                         opening relative references to
+    #                                         this file
     class File < SourceInput
       attr_reader :path, :working_directory
 
+      # @param [String]       path              The path to the file to open
+      #                                         as this source
+      # @param [String, nil]  working_directory The path to the
+      #                                         working directory to use, will
+      #                                         be calculated from path if not
+      #                                         provided
       def initialize(path, working_directory = nil)
         @path = ::File.absolute_path(path)
         working_directory ||= resolve_working_directory
@@ -17,10 +30,16 @@ module Openapi3Parser
         initialize_contents
       end
 
+      # @see SourceInput#resolve_next
+      # @param  [Source::Reference] reference
+      # @return [SourceInput]
       def resolve_next(reference)
         ResolveNext.call(reference, self, working_directory: working_directory)
       end
 
+      # @see SourceInput#other
+      # @param  [SourceInput] other
+      # @return [Boolean]
       def ==(other)
         return false unless other.instance_of?(self.class)
         path == other.path &&

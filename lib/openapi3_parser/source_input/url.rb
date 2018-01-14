@@ -8,18 +8,31 @@ require "openapi3_parser/error"
 
 module Openapi3Parser
   class SourceInput
+    # An input of a URL to an OpenAPI file
+    #
+    # @attr_reader [String] request_url   The URL that will be requested
+    # @attr_reader [String] resolved_url  The eventual URL of the file that was
+    #                                     accessed, this may differ to the
+    #                                     request_url in the case of redirects
     class Url < SourceInput
       attr_reader :request_url, :resolved_url
 
+      # @param [String, URI] request_url
       def initialize(request_url)
         @request_url = request_url.to_s
         initialize_contents
       end
 
+      # @see SourceInput#resolve_next
+      # @param  [Source::Reference] reference
+      # @return [SourceInput]
       def resolve_next(reference)
         ResolveNext.call(reference, self, base_url: resolved_url)
       end
 
+      # @see SourceInput#other
+      # @param  [SourceInput] other
+      # @return [Boolean]
       def ==(other)
         return false unless other.instance_of?(self.class)
         [request_url, resolved_url].include?(other.request_url) ||
