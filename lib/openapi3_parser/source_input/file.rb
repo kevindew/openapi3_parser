@@ -7,7 +7,7 @@ require "openapi3_parser/error"
 
 module Openapi3Parser
   class SourceInput
-    # An Input of a file on the file system
+    # An input of a file on the file system
     #
     # @attr_reader [String] path              The absolute path to this file
     # @attr_reader [String] working_directory The abolsute path of the

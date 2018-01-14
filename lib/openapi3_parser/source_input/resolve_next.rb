@@ -8,8 +8,8 @@ module Openapi3Parser
     class ResolveNext
       # @param  reference            [Source::Reference]
       # @param  current_source_input [SourceInput]
-      # @param  base_url             [String]
-      # @param  working_directory    [String]
+      # @param  base_url             [String, nil]
+      # @param  working_directory    [String, nil]
       # @return [SourceInput]
       def self.call(reference,
                     current_source_input,
