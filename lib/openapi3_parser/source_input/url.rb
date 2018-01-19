@@ -39,6 +39,34 @@ module Openapi3Parser
           [request_url, resolved_url].include?(other.resolved_url)
       end
 
+      # return [String]
+      def url
+        resolved_url || request_url
+      end
+
+      # return [String]
+      def inspect
+        %{#{self.class.name}(url: #{url})}
+      end
+
+      # @return [String]
+      def to_s
+        request_url
+      end
+
+      # @return [String]
+      def relative_to(source_input)
+        other_url = if source_input.respond_to?(:url)
+                      source_input.url
+                    elsif source_input.respond_to?(:base_url)
+                      source_input.base_url
+                    end
+
+        return url unless other_url
+
+        other_url ? RelativeUrlDifference.call(other_url, url) : url
+      end
+
       private
 
       def parse_contents
@@ -50,6 +78,45 @@ module Openapi3Parser
         end
         @resolved_url = file.base_uri.to_s
         StringParser.call(file.read, resolved_url)
+      end
+
+      class RelativeUrlDifference
+        def initialize(from_url, to_url)
+          @from_uri = URI.parse(from_url)
+          @to_uri = URI.parse(to_url)
+        end
+
+        def self.call(from_url, to_url)
+          new(from_url, to_url).call
+        end
+
+        def call
+          return to_uri.to_s if different_hosts?
+          relative_path
+        end
+
+        private_class_method :new
+
+        private
+
+        attr_reader :from_uri, :to_uri
+
+        def different_hosts?
+          URI.join(from_uri, "/") != URI.join(to_uri, "/")
+        end
+
+        def relative_path
+          relative = to_uri.route_from(from_uri)
+          return relative.to_s unless relative.path.empty?
+
+          # if we have same path it's nice to show just the filename
+          file_and_query(to_uri)
+        end
+
+        def file_and_query(uri)
+          Pathname.new(uri.path).basename.to_s +
+            (uri.query ? "?#{uri.query}" : "")
+        end
       end
     end
   end

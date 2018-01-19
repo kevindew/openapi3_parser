@@ -23,7 +23,7 @@ module Openapi3Parser
       # @param [Object]       raw_input
       # @param [String, nil]  base_url
       # @param [String, nil]  working_directory
-      def initialize(raw_input, base_url = nil, working_directory = nil)
+      def initialize(raw_input, base_url: nil, working_directory: nil)
         @raw_input = raw_input
         @base_url = base_url
         working_directory ||= resolve_working_directory
@@ -49,6 +49,17 @@ module Openapi3Parser
         raw_input == other.raw_input &&
           base_url == other.base_url &&
           working_directory == other.working_directory
+      end
+
+      # return [String]
+      def inspect
+        %{#{self.class.name}(input: #{raw_input.inspect}, base_url: } +
+          %{#{base_url}, working_directory: #{working_directory})}
+      end
+
+      # @return [String]
+      def to_s
+        raw_input.to_s
       end
 
       private

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/source_input/file"
+require "openapi3_parser/source_input/raw"
 require "openapi3_parser/source_input/url"
 require "openapi3_parser/error"
 require "openapi3_parser/source/reference"
@@ -120,6 +122,51 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
     context "when class is different" do
       let(:other) { Openapi3Parser::SourceInput::Raw.new({}) }
       it { is_expected.to be false }
+    end
+  end
+
+  describe ".relative_to" do
+    subject { described_class.new(url).relative_to(other) }
+    let(:url) { "https://example.com/path/to/file.yaml" }
+    let(:other_url) { "https://example.com/path/to/file.yaml" }
+    let(:other) { described_class.new(other_url) }
+
+    it { is_expected.to eq "file.yaml" }
+
+    context "when url is up a directory" do
+      let(:url) { "https://example.com/path/to/other/file.yaml" }
+      it { is_expected.to eq "other/file.yaml" }
+    end
+
+    context "when url is down a directory" do
+      let(:url) { "https://example.com/path/to-file.yaml" }
+      it { is_expected.to eq "../to-file.yaml" }
+    end
+
+    context "when url has different query strings" do
+      let(:url) { "https://example.com/file.yaml?key=1" }
+      let(:other_url) { "https://example.com/file.yaml?key=2" }
+      it { is_expected.to eq "file.yaml?key=1" }
+    end
+
+    context "when other is a raw input with a base_url" do
+      let(:other) do
+        Openapi3Parser::SourceInput::Raw.new({}, base_url: other_url)
+      end
+      it { is_expected.to eq "file.yaml" }
+    end
+
+    context "when other is a raw input in a different working directory" do
+      let(:other) do
+        Openapi3Parser::SourceInput::Raw.new({},
+                                             base_url: "https://google.com")
+      end
+      it { is_expected.to eq url }
+    end
+
+    context "when other is a file input" do
+      let(:other) { Openapi3Parser::SourceInput::File.new("/path/to/file") }
+      it { is_expected.to eq url }
     end
   end
 end

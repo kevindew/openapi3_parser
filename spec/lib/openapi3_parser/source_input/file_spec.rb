@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/source_input/file"
+require "openapi3_parser/source_input/raw"
+require "openapi3_parser/source_input/url"
 require "openapi3_parser/error"
 require "openapi3_parser/source/reference"
 
@@ -107,6 +109,46 @@ RSpec.describe Openapi3Parser::SourceInput::File do
     context "when class is different" do
       let(:other) { Openapi3Parser::SourceInput::Raw.new({}) }
       it { is_expected.to be false }
+    end
+  end
+
+  describe ".relative_to" do
+    subject { described_class.new(path).relative_to(other) }
+    let(:path) { "/path/to/file.yaml" }
+    let(:other) { described_class.new("/path/to/file.yaml") }
+
+    it { is_expected.to eq "file.yaml" }
+
+    context "when path is up a directory" do
+      let(:path) { "/path/to/other/file.yaml" }
+      it { is_expected.to eq "other/file.yaml" }
+    end
+
+    context "when path is down a directory" do
+      let(:path) { "/path/to-file.yaml" }
+      it { is_expected.to eq "../to-file.yaml" }
+    end
+
+    context "when other is a raw input in same working directory" do
+      let(:other) do
+        Openapi3Parser::SourceInput::Raw.new({}, working_directory: "/path/to")
+      end
+      it { is_expected.to eq "file.yaml" }
+    end
+
+    context "when other is a raw input in a different working directory" do
+      let(:other) do
+        Openapi3Parser::SourceInput::Raw.new({}, working_directory: "/tmp/test")
+      end
+      it { is_expected.to eq path }
+    end
+
+    context "when other is a url input" do
+      let(:url) { "http://example.com/test.yaml" }
+      let(:other) { Openapi3Parser::SourceInput::Url.new(url) }
+      before { stub_request(:get, url) }
+
+      it { is_expected.to eq path }
     end
   end
 end

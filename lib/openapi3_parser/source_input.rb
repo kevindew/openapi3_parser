@@ -50,6 +50,15 @@ module Openapi3Parser
       @contents
     end
 
+    # The relative path, if possible, for this source_input compared to a
+    # different one. Defaults to empty string and should be specialised in
+    # subclasses
+    #
+    # @return [String]
+    def relative_to(_source_input)
+      ""
+    end
+
     private
 
     def initialize_contents

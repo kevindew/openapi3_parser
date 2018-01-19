@@ -23,7 +23,9 @@ RSpec.describe Openapi3Parser::SourceInput::ResolveNext do
       Openapi3Parser::Source::Reference.new(literal_reference)
     end
     let(:current_source_input) do
-      Openapi3Parser::SourceInput::Raw.new({}, base_url, working_directory)
+      Openapi3Parser::SourceInput::Raw.new({},
+                                           base_url: base_url,
+                                           working_directory: working_directory)
     end
     let(:base_url) { nil }
     let(:working_directory) { nil }
