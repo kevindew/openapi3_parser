@@ -9,7 +9,7 @@ require "support/helpers/context"
 RSpec.describe Openapi3Parser::Context do
   include Helpers::Context
 
-  describe "#root" do
+  describe ".root" do
     subject(:context) { described_class.root(input, source) }
 
     let(:input) { {} }
@@ -28,7 +28,7 @@ RSpec.describe Openapi3Parser::Context do
     end
   end
 
-  describe "#next_field" do
+  describe ".next_field" do
     subject(:context) { described_class.next_field(parent_context, field) }
     let(:input) { { "key" => "value" } }
     let(:parent_context) do
@@ -45,7 +45,7 @@ RSpec.describe Openapi3Parser::Context do
     end
   end
 
-  describe "#reference_field" do
+  describe ".reference_field" do
     subject(:context) do
       described_class.reference_field(referencer_context,
                                       input: reference_input,
