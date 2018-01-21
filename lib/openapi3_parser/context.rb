@@ -93,11 +93,6 @@ module Openapi3Parser
       document_location.pointer.segments
     end
 
-    # @deprecated
-    def stringify_namespace
-      document_location.pointer.fragment
-    end
-
     def inspect
       %{#{self.class.name}(document_location: #{document_location}, } +
         %{source_location: #{source_location}), referenced_by: } +

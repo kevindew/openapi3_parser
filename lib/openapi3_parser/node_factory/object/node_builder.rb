@@ -33,16 +33,16 @@ module Openapi3Parser
         def check_required_fields
           fields = Validator.missing_required_fields(input, factory)
           return if fields.empty?
-          raise Openapi3Parser::Error,
+          raise Openapi3Parser::Error::MissingFields,
                 "Missing required fields for "\
-                  "#{context.stringify_namespace}: #{fields.join(', ')}"
+                  "#{context.location_summary}: #{fields.join(', ')}"
         end
 
         def check_unexpected_fields
           fields = Validator.unexpected_fields(input, factory)
           return if fields.empty?
-          raise Openapi3Parser::Error,
-                "Unexpected fields for #{context.stringify_namespace}: "\
+          raise Openapi3Parser::Error::UnexpectedFields,
+                "Unexpected fields for #{context.location_summary}: "\
                   "#{fields.join(', ')}"
         end
 
@@ -59,9 +59,9 @@ module Openapi3Parser
           error = field_config.input_type_error(input, factory)
 
           return unless error
-          raise Openapi3Parser::Error,
+          raise Openapi3Parser::Error::InvalidType,
                 "Invalid type for "\
-                  "#{field_context.stringify_namespace}: #{error}"
+                  "#{field_context.location_summary}: #{error}"
         end
 
         def check_validation_errors(name, field_config)
@@ -69,8 +69,8 @@ module Openapi3Parser
           errors = field_config.validation_errors(field_context.input, factory)
 
           return unless errors.any?
-          raise Openapi3Parser::Error,
-                "Invalid field for #{field_context.stringify_namespace}: "\
+          raise Openapi3Parser::Error::InvalidData,
+                "Invalid field for #{field_context.location_summary}: "\
                 "#{errors.join(', ')}"
         end
 
