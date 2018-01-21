@@ -102,6 +102,17 @@ module Openapi3Parser
       !data_at_pointer(json_pointer).nil?
     end
 
+    # @return [String]
+    def relative_to_root
+      return "" if root?
+      source_input.relative_to(document.root_source.source_input)
+    end
+
+    # return [String]
+    def inspect
+      %{#{self.class.name}(input: #{source_input})}
+    end
+
     private
 
     def normalize_data(input)

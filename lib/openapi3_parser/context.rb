@@ -97,5 +97,21 @@ module Openapi3Parser
     def stringify_namespace
       document_location.pointer.fragment
     end
+
+    def inspect
+      %{#{self.class.name}(document_location: #{document_location}, } +
+        %{source_location: #{source_location}), referenced_by: } +
+        %{#{referenced_by})}
+    end
+
+    def location_summary
+      summary = document_location.to_s
+      summary += " (#{source_location})" if document_location != source_location
+      summary
+    end
+
+    def to_s
+      location_summary
+    end
   end
 end

@@ -24,6 +24,14 @@ module Openapi3Parser
       def ==(other)
         source == other.source && pointer == other.pointer
       end
+
+      def to_s
+        source.relative_to_root + pointer.fragment
+      end
+
+      def inspect
+        %{#{self.class.name}(source: #{source.inspect}, pointer: #{pointer})}
+      end
     end
   end
 end

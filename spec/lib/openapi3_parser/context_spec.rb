@@ -85,4 +85,36 @@ RSpec.describe Openapi3Parser::Context do
       expect(context.source_location).to eq reference_source_location
     end
   end
+
+  describe "#location_summary" do
+    subject do
+      described_class.new({},
+                          document_location: document_location,
+                          source_location: source_location)
+                     .location_summary
+    end
+
+    context "when source location and document location are the same" do
+      let(:document_location) do
+        instance_double("Openapi3Parser::Context::Location",
+                        to_s: "file.yml#/")
+      end
+      let(:source_location) { document_location }
+
+      it { is_expected.to eq "file.yml#/" }
+    end
+
+    context "when source location and document location are different" do
+      let(:document_location) do
+        instance_double("Openapi3Parser::Context::Location",
+                        to_s: "file.yml#/")
+      end
+      let(:source_location) do
+        instance_double("Openapi3Parser::Context::Location",
+                        to_s: "other-file.yml#/path/to/object")
+      end
+
+      it { is_expected.to eq "file.yml#/ (other-file.yml#/path/to/object)" }
+    end
+  end
 end
