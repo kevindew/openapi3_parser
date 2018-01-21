@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/context"
+require "openapi3_parser/error"
 require "openapi3_parser/node_factory/map"
 require "openapi3_parser/nodes/map"
 require "openapi3_parser/validation/error"
@@ -96,8 +97,8 @@ module Openapi3Parser
           error = error_for_value_input_type(value)
           next unless error
           next_context = Context.next_field(context, key)
-          raise Openapi3Parser::Error,
-                "Invalid type for #{next_context.stringify_namespace}. "\
+          raise Openapi3Parser::Error::InvalidType,
+                "Invalid type for #{next_context.location_summary}. "\
                 "#{error}"
         end
       end
