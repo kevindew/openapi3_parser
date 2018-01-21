@@ -111,8 +111,8 @@ module Openapi3Parser
       end
 
       unless valid_type?
-        raise Openapi3Parser::Error,
-              "Invalid type for #{context.stringify_namespace}. "\
+        raise Openapi3Parser::Error::InvalidType,
+              "Invalid type for #{context.location_summary}. "\
               "#{validate_type}"
       end
 
