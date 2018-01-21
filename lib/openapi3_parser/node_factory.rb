@@ -123,8 +123,8 @@ module Openapi3Parser
     def validate_before_build
       errors = Array(validate(context.input, context))
       return unless errors.any?
-      raise Openapi3Parser::Error,
-            "Invalid data for #{context.stringify_namespace}. "\
+      raise Openapi3Parser::Error::InvalidData,
+            "Invalid data for #{context.location_summary}. "\
             "#{errors.join(', ')}"
     end
 

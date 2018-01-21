@@ -19,5 +19,7 @@ module Openapi3Parser
     class ImmutableObject < Error; end
     # Raised when a type that is not a whitelist of valid types is used
     class InvalidType < Error; end
+    # Raised when we have to abort creating an object due to invalid data
+    class InvalidData < Error; end
   end
 end
