@@ -21,5 +21,11 @@ module Openapi3Parser
     class InvalidType < Error; end
     # Raised when we have to abort creating an object due to invalid data
     class InvalidData < Error; end
+    # Used when there are fields that are missing from an object which prevents
+    # us from creating a node
+    class MissingFields < Error; end
+    # Used when there are extra fields that are not expected in the data for
+    # a node
+    class UnexpectedFields < Error; end
   end
 end
