@@ -5,9 +5,11 @@ require "openapi3_parser/document"
 require "openapi3_parser/source_input/raw"
 
 require "support/helpers/context"
+require "support/helpers/source_input"
 
 RSpec.describe Openapi3Parser::Context do
   include Helpers::Context
+  include Helpers::SourceInput
 
   describe ".root" do
     subject(:context) { described_class.root(input, source) }
@@ -96,25 +98,28 @@ RSpec.describe Openapi3Parser::Context do
 
     context "when source location and document location are the same" do
       let(:document_location) do
-        instance_double("Openapi3Parser::Context::Location",
-                        to_s: "file.yml#/")
+        create_context_location(create_raw_source_input,
+                                pointer_segments: %w[path to field])
       end
       let(:source_location) { document_location }
 
-      it { is_expected.to eq "file.yml#/" }
+      it { is_expected.to eq "#/path/to/field" }
     end
 
     context "when source location and document location are different" do
       let(:document_location) do
-        instance_double("Openapi3Parser::Context::Location",
-                        to_s: "file.yml#/")
+        source_input = create_file_source_input(path: "/file.yaml")
+        create_context_location(source_input,
+                                pointer_segments: %w[path to field])
       end
       let(:source_location) do
-        instance_double("Openapi3Parser::Context::Location",
-                        to_s: "other-file.yml#/path/to/object")
+        source_input = create_file_source_input(path: "/other-file.yaml")
+        create_context_location(source_input,
+                                document: document_location.source.document,
+                                pointer_segments: %w[path])
       end
 
-      it { is_expected.to eq "file.yml#/ (other-file.yml#/path/to/object)" }
+      it { is_expected.to eq "#/path/to/field (other-file.yaml#/path)" }
     end
   end
 end

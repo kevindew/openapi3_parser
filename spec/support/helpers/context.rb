@@ -15,5 +15,21 @@ module Helpers
       Openapi3Parser::Context.new(input,
                                   document_location: document_location)
     end
+
+    def create_context_location(source_input,
+                                document: nil,
+                                pointer_segments: [])
+      source = if !document
+                 Openapi3Parser::Document.new(source_input).root_source
+               else
+                 Openapi3Parser::Source.new(
+                   source_input,
+                   document,
+                   Openapi3Parser::Document::ReferenceRegister.new
+                 )
+               end
+
+      Openapi3Parser::Context::Location.new(source, pointer_segments)
+    end
   end
 end
