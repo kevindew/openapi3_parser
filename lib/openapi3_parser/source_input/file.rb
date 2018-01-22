@@ -48,8 +48,8 @@ module Openapi3Parser
 
       # return [String]
       def inspect
-        %{#{self.class.name}(path: #{path}, working_directory:  \
-          #{working_directory})}
+        %{#{self.class.name}(path: #{path}, working_directory: } +
+          %{#{working_directory})}
       end
 
       # @return [String]
