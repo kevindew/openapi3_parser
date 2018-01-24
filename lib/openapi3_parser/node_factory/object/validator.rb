@@ -55,8 +55,9 @@ module Openapi3Parser
           fields = self.class.missing_required_fields(input, factory)
           return unless fields.any?
           Validation::Error.new(
-            context.namespace,
-            "Missing required fields: #{fields.join(', ')}"
+            "Missing required fields: #{fields.join(', ')}",
+            context,
+            factory.class
           )
         end
 
@@ -64,8 +65,9 @@ module Openapi3Parser
           fields = self.class.unexpected_fields(input, factory)
           return unless fields.any?
           Validation::Error.new(
-            context.namespace,
-            "Unexpected fields: #{fields.join(', ')}"
+            "Unexpected fields: #{fields.join(', ')}",
+            context,
+            factory.class
           )
         end
 
@@ -88,8 +90,9 @@ module Openapi3Parser
           type_error = field_config.input_type_error(raw_input[name], factory)
           return unless type_error
           Validation::Error.new(
-            context.next_namespace(name),
-            "Invalid type: #{type_error}"
+            "Invalid type: #{type_error}",
+            Context.next_field(context, name),
+            factory.class
           )
         end
 
@@ -98,8 +101,9 @@ module Openapi3Parser
             raw_input[name], factory
           ).map do |error|
             Validation::Error.new(
+              "Invalid field: #{error}",
               Context.next_field(context, name),
-              "Invalid field: #{error}"
+              factory.class
             )
           end
         end

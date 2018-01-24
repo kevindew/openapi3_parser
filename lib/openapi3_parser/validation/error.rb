@@ -3,11 +3,12 @@
 module Openapi3Parser
   module Validation
     class Error
-      attr_reader :namespace, :message
+      attr_reader :message, :context, :factory_class
 
-      def initialize(namespace, message)
-        @namespace = namespace
+      def initialize(message, context, factory_class = nil)
         @message = message
+        @context = context
+        @factory_class = factory_class
       end
     end
   end

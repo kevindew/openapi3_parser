@@ -85,7 +85,7 @@ module Openapi3Parser
       errors = Array(errors)
       errors.each do |error|
         unless error.is_a?(Validation::Error)
-          error = Validation::Error.new(context.namespace, error)
+          error = Validation::Error.new(error, context, self.class)
         end
         error_collection.append(error)
       end
@@ -97,7 +97,7 @@ module Openapi3Parser
       return error_collection if nil_input? && allowed_default?
       unless valid_type?
         error = Validation::Error.new(
-          context.namespace, "Invalid type. #{validate_type}"
+          "Invalid type. #{validate_type}", context, self.class
         )
         return error_collection.tap { |ec| ec.append(error) }
       end

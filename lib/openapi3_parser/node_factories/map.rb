@@ -87,7 +87,7 @@ module Openapi3Parser
           error = error_for_value_input_type(value)
           next unless error
           memo << Validation::Error.new(
-            Context.next_field(context, key), error
+            error, Context.next_field(context, key), self.class
           )
         end
       end
