@@ -5,6 +5,7 @@ require "openapi3_parser/node_factory"
 require "openapi3_parser/node_factory/field_config"
 require "openapi3_parser/node_factory/object/node_builder"
 require "openapi3_parser/node_factory/object/validator"
+require "openapi3_parser/validation/error_collection"
 
 module Openapi3Parser
   module NodeFactory
@@ -60,10 +61,9 @@ module Openapi3Parser
         end
       end
 
-      def validate_input(error_collection)
-        super(error_collection)
+      def validate_input
         validator = Validator.new(processed_input, self)
-        error_collection.tap { |ec| ec.append(*validator.errors) }
+        Validation::ErrorCollection.combine(super, validator.errors)
       end
 
       def build_node(input)

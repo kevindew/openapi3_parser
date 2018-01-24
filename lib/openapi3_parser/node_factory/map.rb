@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/node_factory"
+require "openapi3_parser/validation/error_collection"
 
 module Openapi3Parser
   module NodeFactory
@@ -23,11 +24,10 @@ module Openapi3Parser
         build_map(data, context)
       end
 
-      def validate_input(error_collection)
-        super(error_collection)
-        processed_input.each_value do |value|
-          next unless value.respond_to?(:errors)
-          error_collection.merge(value.errors)
+      def validate_input
+        processed_input.each_value.inject(super) do |memo, value|
+          errors = value.respond_to?(:errors) ? value.errors : []
+          Validation::ErrorCollection.combine(memo, errors)
         end
       end
 

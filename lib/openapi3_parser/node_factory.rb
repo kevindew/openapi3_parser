@@ -74,35 +74,30 @@ module Openapi3Parser
 
     def validate(_input, _context); end
 
-    def validate_input(error_collection)
-      add_validation_errors(
-        validate(context.input, context),
-        error_collection
-      )
+    def validate_input
+      transform_errors(validate(context.input, context))
     end
 
-    def add_validation_errors(errors, error_collection)
-      errors = Array(errors)
-      errors.each do |error|
-        unless error.is_a?(Validation::Error)
-          error = Validation::Error.new(error, context, self.class)
+    def transform_errors(errors)
+      error_objects = Array(errors).map do |error|
+        if !error.is_a?(Validation::Error)
+          error
+        else
+          Validation::Error.new(error, context, self.class)
         end
-        error_collection.append(error)
       end
-      error_collection
+      Validation::ErrorCollection.new(error_objects)
     end
 
     def build_errors
-      error_collection = Validation::ErrorCollection.new
-      return error_collection if nil_input? && allowed_default?
+      return Validation::ErrorCollection.new if nil_input? && allowed_default?
       unless valid_type?
         error = Validation::Error.new(
           "Invalid type. #{validate_type}", context, self.class
         )
-        return error_collection.tap { |ec| ec.append(error) }
+        return Validation::ErrorCollection.new([error])
       end
-      validate_input(error_collection)
-      error_collection
+      validate_input
     end
 
     def build_valid_node

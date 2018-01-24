@@ -2,35 +2,34 @@
 
 module Openapi3Parser
   module Validation
+    # An immutable collection of Validation::Error objects
+    # @attr_reader [Array<Validation::Error>] errors
     class ErrorCollection
-      def initialize(*errors)
-        reset
-        append(*errors)
+      include Enumerable
+
+      # Combines ErrorCollection objects or arrays of Validation::Error objects
+      # @param  [ErrorCollection, Array<Validation::Error>] errors
+      # @param  [ErrorCollection, Array<Validation::Error>] other_errors
+      # @return [ErrorCollection]
+      def self.combine(errors, other_errors)
+        new(errors.to_a + other_errors.to_a)
       end
 
-      def append(*errors)
-        errors.each { |e| @errors << e }
-      end
+      attr_reader :errors
+      alias to_a errors
 
-      def reset
-        @errors = []
-      end
-
-      def merge(error_collection)
-        append(*error_collection.to_a)
+      # @param  [Array<Validation::Error>] errors
+      def initialize(errors = [])
+        @errors = errors.freeze
       end
 
       def empty?
         errors.empty?
       end
 
-      def to_a
-        errors.dup
+      def each(&block)
+        errors.each(&block)
       end
-
-      private
-
-      attr_reader :errors
     end
   end
 end

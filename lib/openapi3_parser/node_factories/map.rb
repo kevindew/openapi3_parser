@@ -5,6 +5,7 @@ require "openapi3_parser/error"
 require "openapi3_parser/node_factory/map"
 require "openapi3_parser/nodes/map"
 require "openapi3_parser/validation/error"
+require "openapi3_parser/validation/error_collection"
 
 module Openapi3Parser
   module NodeFactories
@@ -56,11 +57,9 @@ module Openapi3Parser
         given_validate&.call(input, context)
       end
 
-      def validate_input(error_collection)
-        super(error_collection)
-        error_collection.merge(
-          validate_value_input_type(processed_input, context)
-        )
+      def validate_input
+        errors = validate_value_input_type(processed_input, context)
+        Validation::ErrorCollection.combine(super, errors)
       end
 
       def build_node(input)

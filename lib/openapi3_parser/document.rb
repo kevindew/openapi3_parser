@@ -107,10 +107,9 @@ module Openapi3Parser
     #
     # @return [Validation::ErrorCollection]
     def errors
-      error_collection = Validation::ErrorCollection.new
-      error_collection.merge(factory.errors)
-      reference_factories.each { |f| error_collection.merge(f.errors) }
-      error_collection
+      reference_factories.inject(factory.errors) do |memo, f|
+        Validation::ErrorCollection.combine(memo, f.errors)
+      end
     end
 
     # Look up whether an instance of SourceInput is already a known source
