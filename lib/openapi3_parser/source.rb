@@ -108,6 +108,10 @@ module Openapi3Parser
       source_input.relative_to(document.root_source.source_input)
     end
 
+    def ==(other)
+      source_input == other.source_input && document == other.document
+    end
+
     # return [String]
     def inspect
       %{#{self.class.name}(input: #{source_input})}

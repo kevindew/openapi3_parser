@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context/location"
+require "openapi3_parser/document"
+require "openapi3_parser/source_input/raw"
 require "openapi3_parser/validation/error"
 require "openapi3_parser/validation/error_collection"
 
@@ -8,8 +11,19 @@ require "support/helpers/context"
 RSpec.describe Openapi3Parser::Validation::ErrorCollection do
   include Helpers::Context
 
-  def create_error(message)
-    Openapi3Parser::Validation::Error.new(message, create_context({}))
+  let(:base_document) do
+    source_input = Openapi3Parser::SourceInput::Raw.new({})
+    Openapi3Parser::Document.new(source_input)
+  end
+
+  def create_error(message,
+                   pointer_segments: [],
+                   document: nil,
+                   factory_class: nil)
+    context = create_context({},
+                             pointer_segments: pointer_segments,
+                             document: document)
+    Openapi3Parser::Validation::Error.new(message, context, factory_class)
   end
 
   describe ".combine" do
@@ -66,6 +80,191 @@ RSpec.describe Openapi3Parser::Validation::ErrorCollection do
     context "when there are not errors" do
       let(:errors) { [] }
       it { is_expected.to be true }
+    end
+  end
+
+  describe "#group_errors" do
+    subject(:grouped_errors) { described_class.new(errors).group_errors }
+    let(:errors) { [create_error("Boom")] }
+
+    it "returns an array of LocationTypeGroup objects" do
+      group_type = an_instance_of(
+        Openapi3Parser::Validation::ErrorCollection::LocationTypeGroup
+      )
+      expect(grouped_errors).to match_array([group_type])
+    end
+
+    context "when there are errors for different source locations" do
+      let(:ut_oh) do
+        create_error("Ut oh", pointer_segments: %w[a], document: base_document)
+      end
+      let(:darn) do
+        create_error("Darn", pointer_segments: %w[b], document: base_document)
+      end
+      let(:errors) { [ut_oh, darn] }
+
+      it "has a length of 2" do
+        expect(grouped_errors.length).to eq 2
+      end
+
+      it "matches the location type groups" do
+        klass = Openapi3Parser::Validation::ErrorCollection::LocationTypeGroup
+        expect(grouped_errors).to match_array(
+          [
+            klass.new(ut_oh.context.source_location, nil, [ut_oh]),
+            klass.new(darn.context.source_location, nil, [darn])
+          ]
+        )
+      end
+    end
+
+    context "when there are errors with same source locations" do
+      let(:ut_oh) do
+        create_error("Ut oh", pointer_segments: %w[a], document: base_document)
+      end
+      let(:darn) do
+        create_error("Darn", pointer_segments: %w[a], document: base_document)
+      end
+      let(:errors) { [ut_oh, darn] }
+
+      it "has a length of 1" do
+        expect(grouped_errors.length).to eq 1
+      end
+
+      it "matches the location type groups" do
+        klass = Openapi3Parser::Validation::ErrorCollection::LocationTypeGroup
+        expect(grouped_errors).to match_array(
+          [
+            klass.new(ut_oh.context.source_location, nil, [ut_oh, darn])
+          ]
+        )
+      end
+    end
+
+    context "when errors have same source locations but are for different "\
+            "factories" do
+      class NodeFactory1; end
+      class NodeFactory2; end
+
+      let(:ut_oh) do
+        create_error("Ut oh",
+                     pointer_segments: %w[a],
+                     document: base_document,
+                     factory_class: NodeFactory1)
+      end
+
+      let(:darn) do
+        create_error("Darn",
+                     pointer_segments: %w[a],
+                     document: base_document,
+                     factory_class: NodeFactory2)
+      end
+
+      let(:errors) { [ut_oh, darn] }
+
+      it "has a length of 2" do
+        expect(grouped_errors.length).to eq 2
+      end
+
+      it "matches the location type groups" do
+        klass = Openapi3Parser::Validation::ErrorCollection::LocationTypeGroup
+        expect(grouped_errors).to match_array(
+          [
+            klass.new(ut_oh.context.source_location, "NodeFactory1", [ut_oh]),
+            klass.new(darn.context.source_location, "NodeFactory2", [darn])
+          ]
+        )
+      end
+    end
+
+    context "when there are no errors" do
+      let(:errors) { [] }
+      it { is_expected.to be_empty }
+    end
+  end
+
+  describe "#to_h" do
+    subject(:errors_hash) { described_class.new(errors).to_h }
+    let(:errors) { [create_error("Boom")] }
+
+    it "returns a hash" do
+      expect(errors_hash).to be_an_instance_of(Hash)
+    end
+
+    context "when there are errors for different source locations" do
+      let(:ut_oh) do
+        create_error("Ut oh", pointer_segments: %w[a], document: base_document)
+      end
+      let(:darn) do
+        create_error("Darn", pointer_segments: %w[b], document: base_document)
+      end
+      let(:errors) { [ut_oh, darn] }
+
+      it "has both errors" do
+        expect(errors_hash).to match(
+          "#/a" => ["Ut oh"],
+          "#/b" => ["Darn"]
+        )
+      end
+    end
+
+    context "when there are errors with same source locations" do
+      let(:ut_oh) do
+        create_error("Ut oh", pointer_segments: %w[a], document: base_document)
+      end
+      let(:darn) do
+        create_error("Darn", pointer_segments: %w[a], document: base_document)
+      end
+      let(:errors) { [ut_oh, darn] }
+
+      it "groups the errors" do
+        expect(errors_hash).to match(
+          "#/a" => ["Ut oh", "Darn"]
+        )
+      end
+    end
+
+    context "when errors have same source locations but are for different "\
+            "factories" do
+
+      class NodeFactory1; end
+      class NodeFactory2; end
+
+      let(:ut_oh) do
+        create_error("Ut oh",
+                     pointer_segments: %w[a],
+                     document: base_document,
+                     factory_class: NodeFactory1)
+      end
+
+      let(:darn) do
+        create_error("Darn",
+                     pointer_segments: %w[a],
+                     document: base_document,
+                     factory_class: NodeFactory2)
+      end
+
+      let(:another) do
+        create_error("Another",
+                     pointer_segments: %w[b],
+                     document: base_document,
+                     factory_class: NodeFactory1)
+      end
+
+      let(:errors) { [ut_oh, darn, another] }
+
+      it "has the errors with type when there is ambiguity" do
+        expect(errors_hash).to match(
+          "#/a (as NodeFactory1)" => ["Ut oh"],
+          "#/a (as NodeFactory2)" => ["Darn"],
+          "#/b" => ["Another"]
+        )
+      end
+    end
+
+    context "when there are no errors" do
+      let(:errors) { [] }
+      it { is_expected.to be_empty }
     end
   end
 end
