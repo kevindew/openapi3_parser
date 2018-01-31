@@ -8,7 +8,7 @@ module Openapi3Parser
     class Operation
       include Node::Object
 
-      # @return [Nodes::Array] a collection of String objects
+      # @return [Nodes::Array<String>]
       def tags
         node_data["tags"]
       end
@@ -33,8 +33,7 @@ module Openapi3Parser
         node_data["operationId"]
       end
 
-      # @return [Nodes::Array] a collection of {Parameter}[./Parameter.html]
-      #         objects
+      # @return [Nodes::Array<Parameter>]
       def parameters
         node_data["parameters"]
       end
@@ -49,8 +48,7 @@ module Openapi3Parser
         node_data["responses"]
       end
 
-      # @return [Map] a collection of String: {Callback}[./Callback.html]
-      #         objects
+      # @return [Map<String, Callback>]
       def callbacks
         node_data["callbacks"]
       end
@@ -60,13 +58,12 @@ module Openapi3Parser
         node_data["deprecated"]
       end
 
-      # @return [Nodes::Array] a collection of
-      #         {SecurityRequirement}[./SecurityRequirement.html] objects
+      # @return [Nodes::Array<SecurityRequirement>]
       def security
         node_data["security"]
       end
 
-      # @return [Nodes::Array] a collection of {Server}[./Server.html] objects
+      # @return [Nodes::Array<Server>]
       def servers
         node_data["servers"]
       end

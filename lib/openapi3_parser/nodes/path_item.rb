@@ -58,13 +58,12 @@ module Openapi3Parser
         node_data["trace"]
       end
 
-      # @return [Nodes::Array] a collection of {Server}[./Server.html] objects
+      # @return [Nodes::Array<Server>]
       def servers
         node_data["servers"]
       end
 
-      # @return [Nodes::Array] a collection of {Parameter}[./Parameter.html]
-      #         objects
+      # @return [Nodes::Array<Parameter>]
       def parameters
         node_data["parameters"]
       end

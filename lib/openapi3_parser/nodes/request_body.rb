@@ -13,7 +13,7 @@ module Openapi3Parser
         node_data["description"]
       end
 
-      # @return [Map] a map of String: {MediaType}[./MediaType.html] objects
+      # @return [Map<String, MediaType>]
       def content
         node_data["content"]
       end

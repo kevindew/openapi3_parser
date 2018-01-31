@@ -18,8 +18,7 @@ module Openapi3Parser
         node_data["description"]
       end
 
-      # @return [Map] a map of String: {ServerVariable}[./ServerVariable.html]
-      #         objects
+      # @return [Map<String, ServerVariable>]
       def variables
         node_data["variables"]
       end

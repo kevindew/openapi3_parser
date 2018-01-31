@@ -79,13 +79,12 @@ module Openapi3Parser
         node_data["minProperties"]
       end
 
-      # @return [Nodes::Array, nil] a collection of String objects or nil
+      # @return [Nodes::Array<String>, nil]
       def required
         node_data["required"]
       end
 
-      # @return [Nodes::Array, nil] a collection of objects of no fixed type or
-      #         nil
+      # @return [Nodes::Array<Object>, nil]
       def enum
         node_data["enum"]
       end
@@ -95,17 +94,17 @@ module Openapi3Parser
         node_data["type"]
       end
 
-      # @return [Nodes::Array, nil] a collection of Schema objects or nil
+      # @return [Nodes::Array<Schema>, nil]
       def all_of
         node_data["allOf"]
       end
 
-      # @return [Nodes::Array, nil] a collection of Schema objects or nil
+      # @return [Nodes::Array<Schema>, nil]
       def one_of
         node_data["oneOf"]
       end
 
-      # @return [Nodes::Array, nil] a collection of Schema objects or nil
+      # @return [Nodes::Array<Schema>, nil]
       def any_of
         node_data["anyOf"]
       end
@@ -120,7 +119,7 @@ module Openapi3Parser
         node_data["items"]
       end
 
-      # @return [Map] a collection of Schema objects
+      # @return [Map<String, Schema>]
       def properties
         node_data["properties"]
       end

@@ -23,7 +23,7 @@ module Openapi3Parser
         node_data["refreshUrl"]
       end
 
-      # @return [Map] a map of String: String objects
+      # @return [Map<String, String>]
       def scopes
         node_data["scopes"]
       end

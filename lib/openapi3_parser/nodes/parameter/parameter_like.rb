@@ -52,12 +52,12 @@ module Openapi3Parser
           node_data["example"]
         end
 
-        # @return [Map] a map of String: {Example}[../Example.html] objects
+        # @return [Map<String, Example>]
         def examples
           node_data["examples"]
         end
 
-        # @return [Map] a map of String: {MediaType}[../MediaType.html] objects
+        # @return [Map<String, MediaType>]
         def content
           node_data["content"]
         end

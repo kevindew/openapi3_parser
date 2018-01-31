@@ -13,7 +13,7 @@ module Openapi3Parser
         node_data["propertyName"]
       end
 
-      # @return [Map] a map of String: String objects
+      # @return [Map<String, String>]
       def mapping
         node_data["mapping"]
       end

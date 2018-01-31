@@ -8,7 +8,7 @@ module Openapi3Parser
     class ServerVariable
       include Node::Object
 
-      # @return [Nodes::Array, nil] a collection of String objects or nil
+      # @return [Nodes::Array<String>, nil]
       def enum
         node_data["enum"]
       end

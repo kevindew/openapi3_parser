@@ -13,7 +13,7 @@ module Openapi3Parser
         node_data["contentType"]
       end
 
-      # @return [Map] a map of String: {Header}[./Header.html] objects
+      # @return [Map<String, Header>]
       def headers
         node_data["headers"]
       end

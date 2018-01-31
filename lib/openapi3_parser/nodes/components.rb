@@ -8,49 +8,47 @@ module Openapi3Parser
     class Components
       include Node::Object
 
-      # @return [Map] a map of String: {Schema}[../Schema.html] objects
+      # @return [Map<String, Schema>]
       def schemas
         node_data["schemas"]
       end
 
-      # @return [Map] a map of String: {Response}[./Response.html] objects
+      # @return [Map<String, Response>]
       def responses
         node_data["responses"]
       end
 
-      # @return [Map] a map of String: {Parameter}[./Parameter.html] objects
+      # @return [Map<String, Parameter>]
       def parameters
         node_data["parameters"]
       end
 
-      # @return [Map] a map of String: {Example}[../Example.html] objects
+      # @return [Map<String, Example>]
       def examples
         node_data["examples"]
       end
 
-      # @return [Map] a map of String: {RequestBody}[./RequestBody.html]
-      #         objects
+      # @return [Map<String, RequestBody>]
       def request_bodies
         node_data["requestBodies"]
       end
 
-      # @return [Map] a map of String: {Header}[./Header.html] objects
+      # @return [Map<String, Header>]
       def headers
         node_data["headers"]
       end
 
-      # @return [Map] a map of String: {SecurityScheme}[./SecurityScheme.html]
-      #         objects
+      # @return [Map<String, SecurityScheme>]
       def security_schemes
         node_data["securitySchemes"]
       end
 
-      # @return [Map] a map of String: {Link}[./Link.html] objects
+      # @return [Map<String, Link>]
       def links
         node_data["links"]
       end
 
-      # @return [Map] a map of String: {Callback}[./Callback.html] objects
+      # @return [Map<String, Callback>]
       def callbacks
         node_data["callbacks"]
       end

@@ -18,12 +18,12 @@ module Openapi3Parser
         node_data["example"]
       end
 
-      # @return [Map] a map of String: {Example}[./Example.html] objects
+      # @return [Map<String, Example>]
       def examples
         node_data["examples"]
       end
 
-      # @return [Map] a map of String: {Encoding}[./Encoding.html] objects
+      # @return [Map<String, Encoding>]
       def encoding
         node_data["encoding"]
       end

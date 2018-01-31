@@ -18,7 +18,7 @@ module Openapi3Parser
         node_data["operationId"]
       end
 
-      # @return [Map] a map of String: {Parameter}[./Parameter.html] objects
+      # @return [Map<String, Parameter>]
       def parameters
         node_data["parameters"]
       end
