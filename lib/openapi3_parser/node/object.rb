@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/markdown"
+
 module Openapi3Parser
   module Node
     module Object
@@ -47,6 +49,14 @@ module Openapi3Parser
       # Iterate through the attributes of this object
       def each(&block)
         node_data.each(&block)
+      end
+
+      # Used to render fields that can be in markdown syntax into HTML
+      # @param  [String, nil] value
+      # @return [String, nil]
+      def render_markdown(value)
+        return if value.nil?
+        Markdown.to_html(value)
       end
     end
   end

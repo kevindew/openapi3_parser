@@ -19,6 +19,11 @@ module Openapi3Parser
       end
 
       # @return [String, nil]
+      def description_html
+        render_markdown(description)
+      end
+
+      # @return [String, nil]
       def terms_of_service
         node_data["termsOfService"]
       end

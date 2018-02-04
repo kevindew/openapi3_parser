@@ -12,6 +12,11 @@ module Openapi3Parser
           node_data["description"]
         end
 
+        # @return [String, nil]
+        def description_html
+          render_markdown(description)
+        end
+
         # @return [Boolean]
         def required?
           node_data["required"]

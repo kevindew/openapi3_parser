@@ -13,6 +13,11 @@ module Openapi3Parser
         node_data["description"]
       end
 
+      # @return [String]
+      def description_html
+        render_markdown(description)
+      end
+
       # @return [Map<String, Header>]
       def headers
         node_data["headers"]

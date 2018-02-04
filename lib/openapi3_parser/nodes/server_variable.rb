@@ -22,6 +22,11 @@ module Openapi3Parser
       def description
         node_data["description"]
       end
+
+      # @return [String, nil]
+      def description_html
+        render_markdown(description)
+      end
     end
   end
 end

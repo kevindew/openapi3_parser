@@ -23,6 +23,11 @@ module Openapi3Parser
         node_data["description"]
       end
 
+      # @return [String, nil]
+      def description_html
+        render_markdown(description)
+      end
+
       # @return [ExternalDocumentation, nil]
       def external_docs
         node_data["externalDocs"]
