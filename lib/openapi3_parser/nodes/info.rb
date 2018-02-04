@@ -13,12 +13,12 @@ module Openapi3Parser
         node_data["title"]
       end
 
-      # @return [String, null]
+      # @return [String, nil]
       def description
         node_data["description"]
       end
 
-      # @return [String, null]
+      # @return [String, nil]
       def terms_of_service
         node_data["termsOfService"]
       end
