@@ -14,7 +14,7 @@ These are the steps defined to reach 1.0. Assistance is very welcome.
 - [x] Allow opening of openapi documents by URL
 - [x] Support references by URL
 - [ ] Consider option to limit open by URL/path behaviour
-- [ ] Support converting CommonMark to HTML
+- [x] Support converting CommonMark to HTML
 - [ ] Reach parity with OpenAPI specification for validation
 - [ ] Consider a lenient mode for a document to only have to comply with type
       based validation
