@@ -1,3 +1,8 @@
+# Unreleased
+
+- Support commonmark rendering, add description_html methods to nodes which
+  allow description to be rendered as HTML.
+
 # 0.3.0
 
 - Allow opening files by URL
