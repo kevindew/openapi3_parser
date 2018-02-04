@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/discriminator"
+require "openapi3_parser/node/discriminator"
 require "openapi3_parser/node_factory/object"
 
 module Openapi3Parser
@@ -16,7 +16,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::Discriminator.new(data, context)
+        Node::Discriminator.new(data, context)
       end
 
       def validate_mapping(input)

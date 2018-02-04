@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/operation"
+require "openapi3_parser/node/operation"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/optional_reference"
 require "openapi3_parser/node_factories/array"
@@ -35,7 +35,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::Operation.new(data, context)
+        Node::Operation.new(data, context)
       end
 
       def tags_factory(context)

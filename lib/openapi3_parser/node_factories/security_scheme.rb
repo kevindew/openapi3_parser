@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/security_scheme"
+require "openapi3_parser/node/security_scheme"
 require "openapi3_parser/node_factories/oauth_flows"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/optional_reference"
@@ -24,7 +24,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::SecurityScheme.new(data, context)
+        Node::SecurityScheme.new(data, context)
       end
 
       def flows_factory(context)

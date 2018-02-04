@@ -2,7 +2,7 @@
 
 module Openapi3Parser
   module Node
-    module Map
+    class Map
       include Enumerable
 
       attr_reader :node_data, :node_context

@@ -2,7 +2,7 @@
 
 require "openapi3_parser/error"
 require "openapi3_parser/node_factories/array"
-require "openapi3_parser/nodes/array"
+require "openapi3_parser/node/array"
 
 require "support/helpers/context"
 
@@ -19,7 +19,7 @@ RSpec.describe Openapi3Parser::NodeFactories::Array do
   describe "#node" do
     subject { instance.node }
 
-    it { is_expected.to be_a(Openapi3Parser::Nodes::Array) }
+    it { is_expected.to be_a(Openapi3Parser::Node::Array) }
 
     context "when input is expected to contain hashes" do
       let(:input) { [{}, 1] }

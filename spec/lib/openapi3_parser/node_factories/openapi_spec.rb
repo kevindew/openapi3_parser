@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/node_factories/openapi"
-require "openapi3_parser/nodes/openapi"
+require "openapi3_parser/node/openapi"
 
 require "support/node_object_factory"
 require "support/helpers/context"
@@ -9,7 +9,7 @@ require "support/helpers/context"
 RSpec.describe Openapi3Parser::NodeFactories::Openapi do
   include Helpers::Context
 
-  it_behaves_like "node object factory", Openapi3Parser::Nodes::Openapi do
+  it_behaves_like "node object factory", Openapi3Parser::Node::Openapi do
     let(:input) do
       {
         "openapi" => "3.0.0",

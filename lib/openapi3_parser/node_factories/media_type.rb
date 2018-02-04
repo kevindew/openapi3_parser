@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/media_type"
+require "openapi3_parser/node/media_type"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/optional_reference"
 require "openapi3_parser/node_factories/map"
@@ -22,7 +22,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::MediaType.new(data, context)
+        Node::MediaType.new(data, context)
       end
 
       def schema_factory(context)

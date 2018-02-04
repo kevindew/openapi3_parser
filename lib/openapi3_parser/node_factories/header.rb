@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/header"
+require "openapi3_parser/node/header"
 require "openapi3_parser/node_factories/parameter/parameter_like"
 require "openapi3_parser/node_factory/object"
 
@@ -29,7 +29,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::Header.new(data, context)
+        Node::Header.new(data, context)
       end
     end
   end

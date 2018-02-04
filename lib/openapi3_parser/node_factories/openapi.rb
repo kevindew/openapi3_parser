@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/openapi"
+require "openapi3_parser/node/openapi"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factories/info"
 require "openapi3_parser/node_factories/array"
@@ -31,7 +31,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::Openapi.new(data, context)
+        Node::Openapi.new(data, context)
       end
 
       def servers_factory(context)

@@ -29,36 +29,36 @@ module Openapi3Parser
 
     # @!method openapi
     #   The value of the openapi version field for this document
-    #   @see Nodes::Openapi#openapi
+    #   @see Node::Openapi#openapi
     #   @return [String]
     # @!method info
     #   The value of the info field on the OpenAPI document
-    #   @see Nodes::Openapi#info
-    #   @return [Nodes::Info]
+    #   @see Node::Openapi#info
+    #   @return [Node::Info]
     # @!method servers
     #   The value of the servers field on the OpenAPI document
-    #   @see Nodes::Openapi#servers
-    #   @return [Nodes::Array<Nodes::Server>]
+    #   @see Node::Openapi#servers
+    #   @return [Node::Array<Node::Server>]
     # @!method paths
     #   The value of the paths field on the OpenAPI document
-    #   @see Nodes::Openapi#paths
-    #   @return [Nodes::Paths]
+    #   @see Node::Openapi#paths
+    #   @return [Node::Paths]
     # @!method components
     #   The value of the components field on the OpenAPI document
-    #   @see Nodes::Openapi#components
-    #   @return [Nodes::Components]
+    #   @see Node::Openapi#components
+    #   @return [Node::Components]
     # @!method security
     #   The value of the security field on the OpenAPI document
-    #   @see Nodes::Openapi#security
-    #   @return [Nodes::Array<Nodes::SecurityRequirement>]
+    #   @see Node::Openapi#security
+    #   @return [Node::Array<Node::SecurityRequirement>]
     # @!method tags
     #   The value of the tags field on the OpenAPI document
-    #   @see Nodes::Openapi#tags
-    #   @return [Nodes::Array<Nodes::Tag>]
+    #   @see Node::Openapi#tags
+    #   @return [Node::Array<Node::Tag>]
     # @!method external_docs
     #   The value of the external_docs field on the OpenAPI document
-    #   @see Nodes::Openapi#external_docs
-    #   @return [Nodes::ExternalDocumentation]
+    #   @see Node::Openapi#external_docs
+    #   @return [Node::ExternalDocumentation]
     # @!method extension
     #   Look up an extension field provided for the root object of the document
     #   @see Node::Object#extension
@@ -82,7 +82,7 @@ module Openapi3Parser
       @built = false
     end
 
-    # @return [Nodes::Openapi]
+    # @return [Node::Openapi]
     def root
       factory.node
     end

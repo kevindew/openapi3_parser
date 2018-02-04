@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/schema"
+require "openapi3_parser/node/schema"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/optional_reference"
 require "openapi3_parser/node_factories/map"
@@ -59,7 +59,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::Schema.new(data, context)
+        Node::Schema.new(data, context)
       end
 
       def required_factory(context)

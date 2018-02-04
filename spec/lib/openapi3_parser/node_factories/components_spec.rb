@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/node_factories/components"
-require "openapi3_parser/nodes/components"
+require "openapi3_parser/node/components"
 
 require "support/node_object_factory"
 require "support/helpers/context"
@@ -9,7 +9,7 @@ require "support/helpers/context"
 RSpec.describe Openapi3Parser::NodeFactories::Components do
   include Helpers::Context
 
-  it_behaves_like "node object factory", Openapi3Parser::Nodes::Components do
+  it_behaves_like "node object factory", Openapi3Parser::Node::Components do
     let(:input) do
       {
         "schemas" => {

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/node_factories/media_type"
-require "openapi3_parser/nodes/media_type"
+require "openapi3_parser/node/media_type"
 
 require "support/node_object_factory"
 require "support/helpers/context"
@@ -9,7 +9,7 @@ require "support/helpers/context"
 RSpec.describe Openapi3Parser::NodeFactories::MediaType do
   include Helpers::Context
 
-  it_behaves_like "node object factory", Openapi3Parser::Nodes::MediaType do
+  it_behaves_like "node object factory", Openapi3Parser::Node::MediaType do
     let(:input) do
       {
         "schema" => {

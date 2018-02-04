@@ -4,7 +4,7 @@ require "openapi3_parser/context"
 require "openapi3_parser/node_factories/response"
 require "openapi3_parser/node_factory/map"
 require "openapi3_parser/node_factory/optional_reference"
-require "openapi3_parser/nodes/responses"
+require "openapi3_parser/node/responses"
 
 module Openapi3Parser
   module NodeFactories
@@ -27,7 +27,7 @@ module Openapi3Parser
       end
 
       def build_map(data, context)
-        Nodes::Responses.new(data, context)
+        Node::Responses.new(data, context)
       end
     end
   end

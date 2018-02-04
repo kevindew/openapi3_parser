@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/node_factories/oauth_flow"
-require "openapi3_parser/nodes/oauth_flow"
+require "openapi3_parser/node/oauth_flow"
 
 require "support/node_object_factory"
 require "support/helpers/context"
@@ -9,7 +9,7 @@ require "support/helpers/context"
 RSpec.describe Openapi3Parser::NodeFactories::OauthFlow do
   include Helpers::Context
 
-  it_behaves_like "node object factory", Openapi3Parser::Nodes::OauthFlow do
+  it_behaves_like "node object factory", Openapi3Parser::Node::OauthFlow do
     let(:input) do
       {
         "authorizationUrl" => "https://example.com/api/oauth/dialog",

@@ -3,7 +3,7 @@
 require "openapi3_parser/context"
 require "openapi3_parser/error"
 require "openapi3_parser/node_factory/map"
-require "openapi3_parser/nodes/map"
+require "openapi3_parser/node/map"
 require "openapi3_parser/validation/error"
 require "openapi3_parser/validation/error_collection"
 
@@ -68,7 +68,7 @@ module Openapi3Parser
       end
 
       def build_map(data, context)
-        Nodes::Map.new(data, context)
+        Node::Map.new(data, context)
       end
 
       def value_factory?

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/document"
-require "openapi3_parser/nodes/openapi"
+require "openapi3_parser/node/openapi"
 require "openapi3_parser/source"
 require "openapi3_parser/source_input/raw"
 require "openapi3_parser/source_input/file"
@@ -40,7 +40,7 @@ RSpec.describe Openapi3Parser::Document do
 
   describe "#root" do
     subject { described_class.new(source_input).root }
-    it { is_expected.to be_an_instance_of(Openapi3Parser::Nodes::Openapi) }
+    it { is_expected.to be_an_instance_of(Openapi3Parser::Node::Openapi) }
   end
 
   describe "#source_for_source_input" do

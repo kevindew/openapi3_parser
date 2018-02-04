@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/info"
+require "openapi3_parser/node/info"
 require "openapi3_parser/node_factories/license"
 require "openapi3_parser/node_factories/contact"
 require "openapi3_parser/node_factory/object"
@@ -21,7 +21,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::Info.new(data, context)
+        Node::Info.new(data, context)
       end
     end
   end

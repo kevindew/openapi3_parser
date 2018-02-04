@@ -3,7 +3,7 @@
 require "openapi3_parser/context"
 require "openapi3_parser/error"
 require "openapi3_parser/node_factory"
-require "openapi3_parser/nodes/array"
+require "openapi3_parser/node/array"
 require "openapi3_parser/validation/error"
 require "openapi3_parser/validation/error_collection"
 
@@ -64,7 +64,7 @@ module Openapi3Parser
       end
 
       def build_array(data, context)
-        Nodes::Array.new(data, context)
+        Node::Array.new(data, context)
       end
 
       def value_factory?

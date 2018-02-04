@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/response"
+require "openapi3_parser/node/response"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/optional_reference"
 require "openapi3_parser/node_factories/map"
@@ -22,7 +22,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::Response.new(data, context)
+        Node::Response.new(data, context)
       end
 
       def headers_factory(context)

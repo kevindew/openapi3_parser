@@ -3,7 +3,7 @@
 require "openapi3_parser/node_factory/map"
 require "openapi3_parser/node_factory/optional_reference"
 require "openapi3_parser/node_factories/path_item"
-require "openapi3_parser/nodes/paths"
+require "openapi3_parser/node/paths"
 
 module Openapi3Parser
   module NodeFactories
@@ -26,7 +26,7 @@ module Openapi3Parser
       end
 
       def build_map(data, context)
-        Nodes::Paths.new(data, context)
+        Node::Paths.new(data, context)
       end
     end
   end

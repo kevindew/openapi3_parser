@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/path_item"
+require "openapi3_parser/node/path_item"
 require "openapi3_parser/node_factory/fields/reference"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/object/node_builder"
@@ -38,12 +38,12 @@ module Openapi3Parser
 
       def build_object(data, context)
         ref = data.delete("$ref")
-        return Nodes::PathItem.new(data, context) unless ref
+        return Node::PathItem.new(data, context) unless ref
 
         merged_data = ref.node_data.merge(data) do |_, new, old|
           new.nil? ? old : new
         end
-        Nodes::PathItem.new(merged_data, ref.node_context)
+        Node::PathItem.new(merged_data, ref.node_context)
       end
 
       def ref_factory(context)

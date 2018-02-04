@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/oauth_flows"
+require "openapi3_parser/node/oauth_flows"
 require "openapi3_parser/node_factories/oauth_flow"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/optional_reference"
@@ -24,7 +24,7 @@ module Openapi3Parser
       end
 
       def build_object(data, context)
-        Nodes::OauthFlows.new(data, context)
+        Node::OauthFlows.new(data, context)
       end
     end
   end

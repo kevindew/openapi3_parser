@@ -2,7 +2,7 @@
 
 require "openapi3_parser/node_factory/map"
 require "openapi3_parser/node_factories/path_item"
-require "openapi3_parser/nodes/callback"
+require "openapi3_parser/node/callback"
 
 module Openapi3Parser
   module NodeFactories
@@ -20,7 +20,7 @@ module Openapi3Parser
       end
 
       def build_map(data, context)
-        Nodes::Callback.new(data, context)
+        Node::Callback.new(data, context)
       end
     end
   end

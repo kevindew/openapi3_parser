@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/server_variable"
+require "openapi3_parser/node/server_variable"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factories/array"
 
@@ -29,7 +29,7 @@ module Openapi3Parser
       end
 
       def build_object(data, context)
-        Nodes::ServerVariable.new(data, context)
+        Node::ServerVariable.new(data, context)
       end
     end
   end

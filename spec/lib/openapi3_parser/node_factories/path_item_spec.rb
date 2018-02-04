@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/node_factories/path_item"
-require "openapi3_parser/nodes/path_item"
+require "openapi3_parser/node/path_item"
 
 require "support/node_object_factory"
 require "support/helpers/context"
@@ -9,7 +9,7 @@ require "support/helpers/context"
 RSpec.describe Openapi3Parser::NodeFactories::PathItem do
   include Helpers::Context
 
-  it_behaves_like "node object factory", Openapi3Parser::Nodes::PathItem do
+  it_behaves_like "node object factory", Openapi3Parser::Node::PathItem do
     let(:input) do
       {
         "$ref" => "#/path_items/example",

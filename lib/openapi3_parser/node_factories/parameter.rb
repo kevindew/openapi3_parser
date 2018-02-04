@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/parameter"
+require "openapi3_parser/node/parameter"
 require "openapi3_parser/node_factories/parameter/parameter_like"
 require "openapi3_parser/node_factory/object"
 
@@ -31,7 +31,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::Parameter.new(data, context)
+        Node::Parameter.new(data, context)
       end
 
       def default_style

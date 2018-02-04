@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/security_requirement"
+require "openapi3_parser/node/security_requirement"
 require "openapi3_parser/node_factory/map"
 require "openapi3_parser/node_factories/array"
 
@@ -19,7 +19,7 @@ module Openapi3Parser
       end
 
       def build_map(data, context)
-        Nodes::SecurityRequirement.new(data, context)
+        Node::SecurityRequirement.new(data, context)
       end
     end
   end

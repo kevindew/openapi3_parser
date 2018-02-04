@@ -4,7 +4,7 @@ require "openapi3_parser/markdown"
 
 module Openapi3Parser
   module Node
-    module Object
+    class Object
       include Enumerable
 
       attr_reader :node_data, :node_context

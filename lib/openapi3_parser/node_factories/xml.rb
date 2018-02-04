@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/nodes/xml"
+require "openapi3_parser/node/xml"
 require "openapi3_parser/node_factory/object"
 
 module Openapi3Parser
@@ -18,7 +18,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        Nodes::Xml.new(data, context)
+        Node::Xml.new(data, context)
       end
     end
   end
