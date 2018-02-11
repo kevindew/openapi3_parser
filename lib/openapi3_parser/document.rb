@@ -13,12 +13,21 @@ module Openapi3Parser
   # Document is the root construct of a created OpenAPI Document and can be
   # used to navigate the contents of a document or to check it's validity.
   #
-  # @attr_reader  [Source] root_source
+  # @attr_reader  [String]        openapi_version
+  # @attr_reader  [Source]        root_source
+  # @attr_reader  [Array<String>] warnings
   class Document
     extend Forwardable
     include Enumerable
 
-    attr_reader :root_source
+    attr_reader :openapi_version, :root_source, :warnings
+
+    # A collection of the openapi versions that are supported
+    SUPPORTED_OPENAPI_VERSIONS = %w[3.0].freeze
+
+    # The version of OpenAPI that will be used by default for
+    # validation/construction
+    DEFAULT_OPENAPI_VERSION = "3.0"
 
     # @!method valid?
     #   Whether this OpenAPI document has any validation issues or not. See
@@ -78,6 +87,8 @@ module Openapi3Parser
     def initialize(source_input)
       @reference_register = ReferenceRegister.new
       @root_source = Source.new(source_input, self, reference_register)
+      @warnings = []
+      @openapi_version = determine_openapi_version(root_source.data["openapi"])
       @build_in_progress = false
       @built = false
     end
@@ -125,14 +136,39 @@ module Openapi3Parser
 
     attr_reader :reference_register, :built, :build_in_progress
 
+    def add_warning(text)
+      @warnings << text
+    end
+
     def build
       return if build_in_progress || built
       @build_in_progress = true
       context = Context.root(root_source.data, root_source)
       @factory = NodeFactories::Openapi.new(context)
       reference_register.freeze
+      @warnings.freeze
       @build_in_progress = false
       @built = true
+    end
+
+    def determine_openapi_version(version)
+      minor_version = (version || "").split(".").first(2).join(".")
+
+      if SUPPORTED_OPENAPI_VERSIONS.include?(minor_version)
+        minor_version
+      elsif version
+        add_warning(
+          "Unsupported OpenAPI version (#{version}), treating as a " \
+          "#{DEFAULT_OPENAPI_VERSION} document"
+        )
+        DEFAULT_OPENAPI_VERSION
+      else
+        add_warning(
+          "Unspecified OpenAPI version, treating as a " \
+          "#{DEFAULT_OPENAPI_VERSION} document"
+        )
+        DEFAULT_OPENAPI_VERSION
+      end
     end
 
     def factory

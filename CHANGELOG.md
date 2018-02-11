@@ -1,5 +1,6 @@
 # Unreleased
 
+- Determine the OpenAPI specification version and store it in document.
 - Support commonmark rendering, add description_html methods to nodes which
   allow description to be rendered as HTML.
 

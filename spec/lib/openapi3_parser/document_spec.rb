@@ -12,7 +12,7 @@ RSpec.describe Openapi3Parser::Document do
 
   let(:source_data) do
     {
-      "openapi" => "3.0.0",
+      "openapi" => openapi_version,
       "info" => {
         "title" => "Minimal Openapi definition",
         "version" => "1.0.0"
@@ -21,6 +21,8 @@ RSpec.describe Openapi3Parser::Document do
       "components" => components_data
     }
   end
+
+  let(:openapi_version) { "3.0.0" }
 
   let(:components_data) do
     {
@@ -37,6 +39,36 @@ RSpec.describe Openapi3Parser::Document do
   end
 
   before { allow(File).to receive(:read).and_return(responses_data.to_json) }
+
+  describe ".new" do
+    let(:instance) { described_class.new(source_input) }
+
+    context "when an allowed version is included" do
+      let(:openapi_version) { "3.0.1" }
+
+      it "it does not have warnings" do
+        expect(instance.warnings).to be_empty
+      end
+    end
+
+    context "when no version is include in the source data" do
+      let(:openapi_version) { nil }
+
+      it "raises a warning" do
+        expect(instance.warnings.first).to match(/Unspecified OpenAPI version/)
+      end
+    end
+
+    context "when an unsupported version is include in the source data" do
+      let(:openapi_version) { "2.0.0" }
+
+      it "raises a warning" do
+        expect(instance.warnings.first).to match(
+          /Unsupported OpenAPI version #{Regexp.escape('(2.0.0)')}/
+        )
+      end
+    end
+  end
 
   describe "#root" do
     subject { described_class.new(source_input).root }
@@ -99,6 +131,28 @@ RSpec.describe Openapi3Parser::Document do
     context "when there are errors" do
       let(:source_data) { {} }
       it { is_expected.not_to be_empty }
+    end
+  end
+
+  describe "#openapi_version" do
+    subject { described_class.new(source_input).openapi_version }
+
+    context "when an allowed version is used" do
+      let(:openapi_version) { "3.0.1" }
+
+      it { is_expected.to eq("3.0") }
+    end
+
+    context "when no version is provided" do
+      let(:openapi_version) { nil }
+
+      it { is_expected.to eq(described_class::DEFAULT_OPENAPI_VERSION) }
+    end
+
+    context "when an unsupported version is provided" do
+      let(:openapi_version) { "2.0.0" }
+
+      it { is_expected.to eq(described_class::DEFAULT_OPENAPI_VERSION) }
     end
   end
 end
