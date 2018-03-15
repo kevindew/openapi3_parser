@@ -80,7 +80,7 @@ module Openapi3Parser
 
     def transform_errors(errors)
       error_objects = Array(errors).map do |error|
-        if !error.is_a?(Validation::Error)
+        if error.is_a?(Validation::Error)
           error
         else
           Validation::Error.new(error, context, self.class)
