@@ -45,7 +45,17 @@ module Openapi3Parser
       end
 
       def tags_factory(context)
-        NodeFactories::Array.new(context, value_factory: NodeFactories::Tag)
+        validate_unique_tags = lambda do |input, _context|
+          names = input.map { |i| i["name"] }
+          return if names.uniq.count == names.count
+
+          dupes = names.find_all { |name| names.count(name) > 1 }
+          "Duplicate tag names: #{dupes.uniq.join(', ')}"
+        end
+
+        NodeFactories::Array.new(context,
+                                 value_factory: NodeFactories::Tag,
+                                 validate: validate_unique_tags)
       end
     end
   end
