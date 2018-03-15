@@ -78,12 +78,15 @@ module Openapi3Parser
         end
 
         def field_errors(name, field_config)
+          return if input[name].nil?
           field = input[name]
-          return if field.nil?
-          return field.errors.to_a if field.respond_to?(:errors)
-          type_error = build_type_error(name, field_config)
-          return type_error if type_error
-          build_validation_errors(name, field_config)
+
+          if field.respond_to?(:errors) && !field.errors.empty?
+            field.errors.to_a
+          else
+            build_type_error(name, field_config) ||
+              build_validation_errors(name, field_config)
+          end
         end
 
         def build_type_error(name, field_config)
