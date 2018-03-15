@@ -32,3 +32,5 @@ These are the steps defined to reach 1.0. Assistance is very welcome.
 - [x] Ensure Array and Map nodes return empty ones by default rather than nil
 - [ ] Make JSON pointer public access to be consistent accepting string, array
       or (potentially) a pointer class
+- [ ] Support creating a default Server object on servers property of OpenAPI
+      Node
