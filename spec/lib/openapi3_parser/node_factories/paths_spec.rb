@@ -35,4 +35,55 @@ RSpec.describe Openapi3Parser::NodeFactories::Paths do
 
     let(:context) { create_context(input) }
   end
+
+  describe "path keys" do
+    subject { described_class.new(create_context(input)) }
+    let(:path) do
+      {
+        "get" => {
+          "description" => "Description",
+          "responses" => {
+            "200" => { "description" => "Description" }
+          }
+        }
+      }
+    end
+
+    context "when the path key is a valid path" do
+      let(:input) { { "/path" => path } }
+
+      it { is_expected.to be_valid }
+    end
+
+    context "when the path key has template paramaters" do
+      let(:input) { { "/path/{test}" => path } }
+
+      it { is_expected.to be_valid }
+    end
+
+    context "when a path key does not begin with a slash" do
+      let(:input) { { "path" => path } }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context "when a path key is not a path" do
+      let(:input) { { "invalid path" => path } }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context "when there are two paths with same hiearchy but different "\
+            "templated names" do
+
+      let(:input) do
+        {
+          "/path/{param_a}/test" => path,
+          "/path/{param_b}/test" => path
+        }
+      end
+
+      it { is_expected.not_to be_valid }
+    end
+  end
 end
