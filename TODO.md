@@ -34,3 +34,5 @@ These are the steps defined to reach 1.0. Assistance is very welcome.
       or (potentially) a pointer class
 - [ ] Support creating a default Server object on servers property of OpenAPI
       Node
+- [ ] Support relative URLs being able to be relative the first server object
+      see: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#relative-references-in-urls
