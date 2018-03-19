@@ -2,6 +2,8 @@
 
 require "openapi3_parser/node/contact"
 require "openapi3_parser/node_factory/object"
+require "openapi3_parser/validators/url"
+require "openapi3_parser/validators/email"
 
 module Openapi3Parser
   module NodeFactories
@@ -11,8 +13,12 @@ module Openapi3Parser
       allow_extensions
 
       field "name", input_type: String
-      field "url", input_type: String
-      field "email", input_type: String
+      field "url",
+            input_type: String,
+            validate: ->(input) { Validators::Url.call(input) }
+      field "email",
+            input_type: String,
+            validate: ->(input) { Validators::Email.call(input) }
 
       private
 
