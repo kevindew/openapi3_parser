@@ -19,6 +19,8 @@ module Openapi3Parser
     class Components
       include NodeFactory::Object
 
+      KEY_FORMAT_REGEX = /^[a-zA-Z0-9\.\-_]+$/
+
       allow_extensions
       field "schemas", factory: :schemas_factory
       field "responses", factory: :responses_factory
@@ -75,12 +77,18 @@ module Openapi3Parser
       def referenceable_map_factory(context, factory)
         NodeFactories::Map.new(
           context,
-          value_factory: NodeFactory::OptionalReference.new(factory)
+          value_factory: NodeFactory::OptionalReference.new(factory),
+          validate: method(:validate_map_keys).to_proc
         )
       end
 
       def default
         {}
+      end
+
+      def validate_map_keys(input, _context)
+        invalid = input.keys.reject { |key| key =~ KEY_FORMAT_REGEX }
+        "Contains invalid keys: #{invalid.join(', ')}" unless invalid.empty?
       end
     end
   end

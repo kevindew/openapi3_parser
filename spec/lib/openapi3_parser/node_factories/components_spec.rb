@@ -111,4 +111,25 @@ RSpec.describe Openapi3Parser::NodeFactories::Components do
 
     let(:context) { create_context(input, document_input: document_input) }
   end
+
+  describe "key format" do
+    subject { described_class.new(create_context(input)) }
+    let(:input) do
+      {
+        "responses" => {
+          key => { "description" => "Example description" }
+        }
+      }
+    end
+
+    context "when key is invalid" do
+      let(:key) { "Invalid Key" }
+      it { is_expected.not_to be_valid }
+    end
+
+    context "when key is valid" do
+      let(:key) { "valid.key" }
+      it { is_expected.to be_valid }
+    end
+  end
 end
