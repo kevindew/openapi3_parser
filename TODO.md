@@ -36,3 +36,4 @@ These are the steps defined to reach 1.0. Assistance is very welcome.
       Node
 - [ ] Support relative URLs being able to be relative the first server object
       see: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#relative-references-in-urls
+- [ ] Support validating a Server URL based on default values
