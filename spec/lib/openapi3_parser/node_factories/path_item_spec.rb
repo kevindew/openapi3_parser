@@ -69,4 +69,34 @@ RSpec.describe Openapi3Parser::NodeFactories::PathItem do
 
     let(:context) { create_context(input, document_input: document_input) }
   end
+
+  describe "parameters" do
+    subject do
+      described_class.new(
+        create_context("parameters" => parameters)
+      )
+    end
+
+    context "when there are no duplicate parameters" do
+      let(:parameters) do
+        [
+          { "name" => "id", "in" => "path" },
+          { "name" => "id", "in" => "query" }
+        ]
+      end
+
+      it { is_expected.to be_valid }
+    end
+
+    context "when there are duplicate parameters" do
+      let(:parameters) do
+        [
+          { "name" => "id", "in" => "path" },
+          { "name" => "id", "in" => "query" }
+        ]
+      end
+
+      it { is_expected.not_to be_valid }
+    end
+  end
 end
