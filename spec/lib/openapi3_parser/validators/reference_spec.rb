@@ -3,7 +3,7 @@
 require "openapi3_parser/validators/reference"
 
 RSpec.describe Openapi3Parser::Validators::Reference do
-  describe ".errors" do
+  describe "#errors" do
     let(:input) { "#/test" }
     subject { described_class.new(input).errors }
 
@@ -32,7 +32,7 @@ RSpec.describe Openapi3Parser::Validators::Reference do
     end
   end
 
-  describe ".valid?" do
+  describe "#valid?" do
     let(:input) { "#/test" }
     subject { described_class.new(input).valid? }
 
