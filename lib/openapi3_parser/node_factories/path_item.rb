@@ -74,8 +74,24 @@ module Openapi3Parser
 
       def parameters_factory(context)
         factory = NodeFactory::OptionalReference.new(NodeFactories::Parameter)
-        NodeFactories::Array.new(context, value_factory: factory)
+        NodeFactories::Array.new(context,
+                                 value_factory: factory,
+                                 validate: method(:validate_parameters).to_proc)
       end
+
+      # rubocop:disable Metrics/AbcSize
+      def validate_parameters(_input, factory)
+        resolved = factory.resolved_input
+        dupes = resolved.reject { |item| item["name"].nil? || item["in"].nil? }
+                        .group_by { |item| [item["name"], item["in"]] }
+                        .delete_if { |_, group| group.size < 2 }
+                        .keys
+        return if dupes.empty?
+
+        info = dupes.map { |d| "#{d.first} in #{d.last}" }.join(", ")
+        "Duplicate parameters: #{info}"
+      end
+      # rubocop:enable Metrics/AbcSize
     end
   end
 end

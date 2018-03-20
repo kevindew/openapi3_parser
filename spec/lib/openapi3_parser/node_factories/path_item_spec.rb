@@ -92,7 +92,7 @@ RSpec.describe Openapi3Parser::NodeFactories::PathItem do
       let(:parameters) do
         [
           { "name" => "id", "in" => "path" },
-          { "name" => "id", "in" => "query" }
+          { "name" => "id", "in" => "path" }
         ]
       end
 
