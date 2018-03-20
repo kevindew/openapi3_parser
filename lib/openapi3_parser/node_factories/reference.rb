@@ -26,6 +26,10 @@ module Openapi3Parser
       def ref_factory(context)
         Fields::Reference.new(context, factory)
       end
+
+      def build_resolved_input
+        processed_input["$ref"].data
+      end
     end
   end
 end

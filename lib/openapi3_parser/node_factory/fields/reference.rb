@@ -17,6 +17,10 @@ module Openapi3Parser
           @reference_resolver = create_reference_resolver
         end
 
+        def data
+          reference_resolver&.data
+        end
+
         private
 
         attr_reader :given_reference, :factory, :reference_resolver

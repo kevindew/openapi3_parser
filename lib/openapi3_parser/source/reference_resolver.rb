@@ -16,12 +16,16 @@ module Openapi3Parser
         @reference_factory ||= begin
                                  next_context = Context.reference_field(
                                    context,
-                                   input: source.data_at_pointer(json_pointer),
+                                   input: data,
                                    source: source,
                                    pointer_segments: json_pointer
                                  )
                                  build_factory(next_context)
                                end
+      end
+
+      def data
+        source.data_at_pointer(json_pointer)
       end
 
       def valid?

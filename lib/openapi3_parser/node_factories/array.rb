@@ -42,8 +42,8 @@ module Openapi3Parser
         end
       end
 
-      def validate(input, context)
-        given_validate&.call(input, context)
+      def validate(input, _context)
+        given_validate&.call(input, self)
       end
 
       def validate_input
@@ -65,6 +65,12 @@ module Openapi3Parser
 
       def build_array(data, context)
         Node::Array.new(data, context)
+      end
+
+      def build_resolved_input
+        processed_input.map do |value|
+          value.respond_to?(:resolved_input) ? value.resolved_input : value
+        end
       end
 
       def value_factory?

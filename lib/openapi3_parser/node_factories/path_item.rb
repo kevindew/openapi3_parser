@@ -40,10 +40,7 @@ module Openapi3Parser
         ref = data.delete("$ref")
         return Node::PathItem.new(data, context) unless ref
 
-        merged_data = ref.node_data.merge(data) do |_, new, old|
-          new.nil? ? old : new
-        end
-        Node::PathItem.new(merged_data, ref.node_context)
+        Node::PathItem.new(merge_data(ref.node_data, data), ref.node_context)
       end
 
       def ref_factory(context)
@@ -59,6 +56,20 @@ module Openapi3Parser
           context,
           value_factory: NodeFactories::Server
         )
+      end
+
+      def build_resolved_input
+        ref = processed_input["$ref"]
+        data = super.tap { |d| d.delete("$ref") }
+        return data unless ref
+
+        merge_data(ref.data || {}, data)
+      end
+
+      def merge_data(base, priority)
+        base.merge(priority) do |_, new, old|
+          new.nil? ? old : new
+        end
       end
 
       def parameters_factory(context)

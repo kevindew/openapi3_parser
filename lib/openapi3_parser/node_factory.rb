@@ -44,7 +44,7 @@ module Openapi3Parser
 
     EXTENSION_REGEX = /^x-(.*)/
 
-    attr_reader :context
+    attr_reader :context, :processed_input
 
     def initialize(context)
       @context = context
@@ -68,14 +68,20 @@ module Openapi3Parser
       context.input.nil?
     end
 
-    private
+    def resolved_input
+      @resolved_input ||= processed_input ? build_resolved_input : nil
+    end
 
-    attr_reader :processed_input
+    private
 
     def validate(_input, _context); end
 
     def validate_input
       transform_errors(validate(context.input, context))
+    end
+
+    def build_resolved_input
+      context.input
     end
 
     def transform_errors(errors)

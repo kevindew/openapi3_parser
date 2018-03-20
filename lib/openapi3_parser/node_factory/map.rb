@@ -35,6 +35,16 @@ module Openapi3Parser
         data
       end
 
+      def build_resolved_input
+        processed_input.each_with_object({}) do |(key, value), memo|
+          memo[key] = if value.respond_to?(:resolved_input)
+                        value.resolved_input
+                      else
+                        value
+                      end
+        end
+      end
+
       def default
         {}
       end

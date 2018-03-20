@@ -74,6 +74,17 @@ module Openapi3Parser
       def build_object(data, _context)
         data
       end
+
+      def build_resolved_input
+        processed_input.each_with_object({}) do |(key, value), memo|
+          next if value.respond_to?(:nil_input?) && value.nil_input?
+          memo[key] = if value.respond_to?(:resolved_input)
+                        value.resolved_input
+                      else
+                        value
+                      end
+        end
+      end
     end
   end
 end
