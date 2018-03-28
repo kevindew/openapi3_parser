@@ -11,6 +11,7 @@ require "openapi3_parser/node_factories/responses"
 require "openapi3_parser/node_factories/callback"
 require "openapi3_parser/node_factories/server"
 require "openapi3_parser/node_factories/security_requirement"
+require "openapi3_parser/validators/duplicate_parameters"
 
 module Openapi3Parser
   module NodeFactories
@@ -44,7 +45,14 @@ module Openapi3Parser
 
       def parameters_factory(context)
         factory = NodeFactory::OptionalReference.new(NodeFactories::Parameter)
-        NodeFactories::Array.new(context, value_factory: factory)
+
+        validate = lambda do |_input, array_factory|
+          Validators::DuplicateParameters.call(array_factory.resolved_input)
+        end
+
+        NodeFactories::Array.new(context,
+                                 value_factory: factory,
+                                 validate: validate)
       end
 
       def request_body_factory(context)
