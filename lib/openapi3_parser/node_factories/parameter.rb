@@ -13,7 +13,10 @@ module Openapi3Parser
       allow_extensions
 
       field "name", input_type: String, required: true
-      field "in", input_type: String, required: true
+      field "in",
+            input_type: String,
+            required: true,
+            validate: :validate_in
       field "description", input_type: String
       field "required", input_type: :boolean, default: false
       field "deprecated", input_type: :boolean, default: false
@@ -37,6 +40,11 @@ module Openapi3Parser
       def default_style
         return "simple" if %w[path header].include?(context.input["in"])
         "form"
+      end
+
+      def validate_in(input)
+        valid = %w[header query cookie path].include?(input)
+        "in can only be header, query, cookie, or path" unless valid
       end
     end
   end
