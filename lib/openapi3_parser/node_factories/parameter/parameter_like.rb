@@ -15,7 +15,7 @@ module Openapi3Parser
 
         def examples_factory(context)
           factory = NodeFactory::OptionalReference.new(NodeFactories::Schema)
-          NodeFactories::Map.new(context, value_factory: factory)
+          NodeFactories::Map.new(context, default: nil, value_factory: factory)
         end
 
         def content_factory(context)

@@ -56,7 +56,7 @@ module Openapi3Parser
         node_data["example"]
       end
 
-      # @return [Map<String, Example>]
+      # @return [Map<String, Example>, nil]
       def examples
         node_data["examples"]
       end
