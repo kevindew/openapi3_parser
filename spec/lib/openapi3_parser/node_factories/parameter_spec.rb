@@ -92,4 +92,53 @@ RSpec.describe Openapi3Parser::NodeFactories::Parameter do
       it { is_expected.to have_validation_error("#/required") }
     end
   end
+
+  describe "default style value" do
+    subject(:node) { described_class.new(context).node }
+    let(:context) do
+      create_context("name" => "name", "in" => in_value, "required" => true)
+    end
+
+    context "when in is path" do
+      let(:in_value) { "path" }
+      it "has a value of simple" do
+        expect(node["style"]).to eq("simple")
+      end
+    end
+
+    context "when in is header" do
+      let(:in_value) { "header" }
+      it "has a value of simple" do
+        expect(node["style"]).to eq("simple")
+      end
+    end
+
+    context "when in is query" do
+      let(:in_value) { "query" }
+      it "has a value of form" do
+        expect(node["style"]).to eq("form")
+      end
+    end
+  end
+
+  describe "default explode value" do
+    subject(:node) { described_class.new(context).node }
+    let(:context) do
+      create_context("name" => "name", "in" => "query", "style" => style)
+    end
+
+    context "when style is form" do
+      let(:style) { "form" }
+      it "has a value of true" do
+        expect(node["explode"]).to be true
+      end
+    end
+
+    context "when style is simple" do
+      let(:style) { "simple" }
+      it "has a value of false" do
+        expect(node["explode"]).to be false
+      end
+    end
+  end
 end
