@@ -32,6 +32,8 @@ module Openapi3Parser
 
       field "content", factory: :content_factory
 
+      mutually_exclusive "example", "examples"
+
       private
 
       def build_object(data, context)
