@@ -12,24 +12,28 @@ module Openapi3Parser
     class Map
       include NodeFactory::Map
 
+      # rubocop:disable Metrics/ParameterLists
       def initialize(
         context,
         key_input_type: String,
         value_input_type: nil,
         value_factory: nil,
-        validate: nil
+        validate: nil,
+        default: {}
       )
         @given_key_input_type = key_input_type
         @given_value_input_type = value_input_type
         @given_value_factory = value_factory
         @given_validate = validate
+        @given_default = default
         super(context)
       end
+      # rubocop:enable Metrics/ParameterLists
 
       private
 
       attr_reader :given_key_input_type, :given_value_input_type,
-                  :given_value_factory, :given_validate
+                  :given_value_factory, :given_validate, :given_default
 
       def process_input(input)
         input.each_with_object({}) do |(key, value), memo|
@@ -106,6 +110,10 @@ module Openapi3Parser
         type = given_value_input_type
         return unless type
         "Expected #{type}" unless value.is_a?(type)
+      end
+
+      def default
+        given_default
       end
     end
   end
