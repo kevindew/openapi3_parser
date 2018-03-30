@@ -35,6 +35,7 @@ module Openapi3Parser
           [
             missing_required_fields_error,
             unexpected_fields_error,
+            mututally_exclusive_fields_errors,
             invalid_field_errors
           ].flatten.compact
         end
@@ -77,6 +78,10 @@ module Openapi3Parser
           end
         end
 
+        def mututally_exclusive_fields_errors
+          MututallyExclusiveFieldErrors.call(factory, input)
+        end
+
         def field_errors(name, field_config)
           return if input[name].nil?
           field = input[name]
@@ -108,6 +113,40 @@ module Openapi3Parser
               Context.next_field(context, name),
               factory.class
             )
+          end
+        end
+
+        class MututallyExclusiveFieldErrors
+          def self.call(*args)
+            new.call(*args)
+          end
+
+          def call(factory, input)
+            factory.mutually_exclusive_fields.inject([]) do |memo, fields|
+              number_non_nil = count_non_nil_fields(fields, input)
+
+              next memo unless number_non_nil > 1
+
+              memo << Validation::Error.new(
+                error_message(fields),
+                factory.context,
+                factory.class
+              )
+            end
+          end
+
+          private
+
+          def count_non_nil_fields(fields, input)
+            fields.count do |field|
+              data = input[field]
+              data.respond_to?(:nil_input?) ? !data.nil_input? : !data.nil?
+            end
+          end
+
+          def error_message(fields)
+            list_string = fields[0..-2].join(", ") + " and " + fields[-1]
+            "#{list_string} are mutually exclusive fields"
           end
         end
       end

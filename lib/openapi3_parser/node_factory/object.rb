@@ -33,6 +33,15 @@ module Openapi3Parser
         def allowed_extensions?
           @allow_extensions == true
         end
+
+        def mutually_exclusive(*fields)
+          @mutually_exclusive ||= []
+          @mutually_exclusive << fields
+        end
+
+        def mutually_exclusive_fields
+          @mutually_exclusive || []
+        end
       end
 
       def self.included(base)
@@ -45,6 +54,10 @@ module Openapi3Parser
 
       def allowed_extensions?
         self.class.allowed_extensions?
+      end
+
+      def mutually_exclusive_fields
+        self.class.mutually_exclusive_fields
       end
 
       def field_configs
