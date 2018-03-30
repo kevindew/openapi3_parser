@@ -109,7 +109,7 @@ RSpec.describe Openapi3Parser::NodeFactories::Operation do
     context "when there are no duplicate parameters" do
       let(:parameters) do
         [
-          { "name" => "id", "in" => "path" },
+          { "name" => "id", "in" => "header" },
           { "name" => "id", "in" => "query" }
         ]
       end
@@ -120,8 +120,8 @@ RSpec.describe Openapi3Parser::NodeFactories::Operation do
     context "when there are duplicate parameters" do
       let(:parameters) do
         [
-          { "name" => "id", "in" => "path" },
-          { "name" => "id", "in" => "path" }
+          { "name" => "id", "in" => "query" },
+          { "name" => "id", "in" => "query" }
         ]
       end
 
