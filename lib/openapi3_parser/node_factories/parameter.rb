@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context"
 require "openapi3_parser/node/parameter"
 require "openapi3_parser/node_factories/parameter/parameter_like"
 require "openapi3_parser/node_factory/object"
+require "openapi3_parser/validation/error"
 
 module Openapi3Parser
   module NodeFactories
@@ -13,10 +15,9 @@ module Openapi3Parser
       allow_extensions
 
       field "name", input_type: String, required: true
-      field "in",
-            input_type: String,
-            required: true,
-            validate: :validate_in
+      field "in", input_type: String,
+                  required: true,
+                  validate: :validate_in
       field "description", input_type: String
       field "required", input_type: :boolean, default: false
       field "deprecated", input_type: :boolean, default: false
@@ -35,6 +36,20 @@ module Openapi3Parser
 
       def build_object(data, context)
         Node::Parameter.new(data, context)
+      end
+
+      def validate(input, context)
+        errors = []
+
+        if input["in"] == "path" && !input["required"]
+          errors << Validation::Error.new(
+            "Must be included and true for a path parameter",
+            Context.next_field(context, "required"),
+            self.class
+          )
+        end
+
+        errors
       end
 
       def default_style
