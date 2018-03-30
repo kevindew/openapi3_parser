@@ -55,6 +55,7 @@ module Openapi3Parser
 
       def process_input(input)
         field_configs.each_with_object(input.dup) do |(field, config), memo|
+          memo[field] = nil unless memo[field]
           next unless config.factory?
           next_context = Context.next_field(context, field)
           memo[field] = config.initialize_factory(next_context, self)
