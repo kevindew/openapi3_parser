@@ -104,7 +104,7 @@ module Openapi3Parser
             raw_input[name], factory
           ).map do |error|
             Validation::Error.new(
-              "Invalid field: #{error}",
+              error,
               Context.next_field(context, name),
               factory.class
             )
