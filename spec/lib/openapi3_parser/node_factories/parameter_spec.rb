@@ -141,4 +141,60 @@ RSpec.describe Openapi3Parser::NodeFactories::Parameter do
       end
     end
   end
+
+  describe "content" do
+    subject(:factory) { described_class.new(context) }
+    let(:context) do
+      create_context("name" => "name", "in" => "query", "content" => content)
+    end
+    let(:message) { "Must only have one item" }
+
+    context "when there is a nil content entry" do
+      let(:content) { nil }
+      it { is_expected.to be_valid }
+
+      it "defaults to a nil value" do
+        expect(factory.node.content).to be nil
+      end
+    end
+
+    context "when there are no content entries" do
+      let(:content) { {} }
+      it do
+        is_expected
+          .to have_validation_error("#/content")
+          .with_message(message)
+      end
+    end
+
+    context "when there is a single content entry" do
+      let(:content) do
+        {
+          "media_type" => {
+            "schema" => { "type" => "string" }
+          }
+        }
+      end
+      it { is_expected.to be_valid }
+    end
+
+    context "when there are multiple content entries" do
+      let(:content) do
+        {
+          "media_type_1" => {
+            "schema" => { "type" => "string" }
+          },
+          "media_type_2" => {
+            "schema" => { "type" => "string" }
+          }
+        }
+      end
+
+      it do
+        is_expected
+          .to have_validation_error("#/content")
+          .with_message(message)
+      end
+    end
+  end
 end

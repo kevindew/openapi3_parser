@@ -61,7 +61,7 @@ module Openapi3Parser
         node_data["examples"]
       end
 
-      # @return [Map<String, MediaType>]
+      # @return [Map<String, MediaType>, nil]
       def content
         node_data["content"]
       end

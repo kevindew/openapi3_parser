@@ -19,10 +19,14 @@ module Openapi3Parser
         end
 
         def content_factory(context)
-          factory = NodeFactory::OptionalReference.new(
-            NodeFactories::MediaType
-          )
-          NodeFactories::Map.new(context, value_factory: factory)
+          NodeFactories::Map.new(context,
+                                 default: nil,
+                                 value_factory: NodeFactories::MediaType,
+                                 validate: method(:validate_content).to_proc)
+        end
+
+        def validate_content(input, _context)
+          "Must only have one item" unless input.size == 1
         end
       end
     end
