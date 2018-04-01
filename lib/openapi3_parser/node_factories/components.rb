@@ -13,13 +13,12 @@ require "openapi3_parser/node_factories/header"
 require "openapi3_parser/node_factories/security_scheme"
 require "openapi3_parser/node_factories/link"
 require "openapi3_parser/node_factories/callback"
+require "openapi3_parser/validators/component_keys"
 
 module Openapi3Parser
   module NodeFactories
     class Components
       include NodeFactory::Object
-
-      KEY_FORMAT_REGEX = /^[a-zA-Z0-9\.\-_]+$/
 
       allow_extensions
       field "schemas", factory: :schemas_factory
@@ -78,17 +77,12 @@ module Openapi3Parser
         NodeFactories::Map.new(
           context,
           value_factory: NodeFactory::OptionalReference.new(factory),
-          validate: method(:validate_map_keys).to_proc
+          validate: ->(input, _) { Validators::ComponentKeys.call(input) }
         )
       end
 
       def default
         {}
-      end
-
-      def validate_map_keys(input, _context)
-        invalid = input.keys.reject { |key| key =~ KEY_FORMAT_REGEX }
-        "Contains invalid keys: #{invalid.join(', ')}" unless invalid.empty?
       end
     end
   end

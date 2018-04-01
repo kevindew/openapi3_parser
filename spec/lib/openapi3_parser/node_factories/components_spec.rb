@@ -124,7 +124,7 @@ RSpec.describe Openapi3Parser::NodeFactories::Components do
 
     context "when key is invalid" do
       let(:key) { "Invalid Key" }
-      it { is_expected.not_to be_valid }
+      it { is_expected.to have_validation_error("#/responses") }
     end
 
     context "when key is valid" do
