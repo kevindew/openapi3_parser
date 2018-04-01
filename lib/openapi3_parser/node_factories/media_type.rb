@@ -39,8 +39,36 @@ module Openapi3Parser
       end
 
       def encoding_factory(context)
-        factory = NodeFactories::Encoding
-        NodeFactories::Map.new(context, value_factory: factory)
+        NodeFactories::Map.new(
+          context,
+          validate: EncodingValidator.new(self),
+          value_factory: NodeFactories::Encoding
+        )
+      end
+
+      class EncodingValidator
+        def initialize(factory)
+          @factory = factory
+        end
+
+        def call(input, _context)
+          missing_keys = input.keys - properties
+          error_message(missing_keys) unless missing_keys.empty?
+        end
+
+        private
+
+        attr_reader :factory
+
+        def properties
+          properties = factory.resolved_input.dig("schema", "properties")
+          properties.respond_to?(:keys) ? properties.keys : []
+        end
+
+        def error_message(missing_keys)
+          keys = missing_keys.join(", ")
+          "Keys are not defined as schema properties: #{keys}"
+        end
       end
     end
   end

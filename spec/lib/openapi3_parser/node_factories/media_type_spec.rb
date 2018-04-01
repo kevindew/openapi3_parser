@@ -81,4 +81,62 @@ RSpec.describe Openapi3Parser::NodeFactories::MediaType do
       )
     end
   end
+
+  describe "encoding" do
+    subject { described_class.new(context) }
+    let(:context) do
+      create_context(
+        "schema" => schema,
+        "encoding" => encoding
+      )
+    end
+    let(:schema) do
+      {
+        "type" => "object",
+        "properties" => {
+          "name" => { "type" => "string" },
+          "field" => { "type" => "string" }
+        }
+      }
+    end
+
+    context "when the keys exist in the schema" do
+      let(:encoding) do
+        {
+          "name" => { "contentType" => "text/plain" }
+        }
+      end
+
+      it { is_expected.to be_valid }
+    end
+
+    context "when keys don't exist as properties in the schema" do
+      let(:encoding) do
+        {
+          "key_1" => { "contentType" => "text/plain" },
+          "key_2" => { "contentType" => "text/plain" }
+        }
+      end
+
+      it do
+        is_expected
+          .to have_validation_error("#/encoding")
+          .with_message(
+            "Keys are not defined as schema properties: key_1, key_2"
+          )
+      end
+    end
+
+    context "when there is a malformed schema" do
+      let(:schema) do
+        {
+          "properties" => []
+        }
+      end
+      let(:encoding) { {} }
+
+      it { is_expected.not_to be_valid }
+      it { is_expected.not_to have_validation_error("#/encoding") }
+    end
+  end
 end
