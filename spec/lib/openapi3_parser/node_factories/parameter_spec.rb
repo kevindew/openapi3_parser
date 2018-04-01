@@ -3,8 +3,9 @@
 require "openapi3_parser/node_factories/parameter"
 require "openapi3_parser/node/parameter"
 
-require "support/node_object_factory"
 require "support/helpers/context"
+require "support/mutually_exclusive_example"
+require "support/node_object_factory"
 
 RSpec.describe Openapi3Parser::NodeFactories::Parameter do
   include Helpers::Context
@@ -198,8 +199,7 @@ RSpec.describe Openapi3Parser::NodeFactories::Parameter do
     end
   end
 
-  describe "mutually exclusive fields" do
-    subject { described_class.new(context) }
+  it_behaves_like "mutually exclusive example" do
     let(:context) do
       create_context(
         "name" => "name",
@@ -207,34 +207,6 @@ RSpec.describe Openapi3Parser::NodeFactories::Parameter do
         "example" => example,
         "examples" => examples
       )
-    end
-
-    context "when neither example or examples is provided" do
-      let(:example) { nil }
-      let(:examples) { nil }
-      it { is_expected.to be_valid }
-    end
-
-    context "when an example is provided" do
-      let(:example) { "anything" }
-      let(:examples) { nil }
-      it { is_expected.to be_valid }
-    end
-
-    context "when examples are provided" do
-      let(:example) { nil }
-      let(:examples) { {} }
-      it { is_expected.to be_valid }
-    end
-
-    context "when both are provided" do
-      let(:example) { "anything" }
-      let(:examples) { {} }
-      it do
-        is_expected
-          .to have_validation_error("#/")
-          .with_message("example and examples are mutually exclusive fields")
-      end
     end
   end
 end
