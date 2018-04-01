@@ -32,7 +32,7 @@ module Openapi3Parser
 
       def examples_factory(context)
         factory = NodeFactory::OptionalReference.new(NodeFactories::Example)
-        NodeFactories::Map.new(context, value_factory: factory)
+        NodeFactories::Map.new(context, default: nil, value_factory: factory)
       end
 
       def encoding_factory(context)

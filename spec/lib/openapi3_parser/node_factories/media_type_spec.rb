@@ -60,4 +60,15 @@ RSpec.describe Openapi3Parser::NodeFactories::MediaType do
 
     let(:context) { create_context(input, document_input: document_input) }
   end
+
+  describe "examples default value" do
+    subject(:node) { described_class.new(context).node }
+    let(:context) do
+      create_context("examples" => nil)
+    end
+
+    it "defaults to a value of nil" do
+      expect(node["examples"]).to be_nil
+    end
+  end
 end
