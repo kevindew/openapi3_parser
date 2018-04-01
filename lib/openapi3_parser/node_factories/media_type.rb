@@ -14,10 +14,13 @@ module Openapi3Parser
       include NodeFactory::Object
 
       allow_extensions
+
       field "schema", factory: :schema_factory
       field "example"
       field "examples", factory: :examples_factory
       field "encoding", factory: :encoding_factory
+
+      mutually_exclusive "example", "examples"
 
       private
 

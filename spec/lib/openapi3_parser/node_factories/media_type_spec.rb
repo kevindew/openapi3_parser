@@ -3,8 +3,9 @@
 require "openapi3_parser/node_factories/media_type"
 require "openapi3_parser/node/media_type"
 
-require "support/node_object_factory"
 require "support/helpers/context"
+require "support/mutually_exclusive_example"
+require "support/node_object_factory"
 
 RSpec.describe Openapi3Parser::NodeFactories::MediaType do
   include Helpers::Context
@@ -69,6 +70,15 @@ RSpec.describe Openapi3Parser::NodeFactories::MediaType do
 
     it "defaults to a value of nil" do
       expect(node["examples"]).to be_nil
+    end
+  end
+
+  it_behaves_like "mutually exclusive example" do
+    let(:context) do
+      create_context(
+        "example" => example,
+        "examples" => examples
+      )
     end
   end
 end
