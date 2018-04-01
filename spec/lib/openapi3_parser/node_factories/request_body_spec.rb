@@ -75,4 +75,21 @@ RSpec.describe Openapi3Parser::NodeFactories::RequestBody do
       end
     end
   end
+
+  describe "required" do
+    subject { described_class.new(context).node["required"] }
+    let(:context) do
+      create_context("content" => { "*/*" => {} }, "required" => required)
+    end
+
+    context "when required is set" do
+      let(:required) { true }
+      it { is_expected.to be true }
+    end
+
+    context "when required is not set" do
+      let(:required) { nil }
+      it { is_expected.to be false }
+    end
+  end
 end
