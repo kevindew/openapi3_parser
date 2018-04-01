@@ -16,7 +16,7 @@ module Openapi3Parser
       field "contentType", input_type: String
       field "headers", factory: :headers_factory
       field "style", input_type: String
-      field "explode", input_type: :boolean, default: true
+      field "explode", input_type: :boolean, default: :default_explode
       field "allowReserved", input_type: :boolean, default: false
 
       private
@@ -28,6 +28,10 @@ module Openapi3Parser
       def headers_factory(context)
         factory = NodeFactory::OptionalReference.new(NodeFactories::Header)
         NodeFactories::Map.new(context, value_factory: factory)
+      end
+
+      def default_explode
+        context.input["style"] == "form"
       end
     end
   end

@@ -25,4 +25,23 @@ RSpec.describe Openapi3Parser::NodeFactories::Encoding do
 
     let(:context) { create_context(input) }
   end
+
+  describe "default explode" do
+    subject(:node) { described_class.new(context).node }
+    let(:context) { create_context("style" => style) }
+
+    context "when style is 'form'" do
+      let(:style) { "form" }
+      it "has a value of true" do
+        expect(node["explode"]).to be true
+      end
+    end
+
+    context "when style is 'simple'" do
+      let(:style) { "simple" }
+      it "has a value of false" do
+        expect(node["explode"]).to be false
+      end
+    end
+  end
 end
