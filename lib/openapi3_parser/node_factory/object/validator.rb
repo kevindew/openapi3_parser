@@ -122,20 +122,26 @@ module Openapi3Parser
           end
 
           def call(factory, input)
-            factory.mutually_exclusive_fields.inject([]) do |memo, fields|
-              number_non_nil = count_non_nil_fields(fields, input)
-
-              next memo unless number_non_nil > 1
-
-              memo << Validation::Error.new(
-                error_message(fields),
-                factory.context,
-                factory.class
-              )
-            end
+            factory
+              .mutually_exclusive_fields
+              .each_with_object([]) do |mutually_exclusive, memo|
+                error = determine_error(mutually_exclusive, input, factory)
+                memo << error if error
+              end
           end
 
           private
+
+          def determine_error(mutually_exclusive, input, factory)
+            fields = mutually_exclusive.fields
+            number_non_nil = count_non_nil_fields(fields, input)
+
+            if number_non_nil.zero? && mutually_exclusive.required
+              required_error(fields, factory)
+            elsif number_non_nil > 1
+              exclusive_error(fields, factory)
+            end
+          end
 
           def count_non_nil_fields(fields, input)
             fields.count do |field|
@@ -144,9 +150,24 @@ module Openapi3Parser
             end
           end
 
-          def error_message(fields)
-            list_string = fields[0..-2].join(", ") + " and " + fields[-1]
-            "#{list_string} are mutually exclusive fields"
+          def required_error(fields, factory)
+            Validation::Error.new(
+              "one of #{sentence_fields(fields)} is required",
+              factory.context,
+              factory.class
+            )
+          end
+
+          def exclusive_error(fields, factory)
+            Validation::Error.new(
+              "#{sentence_fields(fields)} are mutually exclusive fields",
+              factory.context,
+              factory.class
+            )
+          end
+
+          def sentence_fields(fields)
+            fields[0..-2].join(", ") + " and " + fields[-1]
           end
         end
       end

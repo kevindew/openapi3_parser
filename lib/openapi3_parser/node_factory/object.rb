@@ -34,9 +34,11 @@ module Openapi3Parser
           @allow_extensions == true
         end
 
-        def mutually_exclusive(*fields)
+        def mutually_exclusive(*fields, required: false)
           @mutually_exclusive ||= []
-          @mutually_exclusive << fields
+          @mutually_exclusive << OpenStruct.new(
+            fields: fields, required: required
+          )
         end
 
         def mutually_exclusive_fields
