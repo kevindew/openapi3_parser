@@ -63,8 +63,17 @@ module Openapi3Parser
       end
 
       def validate(input, _context)
-        return unless input["type"] == "array" && resolved_input["items"].nil?
-        "items must be defined for a type of array"
+        errors = []
+
+        if input["type"] == "array" && resolved_input["items"].nil?
+          errors << "items must be defined for a type of array"
+        end
+
+        if input["readOnly"] == true && input["writeOnly"] == true
+          errors << "readOnly and writeOnly cannot both be true"
+        end
+
+        errors
       end
 
       def required_factory(context)

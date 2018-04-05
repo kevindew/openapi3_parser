@@ -75,6 +75,23 @@ RSpec.describe Openapi3Parser::NodeFactories::Schema do
     end
   end
 
+  describe "writeOnly and readOnly" do
+    subject { described_class.new(context) }
+    let(:context) do
+      create_context("readOnly" => read_only, "writeOnly" => write_only)
+    end
+
+    context "when both are true" do
+      let(:read_only) { true }
+      let(:write_only) { true }
+      it do
+        is_expected
+          .to have_validation_error("#/")
+          .with_message("readOnly and writeOnly cannot both be true")
+      end
+    end
+  end
+
   it_behaves_like "default field", field: "nullable", defaults_to: false do
     let(:context) { create_context("nullable" => nullable) }
   end
