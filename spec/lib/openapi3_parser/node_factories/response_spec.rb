@@ -85,7 +85,7 @@ RSpec.describe Openapi3Parser::NodeFactories::Response do
     let(:context) do
       create_context(
         "description" => "Description",
-        "links" => { key => {} }
+        "links" => { key => { "operationRef" => "#/test" } }
       )
     end
 

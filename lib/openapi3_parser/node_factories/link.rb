@@ -22,6 +22,8 @@ module Openapi3Parser
       field "description", input_type: String
       field "server", factory: :server_factory
 
+      mutually_exclusive "operationRef", "operationId", required: true
+
       private
 
       def build_object(data, context)
