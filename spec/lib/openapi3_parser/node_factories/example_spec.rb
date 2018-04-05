@@ -20,4 +20,55 @@ RSpec.describe Openapi3Parser::NodeFactories::Example do
 
     let(:context) { create_context(input) }
   end
+
+  describe "externalValue" do
+    subject(:factory) { described_class.new(context) }
+    let(:context) { create_context("externalValue" => external_value) }
+
+    context "when externalValue is an actual url" do
+      let(:external_value) { "https://example.com/path" }
+      it { is_expected.to be_valid }
+    end
+
+    context "when externalValue is not a url" do
+      let(:external_value) { "not a url" }
+      it { is_expected.not_to be_valid }
+    end
+  end
+
+  describe "mutually exclusive value externalValue" do
+    subject { described_class.new(context) }
+
+    let(:context) do
+      create_context("value" => value, "externalValue" => external_value)
+    end
+    let(:value) { nil }
+    let(:external_value) { nil }
+
+    context "when neither value or externalValue is provided" do
+      it { is_expected.to be_valid }
+    end
+
+    context "when a value is provided" do
+      let(:value) { "anything" }
+      it { is_expected.to be_valid }
+    end
+
+    context "when examples are provided" do
+      let(:external_value) { "/" }
+      it { is_expected.to be_valid }
+    end
+
+    context "when both are provided" do
+      let(:value) { "anything" }
+      let(:external_value) { "/" }
+      it do
+        is_expected
+          .to have_validation_error("#/")
+          .with_message(
+            "value and externalValue are mutually exclusive fields"
+          )
+      end
+    end
+  end
 end
