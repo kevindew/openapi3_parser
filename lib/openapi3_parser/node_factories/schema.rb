@@ -62,6 +62,11 @@ module Openapi3Parser
         Node::Schema.new(data, context)
       end
 
+      def validate(input, _context)
+        return unless input["type"] == "array" && resolved_input["items"].nil?
+        "items must be defined for a type of array"
+      end
+
       def required_factory(context)
         NodeFactories::Array.new(
           context,

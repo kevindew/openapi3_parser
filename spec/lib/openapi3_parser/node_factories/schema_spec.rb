@@ -46,4 +46,31 @@ RSpec.describe Openapi3Parser::NodeFactories::Schema do
 
     let(:context) { create_context(input, document_input: document_input) }
   end
+
+  describe "items" do
+    subject { described_class.new(context) }
+    let(:context) { create_context("type" => type, "items" => items) }
+
+    context "when type is not array and items is not provided" do
+      let(:type) { "string" }
+      let(:items) { nil }
+      it { is_expected.to be_valid }
+    end
+
+    context "when type is array and items is not provided" do
+      let(:type) { "array" }
+      let(:items) { nil }
+      it do
+        is_expected
+          .to have_validation_error("#/")
+          .with_message("items must be defined for a type of array")
+      end
+    end
+
+    context "when type is array and items areprovided" do
+      let(:type) { "array" }
+      let(:items) { { "type" => "string" } }
+      it { is_expected.to be_valid }
+    end
+  end
 end
