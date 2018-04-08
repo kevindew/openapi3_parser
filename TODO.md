@@ -2,7 +2,7 @@
 
 These are the steps defined to reach 1.0. Assistance is very welcome.
 
-- [ ] Handle mutually exclusive fields
+- [x] Handle mutually exclusive fields
 - [ ] Refactor the various NodeFactory modules to be a less confusing
       hierachical structure. Consider having factories subclass instead of use
       mixin
