@@ -2,6 +2,7 @@
 
 require "openapi3_parser/node/xml"
 require "openapi3_parser/node_factory/object"
+require "openapi3_parser/validators/absolute_uri"
 
 module Openapi3Parser
   module NodeFactories
@@ -10,7 +11,9 @@ module Openapi3Parser
 
       allow_extensions
       field "name", input_type: String
-      field "namespace", input_type: String
+      field "namespace",
+            input_type: String,
+            validate: -> (input) { Validators::AbsoluteUri.call(input) }
       field "prefix", input_type: String
       field "attribute", input_type: :boolean, default: false
       field "wrapped", input_type: :boolean, default: false
