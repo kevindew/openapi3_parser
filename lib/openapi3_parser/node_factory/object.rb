@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "ostruct"
+
 require "openapi3_parser/context"
 require "openapi3_parser/node_factory"
 require "openapi3_parser/node_factory/field_config"
