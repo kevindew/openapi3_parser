@@ -13,7 +13,7 @@ module Openapi3Parser
       field "name", input_type: String
       field "namespace",
             input_type: String,
-            validate: -> (input) { Validators::AbsoluteUri.call(input) }
+            validate: ->(input) { Validators::AbsoluteUri.call(input) }
       field "prefix", input_type: String
       field "attribute", input_type: :boolean, default: false
       field "wrapped", input_type: :boolean, default: false
