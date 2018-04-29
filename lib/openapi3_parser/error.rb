@@ -27,5 +27,8 @@ module Openapi3Parser
     # Used when there are extra fields that are not expected in the data for
     # a node
     class UnexpectedFields < Error; end
+    # Used when a method we expect to be able to call (through symbol or proc)
+    # is not callable
+    class NotCallable < Error; end
   end
 end
