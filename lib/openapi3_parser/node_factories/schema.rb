@@ -23,7 +23,7 @@ module Openapi3Parser
       field "exclusiveMinimum", input_type: :boolean, default: false
       field "maxLength", input_type: Integer
       field "minLength", input_type: Integer, default: 0
-      field :pattern, input_type: String
+      field "pattern", input_type: String
       field "maxItems", input_type: Integer
       field "minItems", input_type: Integer, default: 0
       field "uniqueItems", input_type: :boolean, default: false
