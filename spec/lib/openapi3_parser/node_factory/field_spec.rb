@@ -1,132 +1,44 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/error"
-require "openapi3_parser/node_factory/map"
-require "openapi3_parser/node/map"
+require "openapi3_parser/node_factory/field"
 
 require "support/helpers/context"
 require "support/node_factory"
 
-RSpec.describe Openapi3Parser::NodeFactory::Map do
+RSpec.describe Openapi3Parser::NodeFactory::Field do
   include Helpers::Context
-  let(:context) { create_context(input, pointer_segments: pointer_segments) }
-  let(:input) { {} }
-  let(:pointer_segments) { [] }
 
-  let(:allow_extensions) { false }
-  let(:default) { {} }
-  let(:key_input_type) { String }
-  let(:value_input_type) { nil }
-  let(:value_factory) { nil }
+  let(:context) { create_context(input) }
+  let(:input) { "input" }
+  let(:input_type) { nil }
   let(:validate) { nil }
 
   let(:instance) do
-    described_class.new(context,
-                        allow_extensions: allow_extensions,
-                        default: default,
-                        key_input_type: key_input_type,
-                        value_input_type: value_input_type,
-                        value_factory: value_factory,
-                        validate: validate)
+    described_class.new(context, input_type: input_type, validate: validate)
   end
 
-  it_behaves_like "node factory", ::Hash do
-    let(:context) { create_context({}) }
+  it_behaves_like "node factory", ::Integer do
+    let(:context) { create_context(1) }
   end
 
   describe "#node" do
     subject { instance.node }
 
-    it { is_expected.to be_a(Openapi3Parser::Node::Map) }
+    it { is_expected.to eq(input) }
 
-    context "when input is expected to contain hashes" do
-      let(:input) { { "a" => {}, "b" => 1 } }
-      let(:value_input_type) { Hash }
-
-      it "raises an InvalidType error" do
-        error_type = Openapi3Parser::Error::InvalidType
-        error_message = "Invalid type for #/b: Expected Object"
-        expect { instance.node }
-          .to raise_error(error_type, error_message)
-      end
-    end
-
-    context "when extensions are provided" do
-      let(:input) { { "x-test" => "my extension" } }
-
-      context "and extensions are allowed" do
-        let(:allow_extensions) { true }
-
-        it "allows accessing the extension" do
-          expect(instance.node.extension("test")).to eq("my extension")
-        end
-      end
-
-      context "and extensions are not allowed" do
-        let(:allow_extensions) { false }
-
-        it "raises an UnexpectedFields error" do
-          error_type = Openapi3Parser::Error::UnexpectedFields
-          error_message = "Unexpected fields for #/: x-test"
-          expect { instance.node }
-            .to raise_error(error_type, error_message)
-        end
-      end
-    end
-
-    context "when input is nil and default is an empty hash" do
+    context "when input is nil" do
       let(:input) { nil }
-      let(:default) { {} }
-
-      it { is_expected.to be_a(Openapi3Parser::Node::Map) }
-    end
-
-    context "when input is nil and default is nil" do
-      let(:input) { nil }
-      let(:default) { nil }
-
       it { is_expected.to be_nil }
     end
 
-    context "when key_input_type does not match" do
-      let(:key_input_type) { Integer }
-      let(:input) do
-        {
-          "item" => { "name" => "Kenneth" }
-        }
-      end
+    context "when input_type does not match" do
+      let(:input_type) { Integer }
+      let(:input) { "input" }
 
       it "raises an InvalidType error" do
         expect { instance.node }
           .to raise_error(Openapi3Parser::Error::InvalidType)
-      end
-    end
-
-    context "when value_input_type does not match" do
-      let(:value_input_type) { Integer }
-      let(:input) do
-        {
-          "item" => { "name" => "Kenneth" }
-        }
-      end
-
-      it "raises an InvalidType error" do
-        expect { instance.node }
-          .to raise_error(Openapi3Parser::Error::InvalidType)
-      end
-    end
-
-    context "when value_factory is set" do
-      let(:value_factory) { Openapi3Parser::NodeFactory::Contact }
-      let(:input) do
-        {
-          "item" => { "name" => "Kenneth" }
-        }
-      end
-      subject(:item) { instance.node["item"] }
-
-      it "returns items created by the value factory" do
-        expect(item).to be_a(Openapi3Parser::Node::Contact)
       end
     end
 
