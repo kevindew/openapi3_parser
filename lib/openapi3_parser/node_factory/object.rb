@@ -1,77 +1,68 @@
 # frozen_string_literal: true
 
-require "ostruct"
+require "forwardable"
 
 require "openapi3_parser/context"
-require "openapi3_parser/node_factory"
-require "openapi3_parser/node_factory/field_config"
-require "openapi3_parser/node_factory/object/node_builder"
-require "openapi3_parser/node_factory/object/validator"
-require "openapi3_parser/validation/error_collection"
+require "openapi3_parser/node_factory/object_factory/dsl"
+require "openapi3_parser/node_factory/object_factory/node_builder"
 
 module Openapi3Parser
   module NodeFactory
-    module Object
-      include NodeFactory
+    class Object
+      extend Forwardable
+      extend ObjectFactory::Dsl
 
-      module ClassMethods
-        def field(name, **options)
-          @field_configs ||= {}
-          @field_configs[name] = FieldConfig.new(options)
-        end
+      def_delegators "self.class",
+                     :field_configs,
+                     :allowed_extensions?,
+                     :mutually_exclusive_fields,
+                     :allowed_default?,
+                     :validations
 
-        def field_configs
-          @field_configs || {}
-        end
+      attr_reader :context, :data
 
-        def allow_extensions
-          @allow_extensions = true
-        end
-
-        def disallow_extensions
-          @allow_extensions = false
-        end
-
-        def allowed_extensions?
-          @allow_extensions == true
-        end
-
-        def mutually_exclusive(*fields, required: false)
-          @mutually_exclusive ||= []
-          @mutually_exclusive << OpenStruct.new(
-            fields: fields, required: required
-          )
-        end
-
-        def mutually_exclusive_fields
-          @mutually_exclusive || []
-        end
+      def initialize(context)
+        @context = context
+        data = nil_input? ? default : context.input
+        @data = data.nil? ? nil : process_data(data)
       end
 
-      def self.included(base)
-        base.extend(NodeFactory::ClassMethods)
-        base.extend(ClassMethods)
-        base.class_eval do
-          input_type Hash
-        end
+      def resolved_input
+        @resolved_input ||= build_resolved_input
       end
 
-      def allowed_extensions?
-        self.class.allowed_extensions?
+      def raw_input
+        context.input
       end
 
-      def mutually_exclusive_fields
-        self.class.mutually_exclusive_fields
+      def nil_input?
+        context.input.nil?
       end
 
-      def field_configs
-        self.class.field_configs || {}
+      def valid?
+        errors.empty?
+      end
+
+      def errors
+        @errors ||= ObjectFactory::NodeBuilder.errors(self)
+      end
+
+      def node
+        @node ||= build_node
+      end
+
+      def can_use_default?
+        true
+      end
+
+      def default
+        nil
       end
 
       private
 
-      def process_input(input)
-        field_configs.each_with_object(input.dup) do |(field, config), memo|
+      def process_data(raw_data)
+        field_configs.each_with_object(raw_data.dup) do |(field, config), memo|
           memo[field] = nil unless memo[field]
           next unless config.factory?
           next_context = Context.next_field(context, field)
@@ -79,22 +70,10 @@ module Openapi3Parser
         end
       end
 
-      def validate_input
-        validator = Validator.new(processed_input, self)
-        Validation::ErrorCollection.combine(super, validator.errors)
-      end
-
-      def build_node(input)
-        data = NodeBuilder.new(input, self).data
-        build_object(data, context)
-      end
-
-      def build_object(data, _context)
-        data
-      end
-
       def build_resolved_input
-        processed_input.each_with_object({}) do |(key, value), memo|
+        return unless data
+
+        data.each_with_object({}) do |(key, value), memo|
           next if value.respond_to?(:nil_input?) && value.nil_input?
           memo[key] = if value.respond_to?(:resolved_input)
                         value.resolved_input
@@ -102,6 +81,11 @@ module Openapi3Parser
                         value
                       end
         end
+      end
+
+      def build_node
+        data = ObjectFactory::NodeBuilder.node_data(self)
+        build_object(data, context)
       end
     end
   end
