@@ -99,7 +99,7 @@ module Openapi3Parser
             extra_keys = factory.raw_input.keys - factory.field_configs.keys
             if factory.allowed_extensions?
               extra_keys.reject do |key|
-                key =~ NodeFactoryRefactor::EXTENSION_REGEX
+                key =~ NodeFactory::EXTENSION_REGEX
               end
             else
               extra_keys

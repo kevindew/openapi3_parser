@@ -3,7 +3,7 @@
 require "openapi3_parser/context"
 require "openapi3_parser/document/reference_register"
 require "openapi3_parser/error"
-require "openapi3_parser/node_factories/openapi"
+require "openapi3_parser/node_factory/openapi"
 
 require "support/helpers/context"
 
@@ -16,7 +16,7 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegister do
     context "when something is registered" do
       let(:context) { create_context({}) }
       let(:source) { context.source }
-      let(:factory) { Openapi3Parser::NodeFactories::Openapi.new(context) }
+      let(:factory) { Openapi3Parser::NodeFactory::Openapi.new(context) }
 
       it "registers the source" do
         instance.register(factory)
@@ -33,13 +33,13 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegister do
       let(:root_context) { create_context({}) }
       let(:source) { root_context.source }
       let(:root_factory) do
-        Openapi3Parser::NodeFactories::Openapi.new(root_context)
+        Openapi3Parser::NodeFactory::Openapi.new(root_context)
       end
       let(:next_context) do
         Openapi3Parser::Context.next_field(root_context, "path")
       end
       let(:next_factory) do
-        Openapi3Parser::NodeFactories::Openapi.new(next_context)
+        Openapi3Parser::NodeFactory::Openapi.new(next_context)
       end
 
       before do
@@ -61,10 +61,10 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegister do
       let(:root_context) { create_context({}) }
       let(:source) { root_context.source }
       let(:root_factory) do
-        Openapi3Parser::NodeFactories::Openapi.new(root_context)
+        Openapi3Parser::NodeFactory::Openapi.new(root_context)
       end
       let(:next_factory) do
-        Openapi3Parser::NodeFactories::Openapi.new(root_context)
+        Openapi3Parser::NodeFactory::Openapi.new(root_context)
       end
 
       before do
@@ -84,7 +84,7 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegister do
 
     context "when it is frozen" do
       let(:context) { create_context({}) }
-      let(:factory) { Openapi3Parser::NodeFactories::Openapi.new(context) }
+      let(:factory) { Openapi3Parser::NodeFactory::Openapi.new(context) }
 
       before { instance.freeze }
 

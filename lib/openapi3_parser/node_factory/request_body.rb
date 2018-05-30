@@ -1,0 +1,56 @@
+# frozen_string_literal: true
+
+require "openapi3_parser/context"
+require "openapi3_parser/node/request_body"
+require "openapi3_parser/node_factory/map"
+require "openapi3_parser/node_factory/object"
+require "openapi3_parser/node_factory/media_type"
+require "openapi3_parser/validation/error"
+require "openapi3_parser/validators/media_type"
+
+module Openapi3Parser
+  module NodeFactory
+    class RequestBody < NodeFactory::Object
+      allow_extensions
+      field "description", input_type: String
+      field "content", factory: :content_factory, required: true
+      field "required", input_type: :boolean, default: false
+
+      private
+
+      def build_object(data, context)
+        Node::RequestBody.new(data, context)
+      end
+
+      def content_factory(context)
+        NodeFactory::Map.new(
+          context,
+          value_factory: NodeFactory::MediaType,
+          validate: ContentValidator
+        )
+      end
+
+      class ContentValidator
+        def self.call(*args)
+          new.call(*args)
+        end
+
+        def call(validatable)
+          # This validation isn't actually mentioned in the spec, but it
+          # doesn't seem to make sense if this is an empty hash.
+          if validatable.input.size.zero?
+            return validatable.add_error("Expected to have at least 1 item")
+          end
+
+          validatable.input.keys.each do |key|
+            message = Validators::MediaType.call(key)
+            next unless message
+
+            context = Context.next_field(validatable.context, key)
+            validatable.add_error(message, context)
+          end
+        end
+      end
+    end
+  end
+end

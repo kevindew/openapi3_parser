@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factories/reference"
+require "openapi3_parser/node_factory/reference"
 
 module Openapi3Parser
   module NodeFactory
@@ -11,8 +11,12 @@ module Openapi3Parser
 
       def call(context)
         reference = context.input.is_a?(Hash) && context.input["$ref"]
-        return NodeFactories::Reference.new(context, self) if reference
-        factory.new(context)
+
+        if reference
+          NodeFactory::Reference.new(context, self)
+        else
+          factory.new(context)
+        end
       end
 
       private

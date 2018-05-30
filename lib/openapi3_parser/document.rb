@@ -3,7 +3,7 @@
 require "openapi3_parser/context"
 require "openapi3_parser/document/reference_register"
 require "openapi3_parser/error"
-require "openapi3_parser/node_factories/openapi"
+require "openapi3_parser/node_factory/openapi"
 require "openapi3_parser/source"
 require "openapi3_parser/validation/error_collection"
 
@@ -144,7 +144,7 @@ module Openapi3Parser
       return if build_in_progress || built
       @build_in_progress = true
       context = Context.root(root_source.data, root_source)
-      @factory = NodeFactories::Openapi.new(context)
+      @factory = NodeFactory::Openapi.new(context)
       reference_register.freeze
       @warnings.freeze
       @build_in_progress = false
