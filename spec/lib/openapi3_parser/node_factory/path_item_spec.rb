@@ -99,4 +99,51 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
       it { is_expected.not_to be_valid }
     end
   end
+
+  describe "merging with reference" do
+    let(:input) do
+      { "$ref" => "#/path_items/example" }
+    end
+
+    let(:document_input) do
+      {
+        "path_items" => { "example" => reference_input }
+      }
+    end
+
+    let(:context) { create_context(input, document_input: document_input) }
+
+    let(:reference_input) do
+      { "summary" => "My summary" }
+    end
+
+    let(:instance) { described_class.new(context) }
+
+    it "can be accessed via resolved_input" do
+      expect(instance.resolved_input).to match(
+        hash_including("summary" => "My summary")
+      )
+    end
+
+    it "is within the node" do
+      expect(instance.node.summary).to eq "My summary"
+    end
+
+    context "when both structures contain the same field" do
+      let(:input) do
+        {
+          "$ref" => "#/path_items/example",
+          "summary" => "A different summary"
+        }
+      end
+
+      it "uses the input at a higher priority than the reference" do
+        expect(instance.resolved_input).to match(
+          hash_including("summary" => "A different summary")
+        )
+
+        expect(instance.node.summary).to eq "A different summary"
+      end
+    end
+  end
 end

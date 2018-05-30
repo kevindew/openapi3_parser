@@ -58,11 +58,11 @@ module Openapi3Parser
         data_without_ref = super.tap { |d| d.delete("$ref") }
         return data_without_ref unless ref
 
-        merge_data(ref.data || {}, data_without_ref)
+        merge_data(ref.resolved_input || {}, data_without_ref)
       end
 
       def merge_data(base, priority)
-        base.merge(priority) do |_, new, old|
+        base.merge(priority) do |_, old, new|
           new.nil? ? old : new
         end
       end
