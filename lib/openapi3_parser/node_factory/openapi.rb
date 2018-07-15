@@ -15,7 +15,6 @@ module Openapi3Parser
   module NodeFactory
     class Openapi < NodeFactory::Object
       allow_extensions
-      disallow_default
 
       field "openapi", input_type: String, required: true
       field "info", factory: NodeFactory::Info, required: true

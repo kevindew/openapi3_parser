@@ -40,7 +40,7 @@ module Openapi3Parser
         end
 
         def check_input_type(validatable, building_node)
-          return true unless given_input_type || validatable.input.nil?
+          return true if !given_input_type || validatable.input.nil?
 
           if building_node
             TypeChecker.raise_on_invalid_type(validatable.context,
@@ -51,11 +51,12 @@ module Openapi3Parser
         end
 
         def validate_field(validatable, building_node)
-          return if !given_validate || validatable.input.nil?
+          return true if !given_validate || validatable.input.nil?
 
           run_validation(validatable)
 
-          return if !building_node || validatable.errors.empty?
+          return validatable.errors.empty? unless building_node
+          return true if validatable.errors.empty?
 
           error = validatable.errors.first
           location_summary = error.context.location_summary
@@ -75,15 +76,10 @@ module Openapi3Parser
                     :given_default, :given_validate
 
         def run_validation(validatable)
-          if given_validate.is_a?(Proc)
-            given_validate.call(validatable)
-          elsif given_validate.is_a?(Symbol)
+          if given_validate.is_a?(Symbol)
             validatable.factory.send(given_validate, validatable)
-          elsif given_validate.respond_to?(:call)
-            given_validate.call(validatable)
           else
-            raise Error::NotCallable, "Expected a Proc, a Symbol or an object"\
-                                      " responding to .call for validate"
+            given_validate.call(validatable)
           end
         end
       end
