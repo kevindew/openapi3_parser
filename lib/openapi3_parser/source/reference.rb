@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "cgi"
+
 require "openapi3_parser/source"
 require "openapi3_parser/validators/reference"
 

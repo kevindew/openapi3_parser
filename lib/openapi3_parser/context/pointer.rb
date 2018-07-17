@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "cgi"
+
 module Openapi3Parser
   class Context
     # A class to decorate the array of fields that make up a pointer and
