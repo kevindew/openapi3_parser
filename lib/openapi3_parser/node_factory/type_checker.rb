@@ -29,7 +29,7 @@ module Openapi3Parser
       end
 
       def validate_type(validatable, context)
-        return unless type
+        return true unless type
         context ||= validatable.context
         valid_type?(context.input).tap do |valid|
           next if valid
@@ -39,7 +39,7 @@ module Openapi3Parser
       end
 
       def validate_keys(validatable, context)
-        return unless type
+        return true unless type
         context ||= validatable.context
         valid_keys?(context.input).tap do |valid|
           next if valid
@@ -49,14 +49,14 @@ module Openapi3Parser
       end
 
       def raise_on_invalid_type(context)
-        return if !type || valid_type?(context.input)
+        return true if !type || valid_type?(context.input)
         raise Error::InvalidType,
               "Invalid type for #{context.location_summary}: "\
               "#{field_error_message}"
       end
 
       def raise_on_invalid_keys(context)
-        return if !type || valid_keys?(context.input)
+        return true if !type || valid_keys?(context.input)
         raise Error::InvalidType,
               "Invalid keys for #{context.location_summary}: "\
               "#{keys_error_message}"
