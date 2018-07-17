@@ -42,6 +42,13 @@ module Openapi3Parser
         "#{self.class.name}(message: #{message}, context: #{context}, " \
           "for_type: #{for_type})"
       end
+
+      # @return [Boolean]
+      def ==(other)
+        message == other.message &&
+          context == other.context &&
+          factory_class == other.factory_class
+      end
     end
   end
 end
