@@ -59,6 +59,16 @@ module Openapi3Parser
         nil
       end
 
+      def allowed_fields
+        field_configs.keys
+      end
+
+      def required_fields
+        field_configs.each_with_object([]) do |(key, config), memo|
+          memo << key if config.required?
+        end
+      end
+
       private
 
       def process_data(raw_data)

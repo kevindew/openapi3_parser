@@ -73,6 +73,14 @@ module Openapi3Parser
       @referenced_by = referenced_by
     end
 
+    # @return [Boolean]
+    def ==(other)
+      input == other.input &&
+        document_location == other.document_location &&
+        source_location == other.source_location &&
+        referenced_by == other.referenced_by
+    end
+
     # @return [Document]
     def document
       document_location.source.document

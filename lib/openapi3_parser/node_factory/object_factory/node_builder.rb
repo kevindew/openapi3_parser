@@ -24,8 +24,11 @@ module Openapi3Parser
           return validatable.collection if empty_and_allowed_to_be?
 
           TypeChecker.validate_type(validatable, type: ::Hash)
-          return validatable.collection if validatable.errors.any?
-          validate(raise_on_invalid: false)
+
+          if validatable.errors.empty?
+            validatable.add_errors(validate(raise_on_invalid: false))
+          end
+
           validatable.collection
         end
 
@@ -47,7 +50,7 @@ module Openapi3Parser
         end
 
         def validate(raise_on_invalid:)
-          Validator.call(factory, validatable, raise_on_invalid)
+          Validator.call(factory, raise_on_invalid)
         end
 
         def build_node_data

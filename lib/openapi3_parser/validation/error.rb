@@ -34,6 +34,7 @@ module Openapi3Parser
       # @return [String, nil]
       def for_type
         return unless factory_class
+        return "(anonymous)" unless factory_class.name
         factory_class.name.split("::").last
       end
 
@@ -45,6 +46,7 @@ module Openapi3Parser
 
       # @return [Boolean]
       def ==(other)
+        return false unless other.instance_of?(self.class)
         message == other.message &&
           context == other.context &&
           factory_class == other.factory_class
