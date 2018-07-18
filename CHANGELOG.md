@@ -1,8 +1,9 @@
-# Unreleased
+# 0.4.0
 
 - Determine the OpenAPI specification version and store it in document.
 - Support commonmark rendering, add description_html methods to nodes which
   allow description to be rendered as HTML.
+- Fix bug with CGI constant unresolved
 
 # 0.3.0
 
