@@ -1,3 +1,8 @@
+# Unreleased
+
+- Refactor of the node factory classes to use simpler inheritance rather than
+  the mixins in mixins approach.
+
 # 0.4.0
 
 - Determine the OpenAPI specification version and store it in document.

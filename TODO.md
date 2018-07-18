@@ -3,7 +3,7 @@
 These are the steps defined to reach 1.0. Assistance is very welcome.
 
 - [x] Handle mutually exclusive fields
-- [ ] Refactor the various NodeFactory modules to be a less confusing
+- [x] Refactor the various NodeFactory modules to be a less confusing
       hierachical structure. Consider having factories subclass instead of use
       mixin
 - [x] Decouple Document class for the source file. Consider a source file class
@@ -18,12 +18,12 @@ These are the steps defined to reach 1.0. Assistance is very welcome.
 - [ ] Reach parity with OpenAPI specification for validation
 - [ ] Consider a lenient mode for a document to only have to comply with type
       based validation
-- [ ] Improve test coverage
+- [x] Improve test coverage
 - [ ] Publish documentation of the interface through the structure
 - [x] Consider a resolved context class for representing context with a node
       that can handle scenarios where a node is represented by both a reference
       and resolved context
-- [ ] Create error classes for various scenarios
+- [x] Create error classes for various scenarios
 - [ ] Associate/resolve operation id / operation references
 - [ ] Do something to model expressions
 - [x] Improve the modelling of namespace
