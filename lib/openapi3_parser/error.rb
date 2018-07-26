@@ -30,5 +30,8 @@ module Openapi3Parser
     # Used when a method we expect to be able to call (through symbol or proc)
     # is not callable
     class NotCallable < Error; end
+    # Raised when we in a recursive data structure and can't perform an
+    # operation
+    class InRecursiveStructure < Error; end
   end
 end
