@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
+require "forwardable"
+
 require "openapi3_parser/markdown"
 
 module Openapi3Parser
   module Node
     class Object
+      extend Forwardable
       include Enumerable
 
+      def_delegators :node_data, :each, :keys
       attr_reader :node_data, :node_context
 
       def initialize(data, context)
@@ -44,11 +48,6 @@ module Openapi3Parser
       # @return [Hash, Array, Numeric, String, true, false, nil]
       def extension(value)
         node_data["x-#{value}"]
-      end
-
-      # Iterate through the attributes of this object
-      def each(&block)
-        node_data.each(&block)
       end
 
       # Used to render fields that can be in markdown syntax into HTML

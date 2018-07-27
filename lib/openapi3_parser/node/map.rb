@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
+require "forwardable"
+
 module Openapi3Parser
   module Node
     class Map
+      extend Forwardable
       include Enumerable
 
+      def_delegators :node_data, :each, :keys
       attr_reader :node_data, :node_context
 
       def initialize(data, context)
@@ -42,10 +46,6 @@ module Openapi3Parser
       # @return [Hash, Array, Numeric, String, true, false, nil]
       def extension(value)
         node_data["x-#{value}"]
-      end
-
-      def each(&block)
-        node_data.each(&block)
       end
     end
   end
