@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context/pointer"
 require "openapi3_parser/document"
 require "openapi3_parser/node/openapi"
+require "openapi3_parser/node/info"
 require "openapi3_parser/source"
 require "openapi3_parser/source_input/raw"
 require "openapi3_parser/source_input/file"
@@ -153,6 +155,62 @@ RSpec.describe Openapi3Parser::Document do
       let(:openapi_version) { "2.0.0" }
 
       it { is_expected.to eq(described_class::DEFAULT_OPENAPI_VERSION) }
+    end
+  end
+
+  describe "#node_at" do
+    subject { described_class.new(source_input).node_at(pointer) }
+
+    context "when a fragment is provided" do
+      let(:pointer) { "#/info" }
+
+      it { is_expected.to be_an_instance_of(Openapi3Parser::Node::Info) }
+    end
+
+    context "when an array is provided" do
+      let(:pointer) { %w[info] }
+
+      it { is_expected.to be_an_instance_of(Openapi3Parser::Node::Info) }
+    end
+
+    context "when a pointer is provided" do
+      let(:pointer) { Openapi3Parser::Context::Pointer.new(%w[info]) }
+
+      it { is_expected.to be_an_instance_of(Openapi3Parser::Node::Info) }
+    end
+
+    context "when field doesn't exist" do
+      let(:pointer) { "#/blahblah" }
+
+      it { is_expected.to be_nil }
+    end
+  end
+
+  describe "#resolved_input_at" do
+    subject { described_class.new(source_input).resolved_input_at(pointer) }
+
+    context "when a fragment is provided" do
+      let(:pointer) { "#/info/version" }
+
+      it { is_expected.to eq "1.0.0" }
+    end
+
+    context "when an array is provided" do
+      let(:pointer) { %w[info version] }
+
+      it { is_expected.to eq "1.0.0" }
+    end
+
+    context "when a pointer is provided" do
+      let(:pointer) { Openapi3Parser::Context::Pointer.new(%w[info version]) }
+
+      it { is_expected.to eq "1.0.0" }
+    end
+
+    context "when field doesn't exist" do
+      let(:pointer) { "#/blahblah" }
+
+      it { is_expected.to be_nil }
     end
   end
 end

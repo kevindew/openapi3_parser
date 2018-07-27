@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/cautious_dig"
 require "openapi3_parser/context"
+require "openapi3_parser/context/pointer"
 require "openapi3_parser/document/reference_register"
 require "openapi3_parser/error"
 require "openapi3_parser/node_factory/openapi"
@@ -132,9 +134,44 @@ module Openapi3Parser
       sources.find { |source| source.source_input == source_input }
     end
 
+    # Look up the resolved input for an address in the OpenAPI document,
+    # resolved_input refers to the input with references resolevd and all
+    # optional fields existing
+    #
+    # @param [Context::Pointer, String, Array] pointer
+    def resolved_input_at(pointer)
+      look_up_pointer(pointer, factory.resolved_input)
+    end
+
+    # Look up a node at a particular location in the OpenAPI docuemnt
+    #
+    # Examples:
+    #
+    # document.node_at("#/components/schemas")
+    # document.node_at(%w[components schemas])
+    #
+    # @param [Context::Pointer, String, Array] pointer
+    def node_at(pointer)
+      look_up_pointer(pointer, root)
+    end
+
     private
 
     attr_reader :reference_register, :built, :build_in_progress
+
+    def look_up_pointer(potential_pointer, subject)
+      if potential_pointer.is_a?(String)
+        potential_pointer = Context::Pointer.from_fragment(potential_pointer)
+      end
+
+      segments = if potential_pointer.respond_to?(:segments)
+                   potential_pointer.segments
+                 else
+                   potential_pointer
+                 end
+
+      CautiousDig.call(subject, *segments)
+    end
 
     def add_warning(text)
       @warnings << text
