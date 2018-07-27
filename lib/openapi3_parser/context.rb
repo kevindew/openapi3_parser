@@ -38,6 +38,18 @@ module Openapi3Parser
           referenced_by: pc.referenced_by)
     end
 
+    # Convert a context into one that knows that is a reference
+    #
+    # @param  [Context] current_context
+    # @return [Context]
+    def self.as_reference(current_context)
+      new(current_context.input,
+          document_location: current_context.document_location,
+          source_location: current_context.source_location,
+          referenced_by: current_context.referenced_by,
+          is_reference: true)
+    end
+
     # Creates the context for a field that is referenced by a context.
     # In this scenario the context of the document is the same but we are in
     # a different part of the source file, or even a different source file
@@ -63,14 +75,17 @@ module Openapi3Parser
     # @param  [Context::Location]       document_location
     # @param  [Context::Location, nil]  source_location
     # @param  [Context, nil]            referenced_by
+    # @param  [Boolean]                 is_reference
     def initialize(input,
                    document_location:,
                    source_location: nil,
-                   referenced_by: nil)
+                   referenced_by: nil,
+                   is_reference: false)
       @input = input
       @document_location = document_location
       @source_location = source_location || document_location
       @referenced_by = referenced_by
+      @is_reference = is_reference
     end
 
     # @return [Boolean]
@@ -99,6 +114,11 @@ module Openapi3Parser
     # @deprecated
     def namespace
       document_location.pointer.segments
+    end
+
+    # @return [Boolean]
+    def reference?
+      @is_reference
     end
 
     def inspect

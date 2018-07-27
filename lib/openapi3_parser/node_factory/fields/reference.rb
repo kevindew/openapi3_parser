@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/context"
 require "openapi3_parser/node_factory/field"
 require "openapi3_parser/validators/reference"
 
@@ -8,6 +9,7 @@ module Openapi3Parser
     module Fields
       class Reference < NodeFactory::Field
         def initialize(context, factory)
+          context = Context.as_reference(context)
           super(context, input_type: String, validate: :validate)
           @factory = factory
           @reference = context.input
