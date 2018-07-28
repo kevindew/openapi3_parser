@@ -81,9 +81,11 @@ module Openapi3Parser
     #   @return Object
     # @!method each
     #   Iterate through the attributes of the root object
-    #   @see Node::Object#each
+    # @!method keys
+    #   Access keys of the root object
     def_delegators :root, :openapi, :info, :servers, :paths, :components,
-                   :security, :tags, :external_docs, :extension, :[], :each
+                   :security, :tags, :external_docs, :extension, :[], :each,
+                   :keys
 
     # @param [SourceInput] source_input
     def initialize(source_input)
