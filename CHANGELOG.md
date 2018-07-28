@@ -1,5 +1,8 @@
 # Unreleased
 
+- Support for recursive references - fixes: https://github.com/kevindew/openapi3_parser/issues/4
+- `node_at` method on nodes and document to allow looking up nodes by string
+  paths
 - Refactor of the node factory classes to use simpler inheritance rather than
   the mixins in mixins approach.
 
