@@ -6,12 +6,12 @@ RSpec.describe Openapi3Parser::Context::Pointer do
   describe ".from_fragment" do
     subject { described_class.from_fragment(fragment) }
 
-    context "when fragment is at a root" do
+    context "when fragment is at absolute" do
       let(:fragment) { "#/test" }
       it { is_expected.to eq described_class.new(%w[test]) }
     end
 
-    context "when fragment is not at a root" do
+    context "when fragment is not at absolute" do
       let(:fragment) { "#test" }
       it { is_expected.to eq described_class.new(%w[test], false) }
     end
@@ -32,9 +32,61 @@ RSpec.describe Openapi3Parser::Context::Pointer do
     end
   end
 
+  describe ".merge_pointers" do
+    subject { described_class.merge_pointers(base_pointer, new_pointer) }
+
+    context "when both pointers are nil" do
+      let(:base_pointer) { nil }
+      let(:new_pointer) { nil }
+      it { is_expected.to be_nil }
+    end
+
+    context "when base_pointer is nil" do
+      let(:base_pointer) { nil }
+      let(:new_pointer) { described_class.new(%w[test]) }
+      it { is_expected.to eq new_pointer }
+    end
+
+    context "when new_pointer is nil" do
+      let(:base_pointer) { described_class.new(%w[test]) }
+      let(:new_pointer) { nil }
+      it { is_expected.to eq base_pointer }
+    end
+
+    context "when new_pointer is absolute" do
+      let(:base_pointer) { described_class.new(%w[test]) }
+      let(:new_pointer) { described_class.new(%w[new]) }
+      it { is_expected.to eq new_pointer }
+    end
+
+    context "when new_pointer is not absolute" do
+      let(:base_pointer) { described_class.new(%w[test]) }
+      let(:new_pointer) { described_class.new(%w[new], false) }
+      it { is_expected.to eq described_class.new(%w[test new]) }
+    end
+
+    context "when pointers are arrays" do
+      let(:base_pointer) { %w[test path] }
+      let(:new_pointer) { %w[further along] }
+      it { is_expected.to eq described_class.new(%w[test path further along]) }
+    end
+
+    context "when pointers are fragments" do
+      let(:base_pointer) { "#path" }
+      let(:new_pointer) { "#to" }
+      it { is_expected.to eq described_class.new(%w[path to]) }
+    end
+
+    context "when pointers are fragments with relative mapping" do
+      let(:base_pointer) { "#path/to/item" }
+      let(:new_pointer) { "#../../me" }
+      it { is_expected.to eq described_class.new(%w[path me]) }
+    end
+  end
+
   describe "#fragment" do
-    subject { described_class.new(segments, root).fragment }
-    let(:root) { true }
+    subject { described_class.new(segments, absolute).fragment }
+    let(:absolute) { true }
 
     context "when segments are empty" do
       let(:segments) { [] }
@@ -56,8 +108,8 @@ RSpec.describe Openapi3Parser::Context::Pointer do
       it { is_expected.to eq "#/0/0.123" }
     end
 
-    context "when root is false" do
-      let(:root) { false }
+    context "when absolute is false" do
+      let(:absolute) { false }
       let(:segments) { %w[openapi info title] }
       it { is_expected.to eq "#openapi/info/title" }
     end

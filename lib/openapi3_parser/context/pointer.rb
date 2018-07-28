@@ -9,22 +9,26 @@ module Openapi3Parser
     class Pointer
       def self.from_fragment(fragment)
         fragment = fragment[1..-1] if fragment.start_with?("#")
-        root = fragment[0] == "/"
+        absolute = fragment[0] == "/"
         segments = fragment.split("/").map do |part|
           next if part == ""
           unescaped = CGI.unescape(part.gsub("%20", "+"))
           unescaped =~ /\A\d+\z/ ? unescaped.to_i : unescaped
         end
-        new(segments.compact, root)
+        new(segments.compact, absolute)
       end
 
-      attr_reader :segments, :root
+      def self.merge_pointers(base_pointer, new_pointer)
+        MergePointers.call(base_pointer, new_pointer)
+      end
+
+      attr_reader :segments, :absolute
 
       # @param [::Array] segments
-      # @param [Boolean] root
-      def initialize(segments, root = true)
+      # @param [Boolean] absolute
+      def initialize(segments, absolute = true)
         @segments = segments.freeze
-        @root = root
+        @absolute = absolute
       end
 
       def ==(other)
@@ -34,7 +38,7 @@ module Openapi3Parser
       def fragment
         fragment = segments.map { |s| CGI.escape(s.to_s).gsub("+", "%20") }
                            .join("/")
-        "#" + (root ? fragment.prepend("/") : fragment)
+        "#" + (absolute ? fragment.prepend("/") : fragment)
       end
 
       def to_s
@@ -43,6 +47,51 @@ module Openapi3Parser
 
       def inspect
         %{#{self.class.name}(segments: #{segments}, fragment: "#{fragment}")}
+      end
+
+      class MergePointers
+        private_class_method :new
+
+        def self.call(*args)
+          new(*args).call
+        end
+
+        def initialize(base_pointer, new_pointer)
+          @base_pointer = create_pointer(base_pointer)
+          @new_pointer = create_pointer(new_pointer)
+        end
+
+        def call
+          return base_pointer if new_pointer.nil?
+          return new_pointer if base_pointer.nil? || new_pointer.absolute
+
+          merge_pointers(base_pointer, new_pointer)
+        end
+
+        private
+
+        attr_reader :base_pointer, :new_pointer
+
+        def create_pointer(pointer_like)
+          case pointer_like
+          when Pointer then pointer_like
+          when ::Array then Pointer.new(pointer_like, false)
+          when ::String then Pointer.from_fragment(pointer_like)
+          when nil then nil
+          else raise Openapi3Parser::Error, "Unexpected type for pointer"
+          end
+        end
+
+        def merge_pointers(pointer_a, pointer_b)
+          fragment_a = pointer_a.fragment.gsub(%r{\A#?/?}, "")
+          fragment_b = pointer_b.fragment.gsub(%r{\A#?/?}, "")
+
+          joined = File.expand_path("/#{fragment_a}/#{fragment_b}", "/")
+
+          joined = joined[1..-1] unless pointer_a.absolute
+
+          Pointer.from_fragment("##{joined}")
+        end
       end
     end
   end
