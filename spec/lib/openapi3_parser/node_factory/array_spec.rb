@@ -28,6 +28,16 @@ RSpec.describe Openapi3Parser::NodeFactory::Array do
 
   it_behaves_like "node factory", ::Array
 
+  describe "non array input" do
+    subject { instance }
+    let(:input) { "a string" }
+    it "doesn't raise an error" do
+      expect { instance }.not_to raise_error
+    end
+
+    it { is_expected.not_to be_valid }
+  end
+
   describe "#node" do
     subject(:node) { instance.node }
 

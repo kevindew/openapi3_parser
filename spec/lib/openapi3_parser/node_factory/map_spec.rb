@@ -31,6 +31,16 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
 
   it_behaves_like "node factory", ::Hash
 
+  describe "non hash input" do
+    subject { instance }
+    let(:input) { "a string" }
+    it "doesn't raise an error" do
+      expect { instance }.not_to raise_error
+    end
+
+    it { is_expected.not_to be_valid }
+  end
+
   describe "#node" do
     subject { instance.node }
 

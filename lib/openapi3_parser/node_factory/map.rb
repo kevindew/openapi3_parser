@@ -32,8 +32,7 @@ module Openapi3Parser
         @value_input_type = value_input_type
         @value_factory = value_factory
         @validation = validate
-        data = nil_input? ? default : context.input
-        @data = data.nil? ? nil : process_data(data)
+        @data = build_data(context.input)
       end
       # rubocop:enable Metrics/ParameterLists
 
@@ -69,6 +68,12 @@ module Openapi3Parser
       end
 
       private
+
+      def build_data(raw_input)
+        use_default = nil_input? || !raw_input.is_a?(::Hash)
+        return if use_default && default.nil?
+        process_data(use_default ? default : raw_input)
+      end
 
       def process_data(data)
         data.each_with_object({}) do |(key, value), memo|
