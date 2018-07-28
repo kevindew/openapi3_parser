@@ -27,7 +27,7 @@ These are the steps defined to reach 1.0. Assistance is very welcome.
 - [ ] Associate/resolve operation id / operation references
 - [ ] Do something to model expressions
 - [x] Improve the modelling of namespace
-- [ ] Set up nicer string representations of key classes to help them be
+- [x] Set up nicer string representations of key classes to help them be
       debugged
 - [x] Ensure Array and Map nodes return empty ones by default rather than nil
 - [ ] Make JSON pointer public access to be consistent accepting string, array

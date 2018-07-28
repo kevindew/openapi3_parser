@@ -68,6 +68,10 @@ module Openapi3Parser
         end
       end
 
+      def inspect
+        %{#{self.class.name}(#{context.source_location.inspect})}
+      end
+
       private
 
       def build_data(raw_input)

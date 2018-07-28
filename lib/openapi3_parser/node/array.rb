@@ -22,12 +22,23 @@ module Openapi3Parser
         @node_context = context
       end
 
+      # Look up an attribute of the index in this array
+      #
+      # @param [Integer] value
+      #
+      # @return anything
       def [](value)
         node_data[value]
       end
 
       def each(&block)
         node_data.each(&block)
+      end
+
+      # @return [String]
+      def inspect
+        fragment = node_context.document_location.pointer.fragment
+        %{#{self.class.name}(#{fragment})}
       end
     end
   end

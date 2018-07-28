@@ -57,6 +57,12 @@ module Openapi3Parser
         return if value.nil?
         Markdown.to_html(value)
       end
+
+      # @return [String]
+      def inspect
+        fragment = node_context.document_location.pointer.fragment
+        %{#{self.class.name}(#{fragment})}
+      end
     end
   end
 end

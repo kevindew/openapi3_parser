@@ -155,6 +155,12 @@ module Openapi3Parser
       look_up_pointer(pointer, root)
     end
 
+    # @return [String]
+    def inspect
+      %{#{self.class.name}(openapi_version: #{openapi_version}, } +
+        %{root_source: #{root_source.inspect})}
+    end
+
     private
 
     attr_reader :reference_register, :built, :build_in_progress

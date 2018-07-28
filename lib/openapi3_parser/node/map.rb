@@ -47,6 +47,12 @@ module Openapi3Parser
       def extension(value)
         node_data["x-#{value}"]
       end
+
+      # @return [String]
+      def inspect
+        fragment = node_context.document_location.pointer.fragment
+        %{#{self.class.name}(#{fragment})}
+      end
     end
   end
 end
