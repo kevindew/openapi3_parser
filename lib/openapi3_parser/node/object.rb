@@ -58,6 +58,21 @@ module Openapi3Parser
         Markdown.to_html(value)
       end
 
+      # Used to access a node relative to this node
+      #
+      # @example Looking up the parent node of this node
+      #   obj.node_at("#..")
+      #
+      # @example Jumping way down the tree
+      #   obj.node_at("#properties/Field/type")
+      #
+      # @param  [Context::Pointer, ::Array, ::String] pointer_like
+      # @return anything
+      def node_at(pointer_like)
+        current_pointer = node_context.document_location.pointer
+        node_context.document.node_at(pointer_like, current_pointer)
+      end
+
       # @return [String]
       def inspect
         fragment = node_context.document_location.pointer.fragment

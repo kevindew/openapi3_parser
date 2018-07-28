@@ -48,6 +48,14 @@ module Openapi3Parser
         node_data["x-#{value}"]
       end
 
+      # Used to access a node relative to this node
+      # @param  [Context::Pointer, ::Array, ::String] pointer_like
+      # @return anything
+      def node_at(pointer_like)
+        current_pointer = node_context.document_location.pointer
+        node_context.document.node_at(pointer_like, current_pointer)
+      end
+
       # @return [String]
       def inspect
         fragment = node_context.document_location.pointer.fragment
