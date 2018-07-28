@@ -95,7 +95,7 @@ module Openapi3Parser
       end
 
       def build_node(data)
-        Node::Map.new(data, context)
+        Node::Map.new(data, context) if data
       end
 
       def build_resolved_input

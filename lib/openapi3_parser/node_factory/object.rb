@@ -104,7 +104,7 @@ module Openapi3Parser
 
       def build_node
         data = ObjectFactory::NodeBuilder.node_data(self)
-        build_object(data, context)
+        build_object(data, context) if data
       end
     end
   end

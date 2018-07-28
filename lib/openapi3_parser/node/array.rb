@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "forwardable"
+
 require "openapi3_parser/node/map"
 
 module Openapi3Parser
@@ -11,8 +13,10 @@ module Openapi3Parser
     # The contents of the data will be dependent on where this document is in
     # the document hierachy.
     class Array
+      extend Forwardable
       include Enumerable
 
+      def_delegators :node_data, :each, :[], :empty?
       attr_reader :node_data, :node_context
 
       # @param [::Array] data     data used to populate this node
@@ -20,19 +24,6 @@ module Openapi3Parser
       def initialize(data, context)
         @node_data = data
         @node_context = context
-      end
-
-      # Look up an attribute of the index in this array
-      #
-      # @param [Integer] value
-      #
-      # @return anything
-      def [](value)
-        node_data[value]
-      end
-
-      def each(&block)
-        node_data.each(&block)
       end
 
       # Used to access a node relative to this node

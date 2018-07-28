@@ -8,7 +8,7 @@ module Openapi3Parser
       extend Forwardable
       include Enumerable
 
-      def_delegators :node_data, :each, :keys
+      def_delegators :node_data, :each, :keys, :empty?
       attr_reader :node_data, :node_context
 
       def initialize(data, context)
