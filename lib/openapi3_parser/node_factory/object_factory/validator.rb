@@ -88,20 +88,25 @@ module Openapi3Parser
             factory.data.each do |name, field|
               # references can reference themselves and become in a loop
               next if in_recursive_loop?(field)
+              has_factory_errors = handle_factory_checks(name)
 
-              if field.respond_to?(:errors)
-                # We don't add errors when we're building a node as they will
-                # be raised when that child node is built
-                validatable.add_errors(field.errors) unless building_node
-              end
+              next if has_factory_errors || !field.respond_to?(:errors)
 
-              if factory.field_configs[name]
-                check_field(name, factory.field_configs[name])
-              end
+              # We don't add errors when we're building a node as they will
+              # be raised when that child node is built
+              validatable.add_errors(field.errors) unless building_node
             end
           end
 
           private
+
+          def handle_factory_checks(name)
+            field_errors = if factory.field_configs[name]
+                             check_field(name, factory.field_configs[name])
+                           end
+
+            (field_errors || []).any?
+          end
 
           def in_recursive_loop?(field)
             field.respond_to?(:in_recursive_loop?) && field.in_recursive_loop?
@@ -123,6 +128,7 @@ module Openapi3Parser
             end
 
             validatable.add_errors(field_validatable.errors)
+            field_validatable.errors
           end
         end
 

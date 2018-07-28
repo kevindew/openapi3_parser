@@ -38,7 +38,7 @@ module Openapi3Parser
       field "items", factory: :referenceable_schema
       field "properties", factory: :properties_factory
       field "additionalProperties",
-            input_type: :additional_properties_input_type,
+            validate: :additional_properties_input_type,
             factory: :additional_properties_factory,
             default: false
       field "description", input_type: String
@@ -118,9 +118,10 @@ module Openapi3Parser
         )
       end
 
-      def additional_properties_input_type(input)
+      def additional_properties_input_type(validatable)
+        input = validatable.input
         return if [true, false].include?(input) || input.is_a?(Hash)
-        "Expected a boolean or an object"
+        validatable.add_error("Expected a Boolean or an Object")
       end
 
       def additional_properties_factory(context)

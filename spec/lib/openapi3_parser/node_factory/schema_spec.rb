@@ -112,4 +112,36 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
                   var_name: :deprecated do
                     let(:context) { create_context("deprecated" => deprecated) }
                   end
+
+  describe "additionalProperties" do
+    subject do
+      described_class.new(
+        create_context("additionalProperties" => additional_properties)
+      )
+    end
+
+    context "when it is set to true" do
+      let(:additional_properties) { true }
+      it { is_expected.to be_valid }
+    end
+
+    context "when it is set to false" do
+      let(:additional_properties) { false }
+      it { is_expected.to be_valid }
+    end
+
+    context "when it is an object" do
+      let(:additional_properties) { { "type" => "object" } }
+      it { is_expected.to be_valid }
+    end
+
+    context "when it is something different" do
+      let(:additional_properties) { %w[item_1 item_2] }
+      it do
+        is_expected
+          .to have_validation_error("#/additionalProperties")
+          .with_message("Expected a Boolean or an Object")
+      end
+    end
+  end
 end

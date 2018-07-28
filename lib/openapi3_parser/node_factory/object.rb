@@ -23,8 +23,7 @@ module Openapi3Parser
 
       def initialize(context)
         @context = context
-        data = nil_input? ? default : context.input
-        @data = data.nil? ? nil : process_data(data)
+        @data = build_data(context.input)
       end
 
       def resolved_input
@@ -70,6 +69,12 @@ module Openapi3Parser
       end
 
       private
+
+      def build_data(raw_input)
+        use_default = nil_input? || !raw_input.is_a?(::Hash)
+        return if use_default && default.nil?
+        process_data(use_default ? default : raw_input)
+      end
 
       def process_data(raw_data)
         field_configs.each_with_object(raw_data.dup) do |(field, config), memo|
