@@ -102,7 +102,7 @@ module Openapi3Parser
       def properties_factory(context)
         NodeFactory::Map.new(
           context,
-          value_factory: NodeFactory::Schema
+          value_factory: NodeFactory::OptionalReference.new(self.class)
         )
       end
 
