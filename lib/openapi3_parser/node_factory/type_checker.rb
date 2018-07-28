@@ -68,6 +68,12 @@ module Openapi3Parser
 
       def valid_type?(input)
         return [true, false].include?(input) if type == :boolean
+
+        unless type.is_a?(Class)
+          raise Error::UnvalidatableType,
+                "Expected #{type} to be a Class not a #{type.class}"
+        end
+
         input.is_a?(type)
       end
 

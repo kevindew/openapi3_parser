@@ -121,4 +121,55 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
       end
     end
   end
+
+  describe "when type is a boolean symbol" do
+    let(:type) { :boolean }
+
+    context "when input is true" do
+      let(:input) { true }
+
+      it "validates without error" do
+        expect do
+          described_class.raise_on_invalid_type(context, type: type)
+        end.not_to raise_error
+      end
+    end
+
+    context "when input is false" do
+      let(:input) { false }
+
+      it "validates without error" do
+        expect do
+          described_class.raise_on_invalid_type(context, type: type)
+        end.not_to raise_error
+      end
+    end
+
+    context "when input is something different" do
+      let(:input) { "different" }
+
+      it "doesn't validate" do
+        error_class = Openapi3Parser::Error::InvalidType
+        error_message = "Invalid type for #/: Expected Boolean"
+
+        expect do
+          described_class.raise_on_invalid_type(context, type: type)
+        end.to raise_error(error_class, error_message)
+      end
+    end
+  end
+
+  describe "when type is a non class" do
+    let(:type) { "odd" }
+    let(:input) { "anything" }
+
+    it "raises an error" do
+      error_class = Openapi3Parser::Error::UnvalidatableType
+      error_message = "Expected odd to be a Class not a String"
+
+      expect do
+        described_class.raise_on_invalid_type(context, type: type)
+      end.to raise_error(error_class, error_message)
+    end
+  end
 end

@@ -33,5 +33,8 @@ module Openapi3Parser
     # Raised when we in a recursive data structure and can't perform an
     # operation
     class InRecursiveStructure < Error; end
+    # Used when we're trying to validate that a type is something that is not
+    # validatable, most likely a sign that we're in a bug
+    class UnvalidatableType < Error; end
   end
 end
