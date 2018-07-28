@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factory/object"
+require "openapi3_parser/error"
 require "openapi3_parser/node_factory/fields/reference"
+require "openapi3_parser/node_factory/object"
+require "openapi3_parser/node_factory/recursive_pointer"
 
 module Openapi3Parser
   module NodeFactory
@@ -15,9 +17,22 @@ module Openapi3Parser
         super(context)
       end
 
+      def in_recursive_loop?
+        data["$ref"].in_recursive_loop?
+      end
+
+      def recursive_pointer
+        NodeFactory::RecursivePointer.new(data["$ref"].reference_context)
+      end
+
       private
 
       def build_node
+        if in_recursive_loop?
+          raise Error::InRecursiveStructure,
+                "Can't build node as it references itself, use "\
+                "recursive_pointer"
+        end
         data["$ref"].node
       end
 

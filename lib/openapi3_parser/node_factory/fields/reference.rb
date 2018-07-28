@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "forwardable"
+
 require "openapi3_parser/context"
 require "openapi3_parser/node_factory/field"
 require "openapi3_parser/validators/reference"
@@ -17,7 +19,21 @@ module Openapi3Parser
         end
 
         def resolved_input
-          reference_resolver&.resolved_input
+          return unless reference_resolver
+
+          if in_recursive_loop?
+            RecursiveResolvedInput.new(reference_context)
+          else
+            reference_resolver.resolved_input
+          end
+        end
+
+        def in_recursive_loop?
+          context.source_location == reference_context&.source_location
+        end
+
+        def reference_context
+          context.referenced_by
         end
 
         private
@@ -29,7 +45,7 @@ module Openapi3Parser
         end
 
         def validate(validatable)
-          if reference_validator.valid?
+          if !reference_validator.valid?
             validatable.add_errors(reference_validator.errors)
           else
             validatable.add_errors(reference_resolver&.errors)
@@ -41,8 +57,26 @@ module Openapi3Parser
         end
 
         def create_reference_resolver
-          return unless reference
+          return unless reference_validator.valid?
           context.register_reference(reference, factory)
+        end
+
+        # Used in the place of a hash for resolved input so the value can
+        # be looked up at runtime avoiding a recursive loop.
+        class RecursiveResolvedInput
+          extend Forwardable
+          include Enumerable
+
+          def_delegators :resolved_input, :each, :[], :keys
+          attr_reader :context
+
+          def initialize(context)
+            @context = context
+          end
+
+          def resolved_input
+            context.resolved_input
+          end
         end
       end
     end

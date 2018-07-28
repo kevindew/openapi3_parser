@@ -2,6 +2,7 @@
 
 require "openapi3_parser/node_factory/type_checker"
 require "openapi3_parser/node_factory/object_factory/validator"
+require "openapi3_parser/node_factory/recursive_pointer"
 
 module Openapi3Parser
   module NodeFactory
@@ -56,8 +57,12 @@ module Openapi3Parser
         def build_node_data
           return if factory.nil_input? && factory.data.nil?
 
-          factory.data.each_with_object({}) do |(key, value), memo|
-            memo[key] = resolve_value(key, value)
+          factory.data.each_with_object(NodeData.new) do |(key, value), memo|
+            memo[key] = if node_is_recursive_pointer?(value)
+                          value.recursive_pointer
+                        else
+                          resolve_value(key, value)
+                        end
           end
         end
 
@@ -71,6 +76,18 @@ module Openapi3Parser
             default.nil? ? resolved_value : default
           else
             resolved_value
+          end
+        end
+
+        def node_is_recursive_pointer?(value_factory)
+          return false unless value_factory.respond_to?(:in_recursive_loop?)
+          value_factory.in_recursive_loop?
+        end
+
+        class NodeData < ::Hash
+          def [](key)
+            item = super(key)
+            item.is_a?(NodeFactory::RecursivePointer) ? item.node : item
           end
         end
       end

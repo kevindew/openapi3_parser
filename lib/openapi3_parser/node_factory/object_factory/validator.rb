@@ -86,6 +86,9 @@ module Openapi3Parser
 
           def call
             factory.data.each do |name, field|
+              # references can reference themselves and become in a loop
+              next if in_recursive_loop?(field)
+
               if field.respond_to?(:errors)
                 # We don't add errors when we're building a node as they will
                 # be raised when that child node is built
@@ -99,6 +102,10 @@ module Openapi3Parser
           end
 
           private
+
+          def in_recursive_loop?(field)
+            field.respond_to?(:in_recursive_loop?) && field.in_recursive_loop?
+          end
 
           def check_field(name, field_config)
             return if factory.raw_input[name].nil?

@@ -2,6 +2,7 @@
 
 require "openapi3_parser/context/location"
 require "openapi3_parser/document"
+require "openapi3_parser/node/contact"
 require "openapi3_parser/source_input/raw"
 
 require "support/helpers/context"
@@ -120,6 +121,94 @@ RSpec.describe Openapi3Parser::Context do
       end
 
       it { is_expected.to eq "#/path/to/field (other-file.yaml#/path)" }
+    end
+  end
+
+  describe "#resolved_input" do
+    subject(:resolved_input) do
+      described_class.new({},
+                          document_location: document_location,
+                          is_reference: is_reference)
+                     .resolved_input
+    end
+
+    let(:document_location) do
+      input = { "openapi" => "3.0.0",
+                "info" => { "title" => "Test",
+                            "version" => "1.0" },
+                "paths" => {},
+                "components" => {
+                  "schemas" => {
+                    "a_reference" => {
+                      "$ref" => "#/components/schemas/not_reference"
+                    },
+                    "not_reference" => { "type" => "object" }
+                  }
+                } }
+      create_context_location(Openapi3Parser::SourceInput::Raw.new(input),
+                              pointer_segments: pointer_segments)
+    end
+
+    context "when context is not a reference" do
+      let(:is_reference) { false }
+      let(:pointer_segments) { %w[components schemas not_reference type] }
+
+      it "returns the data at that location" do
+        expect(resolved_input).to be "object"
+      end
+    end
+
+    context "when context is a reference" do
+      let(:is_reference) { true }
+      let(:pointer_segments) { %w[components schemas a_reference $ref] }
+
+      it "returns the data of the referenced item" do
+        expect(resolved_input).to match(a_hash_including("type" => "object"))
+      end
+    end
+  end
+
+  describe "#node" do
+    subject(:node) do
+      described_class.new({},
+                          document_location: document_location,
+                          is_reference: is_reference)
+                     .node
+    end
+
+    let(:document_location) do
+      input = { "openapi" => "3.0.0",
+                "info" => { "title" => "Test",
+                            "version" => "1.0" },
+                "paths" => {},
+                "components" => {
+                  "schemas" => {
+                    "a_reference" => {
+                      "$ref" => "#/components/schemas/not_reference"
+                    },
+                    "not_reference" => { "type" => "object" }
+                  }
+                } }
+      create_context_location(Openapi3Parser::SourceInput::Raw.new(input),
+                              pointer_segments: pointer_segments)
+    end
+
+    context "when context is not a reference" do
+      let(:is_reference) { false }
+      let(:pointer_segments) { %w[components schemas not_reference type] }
+
+      it "returns the data at that location" do
+        expect(node).to be "object"
+      end
+    end
+
+    context "when context is a reference" do
+      let(:is_reference) { true }
+      let(:pointer_segments) { %w[components schemas a_reference $ref] }
+
+      it "returns the data at the parent item" do
+        expect(node).to be_a(Openapi3Parser::Node::Schema)
+      end
     end
   end
 end

@@ -136,5 +136,29 @@ module Openapi3Parser
     def to_s
       location_summary
     end
+
+    def resolved_input
+      # The resolved input for a reference is at the segment before the
+      # reference
+      pointer = if reference?
+                  document_location.pointer.segments[0...-1]
+                else
+                  document_location.pointer
+                end
+
+      document.resolved_input_at(pointer)
+    end
+
+    def node
+      # The created node for a reference is at the segment before the
+      # reference
+      pointer = if reference?
+                  document_location.pointer.segments[0...-1]
+                else
+                  document_location.pointer
+                end
+
+      document.node_at(pointer)
+    end
   end
 end
