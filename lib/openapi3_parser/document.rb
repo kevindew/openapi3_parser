@@ -138,9 +138,11 @@ module Openapi3Parser
     # resolved_input refers to the input with references resolevd and all
     # optional fields existing
     #
-    # @param [Context::Pointer, String, Array] pointer
-    def resolved_input_at(pointer)
-      look_up_pointer(pointer, factory.resolved_input)
+    # @param [Context::Pointer, String, Array]      pointer
+    # @param [Context::Pointer, String, Array, nil] relative_to
+    # @return anything
+    def resolved_input_at(pointer, relative_to = nil)
+      look_up_pointer(pointer, relative_to, factory.resolved_input)
     end
 
     # Look up a node at a particular location in the OpenAPI docuemnt
@@ -150,9 +152,11 @@ module Openapi3Parser
     # document.node_at("#/components/schemas")
     # document.node_at(%w[components schemas])
     #
-    # @param [Context::Pointer, String, Array] pointer
-    def node_at(pointer)
-      look_up_pointer(pointer, root)
+    # @param [Context::Pointer, String, Array]      pointer
+    # @param [Context::Pointer, String, Array, nil] relative_to
+    # @return anything
+    def node_at(pointer, relative_to = nil)
+      look_up_pointer(pointer, relative_to, root)
     end
 
     # @return [String]
@@ -165,18 +169,10 @@ module Openapi3Parser
 
     attr_reader :reference_register, :built, :build_in_progress
 
-    def look_up_pointer(potential_pointer, subject)
-      if potential_pointer.is_a?(String)
-        potential_pointer = Context::Pointer.from_fragment(potential_pointer)
-      end
-
-      segments = if potential_pointer.respond_to?(:segments)
-                   potential_pointer.segments
-                 else
-                   potential_pointer
-                 end
-
-      CautiousDig.call(subject, *segments)
+    def look_up_pointer(pointer, relative_pointer, subject)
+      merged_pointer = Context::Pointer.merge_pointers(relative_pointer,
+                                                       pointer)
+      CautiousDig.call(subject, *merged_pointer.segments)
     end
 
     def add_warning(text)

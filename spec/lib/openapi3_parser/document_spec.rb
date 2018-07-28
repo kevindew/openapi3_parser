@@ -159,7 +159,8 @@ RSpec.describe Openapi3Parser::Document do
   end
 
   describe "#node_at" do
-    subject { described_class.new(source_input).node_at(pointer) }
+    subject { described_class.new(source_input).node_at(pointer, relative_to) }
+    let(:relative_to) { nil }
 
     context "when a fragment is provided" do
       let(:pointer) { "#/info" }
@@ -184,10 +185,20 @@ RSpec.describe Openapi3Parser::Document do
 
       it { is_expected.to be_nil }
     end
+
+    context "when pointer is relative_to a different pointer" do
+      let(:pointer) { "#../" }
+      let(:relative_to) { "#/info/title" }
+
+      it { is_expected.to be_an_instance_of(Openapi3Parser::Node::Info) }
+    end
   end
 
   describe "#resolved_input_at" do
-    subject { described_class.new(source_input).resolved_input_at(pointer) }
+    subject do
+      described_class.new(source_input).resolved_input_at(pointer, relative_to)
+    end
+    let(:relative_to) { nil }
 
     context "when a fragment is provided" do
       let(:pointer) { "#/info/version" }
@@ -211,6 +222,13 @@ RSpec.describe Openapi3Parser::Document do
       let(:pointer) { "#/blahblah" }
 
       it { is_expected.to be_nil }
+    end
+
+    context "when pointer is relative_to a different pointer" do
+      let(:pointer) { "#../version" }
+      let(:relative_to) { "#/info/title" }
+
+      it { is_expected.to eq "1.0.0" }
     end
   end
 end
