@@ -14,8 +14,8 @@ module Openapi3Parser
       end
 
       def call(validatable,
+               allowed_fields:,
                allow_extensions: true,
-               allowed_fields: nil,
                raise_on_invalid: true)
         fields = unexpected_fields(validatable.input,
                                    allowed_fields,
@@ -37,15 +37,9 @@ module Openapi3Parser
       private
 
       def unexpected_fields(input, allowed_fields, allow_extensions)
-        if allowed_fields
-          extra_keys = input.keys - allowed_fields
-          return extra_keys unless allow_extensions
-          extra_keys.reject { |key| key =~ NodeFactory::EXTENSION_REGEX }
-        elsif !allow_extensions
-          input.keys.select { |key| key =~ NodeFactory::EXTENSION_REGEX }
-        else
-          []
-        end
+        extra_keys = input.keys - allowed_fields
+        return extra_keys unless allow_extensions
+        extra_keys.reject { |key| key =~ NodeFactory::EXTENSION_REGEX }
       end
     end
   end

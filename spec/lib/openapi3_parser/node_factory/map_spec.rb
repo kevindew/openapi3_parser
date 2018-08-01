@@ -58,29 +58,6 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
       end
     end
 
-    context "when extensions are provided" do
-      let(:input) { { "x-test" => "my extension" } }
-
-      context "and extensions are allowed" do
-        let(:allow_extensions) { true }
-
-        it "allows accessing the extension" do
-          expect(instance.node.extension("test")).to eq("my extension")
-        end
-      end
-
-      context "and extensions are not allowed" do
-        let(:allow_extensions) { false }
-
-        it "raises an UnexpectedFields error" do
-          error_type = Openapi3Parser::Error::UnexpectedFields
-          error_message = "Unexpected fields for #/: x-test"
-          expect { instance.node }
-            .to raise_error(error_type, error_message)
-        end
-      end
-    end
-
     context "when input is nil and default is an empty hash" do
       let(:input) { nil }
       let(:default) { {} }

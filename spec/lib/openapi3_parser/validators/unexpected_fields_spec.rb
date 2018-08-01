@@ -18,7 +18,7 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
       )
     end
     let(:allow_extensions) { true }
-    let(:allowed_fields) { nil }
+    let(:allowed_fields) { [] }
     let(:raise_on_invalid) { true }
 
     subject(:call) do
@@ -47,7 +47,8 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
         end
       end
 
-      context "when it is false" do
+      context "when it is false and allowed_fields are set" do
+        let(:allowed_fields) { %w[this that] }
         let(:allow_extensions) { false }
         it "raises an error on extensions" do
           expect { call }
@@ -64,13 +65,6 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
 
       context "when it includes the fields" do
         let(:allowed_fields) { %w[fieldA fieldB] }
-        it "doesn't raise error" do
-          expect { call }.not_to raise_error
-        end
-      end
-
-      context "when it is nil" do
-        let(:allowed_fields) { nil }
         it "doesn't raise error" do
           expect { call }.not_to raise_error
         end

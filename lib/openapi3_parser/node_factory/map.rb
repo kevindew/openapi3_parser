@@ -136,7 +136,6 @@ module Openapi3Parser
           return default_value if factory.nil_input?
 
           TypeChecker.raise_on_invalid_type(factory.context, type: ::Hash)
-          check_unexpected_fields(raise_on_invalid: true)
           check_keys(raise_on_invalid: true)
           check_values(raise_on_invalid: true)
           validate(raise_on_invalid: true)
@@ -153,7 +152,6 @@ module Openapi3Parser
         attr_reader :factory, :validatable
 
         def collate_errors
-          check_unexpected_fields(raise_on_invalid: false)
           check_keys(raise_on_invalid: false)
           check_values(raise_on_invalid: false)
           validate(raise_on_invalid: false)
@@ -169,15 +167,6 @@ module Openapi3Parser
           else
             factory.data
           end
-        end
-
-        def check_unexpected_fields(raise_on_invalid: false)
-          Validators::UnexpectedFields.call(
-            validatable,
-            allowed_fields: nil,
-            raise_on_invalid: raise_on_invalid,
-            allow_extensions: factory.allow_extensions
-          )
         end
 
         def check_keys(raise_on_invalid: false)
