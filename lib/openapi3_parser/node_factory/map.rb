@@ -182,6 +182,8 @@ module Openapi3Parser
           return unless factory.value_input_type
 
           factory.context.input.keys.each do |key|
+            next if factory.allow_extensions && key.to_s =~ EXTENSION_REGEX
+
             check_field_type(
               Context.next_field(factory.context, key), raise_on_invalid
             )

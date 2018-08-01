@@ -97,6 +97,21 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
       end
     end
 
+    context "when value_input_type does not match on an extension" do
+      let(:allow_extensions) { true }
+      let(:value_input_type) { Integer }
+      let(:input) do
+        {
+          "real" => 1,
+          "x-item" => { "name" => "Kenneth" }
+        }
+      end
+
+      it "doesn't raise an InvalidType error" do
+        expect { instance.node }.not_to raise_error
+      end
+    end
+
     context "when value_factory is set" do
       let(:value_factory) { Openapi3Parser::NodeFactory::Contact }
       let(:input) do
