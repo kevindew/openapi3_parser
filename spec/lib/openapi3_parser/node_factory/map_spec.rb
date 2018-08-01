@@ -14,7 +14,6 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
 
   let(:allow_extensions) { false }
   let(:default) { {} }
-  let(:key_input_type) { String }
   let(:value_input_type) { nil }
   let(:value_factory) { nil }
   let(:validate) { nil }
@@ -23,7 +22,6 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
     described_class.new(context,
                         allow_extensions: allow_extensions,
                         default: default,
-                        key_input_type: key_input_type,
                         value_input_type: value_input_type,
                         value_factory: value_factory,
                         validate: validate)
@@ -72,11 +70,10 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
       it { is_expected.to be_nil }
     end
 
-    context "when key_input_type does not match" do
-      let(:key_input_type) { Integer }
+    context "when a not string key is passed" do
       let(:input) do
         {
-          "item" => { "name" => "Kenneth" }
+          1 => { "name" => "Kenneth" }
         }
       end
 

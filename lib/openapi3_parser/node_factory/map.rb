@@ -12,7 +12,7 @@ module Openapi3Parser
   module NodeFactory
     class Map
       attr_reader :allow_extensions, :context, :data, :default,
-                  :key_input_type, :value_input_type, :value_factory,
+                  :value_input_type, :value_factory,
                   :validation
 
       # rubocop:disable Metrics/ParameterLists
@@ -20,7 +20,6 @@ module Openapi3Parser
         context,
         allow_extensions: false,
         default: {},
-        key_input_type: String,
         value_input_type: nil,
         value_factory: nil,
         validate: nil
@@ -28,7 +27,6 @@ module Openapi3Parser
         @context = context
         @allow_extensions = allow_extensions
         @default = default
-        @key_input_type = key_input_type
         @value_input_type = value_input_type
         @value_factory = value_factory
         @validation = validate
@@ -77,7 +75,7 @@ module Openapi3Parser
 
       def process_data(data)
         data.each_with_object({}) do |(key, value), memo|
-          memo[key] = if EXTENSION_REGEX =~ key || !value_factory
+          memo[key] = if EXTENSION_REGEX =~ key.to_s || !value_factory
                         value
                       else
                         next_context = Context.next_field(context, key)
@@ -170,14 +168,12 @@ module Openapi3Parser
         end
 
         def check_keys(raise_on_invalid: false)
-          return unless factory.key_input_type
-
           if raise_on_invalid
             TypeChecker.raise_on_invalid_keys(factory.context,
-                                              type: factory.key_input_type)
+                                              type: ::String)
           else
             TypeChecker.validate_keys(validatable,
-                                      type: factory.key_input_type,
+                                      type: ::String,
                                       context: factory.context)
           end
         end
