@@ -1,4 +1,8 @@
-# Unreleased
+# 0.5.1
+
+- Bugfix for allowing maps to have extension like field names
+
+# 0.5.0
 
 - Support for recursive references - fixes: https://github.com/kevindew/openapi3_parser/issues/4
 - `node_at` method on nodes and document to allow looking up nodes by string
