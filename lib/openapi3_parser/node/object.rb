@@ -2,8 +2,6 @@
 
 require "forwardable"
 
-require "openapi3_parser/markdown"
-
 module Openapi3Parser
   module Node
     class Object

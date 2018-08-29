@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/validators/email"
-
 RSpec.describe Openapi3Parser::Validators::Email do
   describe ".call" do
     subject { described_class.call(email) }

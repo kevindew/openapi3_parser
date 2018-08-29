@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/document"
-require "openapi3_parser/source_input/raw"
-require "openapi3_parser/source_input/file"
-require "openapi3_parser/source_input/url"
+Dir.glob(File.join(__dir__, "openapi3_parser", "**", "*.rb")).each do |file|
+  require file
+end
 
 module Openapi3Parser
   # For a variety of inputs this will construct an OpenAPI document. For a

@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/source_input/resolve_next"
-require "openapi3_parser/source_input/file"
-require "openapi3_parser/source_input/raw"
-require "openapi3_parser/source_input/url"
-require "openapi3_parser/source/reference"
-
 RSpec.describe Openapi3Parser::SourceInput::ResolveNext do
   describe "#call" do
     subject do

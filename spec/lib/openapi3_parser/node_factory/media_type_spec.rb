@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factory/media_type"
-require "openapi3_parser/node/media_type"
-
 require "support/helpers/context"
 require "support/mutually_exclusive_example"
 require "support/node_object_factory"

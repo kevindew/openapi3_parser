@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/object"
-require "openapi3_parser/node/openapi"
-require "openapi3_parser/node/paths"
-
 require "support/helpers/context"
 
 RSpec.describe Openapi3Parser::Node::Object do

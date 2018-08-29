@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/openapi"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/info"
-require "openapi3_parser/node_factory/array"
-require "openapi3_parser/node_factory/server"
 require "openapi3_parser/node_factory/paths"
 require "openapi3_parser/node_factory/components"
-require "openapi3_parser/node_factory/security_requirement"
-require "openapi3_parser/node_factory/tag"
 require "openapi3_parser/node_factory/external_documentation"
 
 module Openapi3Parser

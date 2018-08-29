@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factory/schema"
-require "openapi3_parser/node/schema"
-
 require "support/default_field"
 require "support/node_object_factory"
 require "support/helpers/context"

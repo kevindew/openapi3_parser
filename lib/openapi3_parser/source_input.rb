@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/error"
-
 module Openapi3Parser
   # An abstract class which is used to provide a foundation for classes that
   # represent the different means of input an OpenAPI document can have. It is

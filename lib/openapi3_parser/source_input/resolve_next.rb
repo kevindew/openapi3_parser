@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/source_input/file"
-require "openapi3_parser/source_input/url"
-
 module Openapi3Parser
   class SourceInput
     class ResolveNext

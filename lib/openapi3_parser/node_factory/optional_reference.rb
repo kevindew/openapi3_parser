@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factory/reference"
-
 module Openapi3Parser
   module NodeFactory
     class OptionalReference

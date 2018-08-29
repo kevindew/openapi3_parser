@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/validators/reference"
-
 RSpec.describe Openapi3Parser::Validators::Reference do
   describe "#errors" do
     let(:input) { "#/test" }

@@ -1,14 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/context/pointer"
-require "openapi3_parser/document"
-require "openapi3_parser/node/openapi"
-require "openapi3_parser/node/info"
-require "openapi3_parser/source"
-require "openapi3_parser/source_input/raw"
-require "openapi3_parser/source_input/file"
-require "openapi3_parser/validation/error_collection"
-
 RSpec.describe Openapi3Parser::Document do
   let(:source_input) { Openapi3Parser::SourceInput::Raw.new(source_data) }
 

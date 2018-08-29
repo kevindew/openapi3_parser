@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/validators/absolute_uri"
-
 RSpec.describe Openapi3Parser::Validators::AbsoluteUri do
   describe ".call" do
     subject { described_class.call(uri) }

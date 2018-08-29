@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/validators/component_keys"
-
 RSpec.describe Openapi3Parser::Validators::ComponentKeys do
   describe ".call" do
     subject { described_class.call(key => {}) }

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/validation/error"
-require "openapi3_parser/validation/error_collection"
-
 require "support/helpers/context"
 
 RSpec.describe Openapi3Parser::Validation::Error do

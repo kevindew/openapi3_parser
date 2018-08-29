@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/node_factory/map"
-require "openapi3_parser/node_factory/optional_reference"
-require "openapi3_parser/node_factory/path_item"
-require "openapi3_parser/node/paths"
 
 module Openapi3Parser
   module NodeFactory

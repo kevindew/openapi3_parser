@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/context"
-require "openapi3_parser/document/reference_register"
-require "openapi3_parser/error"
-require "openapi3_parser/node_factory/openapi"
-
 require "support/helpers/context"
 
 RSpec.describe Openapi3Parser::Document::ReferenceRegister do

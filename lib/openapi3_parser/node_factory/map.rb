@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/array_sentence"
-require "openapi3_parser/context"
-require "openapi3_parser/node_factory"
-require "openapi3_parser/node_factory/type_checker"
-require "openapi3_parser/node/map"
-require "openapi3_parser/validation/validatable"
-require "openapi3_parser/validators/unexpected_fields"
-
 module Openapi3Parser
   module NodeFactory
     class Map

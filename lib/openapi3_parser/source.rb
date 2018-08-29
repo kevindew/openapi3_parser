@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/error"
-require "openapi3_parser/source/reference"
-require "openapi3_parser/source/reference_resolver"
-
 module Openapi3Parser
   # Represents a source of data used to produce the OpenAPI document. Documents
   # which do not have any references to external files will only have a single

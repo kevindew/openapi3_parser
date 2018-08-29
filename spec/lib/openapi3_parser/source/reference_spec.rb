@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/source/reference"
-
 RSpec.describe Openapi3Parser::Source::Reference do
   describe ".only_fragment?" do
     subject { described_class.new(reference).only_fragment? }

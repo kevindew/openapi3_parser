@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/array_sentence"
-require "openapi3_parser/error"
 
 module Openapi3Parser
   module Validators

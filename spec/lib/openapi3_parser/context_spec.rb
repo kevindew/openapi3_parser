@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/context/location"
-require "openapi3_parser/document"
-require "openapi3_parser/node/contact"
-require "openapi3_parser/source_input/raw"
-
 require "support/helpers/context"
 require "support/helpers/source_input"
 

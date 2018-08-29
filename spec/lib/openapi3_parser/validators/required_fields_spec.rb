@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/error"
-require "openapi3_parser/node_factory/object"
-require "openapi3_parser/validation/validatable"
-require "openapi3_parser/validators/required_fields"
-
 require "support/helpers/context"
 
 RSpec.describe Openapi3Parser::Validators::RequiredFields do

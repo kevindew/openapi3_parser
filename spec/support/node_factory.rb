@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/validation/error_collection"
-
 RSpec.shared_examples "node factory" do |data_type|
   describe "#node" do
     subject { described_class.new(context) }

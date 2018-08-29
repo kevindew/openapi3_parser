@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/source_input/file"
-require "openapi3_parser/source_input/raw"
-require "openapi3_parser/source_input/url"
-require "openapi3_parser/error"
-require "openapi3_parser/source/reference"
-
 RSpec.describe Openapi3Parser::SourceInput::Url do
   let(:valid_input) { "test: this" }
   let(:unparsable_input) { "*invalid: yaml" }

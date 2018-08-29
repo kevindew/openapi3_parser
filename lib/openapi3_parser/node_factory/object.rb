@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 require "forwardable"
-
-require "openapi3_parser/context"
 require "openapi3_parser/node_factory/object_factory/dsl"
-require "openapi3_parser/node_factory/object_factory/node_builder"
 
 module Openapi3Parser
   module NodeFactory

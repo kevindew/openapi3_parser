@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/error"
-require "openapi3_parser/node_factory/type_checker"
-require "openapi3_parser/validation/error"
-require "openapi3_parser/validation/validatable"
-
 require "support/helpers/context"
 
 RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do

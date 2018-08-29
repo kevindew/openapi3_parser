@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/source_input/file"
-require "openapi3_parser/source_input/raw"
-require "openapi3_parser/source_input/url"
-
 module Helpers
   module SourceInput
     def create_file_source_input(data: {},

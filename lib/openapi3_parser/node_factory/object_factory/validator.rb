@@ -2,13 +2,6 @@
 
 require "forwardable"
 
-require "openapi3_parser/array_sentence"
-require "openapi3_parser/error"
-require "openapi3_parser/validation/validatable"
-require "openapi3_parser/validators/mutually_exclusive_fields"
-require "openapi3_parser/validators/required_fields"
-require "openapi3_parser/validators/unexpected_fields"
-
 module Openapi3Parser
   module NodeFactory
     module ObjectFactory

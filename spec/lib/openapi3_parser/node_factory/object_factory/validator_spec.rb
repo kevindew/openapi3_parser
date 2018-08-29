@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/context"
-require "openapi3_parser/error"
-require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/object_factory/validator"
-require "openapi3_parser/validation/error_collection"
-require "openapi3_parser/validation/error"
-
 require "support/helpers/context"
 
 RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do

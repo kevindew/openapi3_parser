@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/context"
-require "openapi3_parser/node/request_body"
-require "openapi3_parser/node_factory/map"
 require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/media_type"
-require "openapi3_parser/validation/error"
-require "openapi3_parser/validators/media_type"
 
 module Openapi3Parser
   module NodeFactory

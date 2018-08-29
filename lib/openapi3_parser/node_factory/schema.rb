@@ -1,13 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/schema"
-require "openapi3_parser/node_factory/map"
 require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/optional_reference"
-require "openapi3_parser/node_factory/array"
-require "openapi3_parser/node_factory/external_documentation"
-require "openapi3_parser/node_factory/discriminator"
-require "openapi3_parser/node_factory/xml"
 
 module Openapi3Parser
   module NodeFactory

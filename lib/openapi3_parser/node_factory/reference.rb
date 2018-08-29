@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/error"
-require "openapi3_parser/node_factory/fields/reference"
 require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/recursive_pointer"
 
 module Openapi3Parser
   module NodeFactory

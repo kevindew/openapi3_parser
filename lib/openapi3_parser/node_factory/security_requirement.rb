@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/security_requirement"
-require "openapi3_parser/node_factory/array"
 require "openapi3_parser/node_factory/map"
 
 module Openapi3Parser

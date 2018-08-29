@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factory/parameter"
-require "openapi3_parser/node/parameter"
-
 require "support/helpers/context"
 require "support/mutually_exclusive_example"
 require "support/node_object_factory"
