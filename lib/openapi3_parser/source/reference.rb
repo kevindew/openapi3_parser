@@ -2,9 +2,6 @@
 
 require "cgi"
 
-require "openapi3_parser/source"
-require "openapi3_parser/validators/reference"
-
 module Openapi3Parser
   class Source
     # An object which represents a reference that can be indicated in a OpenAPI

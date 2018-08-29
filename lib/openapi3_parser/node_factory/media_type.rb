@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/media_type"
-require "openapi3_parser/node_factory/map"
 require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/optional_reference"
-require "openapi3_parser/node_factory/schema"
-require "openapi3_parser/node_factory/example"
-require "openapi3_parser/node_factory/encoding"
 
 module Openapi3Parser
   module NodeFactory

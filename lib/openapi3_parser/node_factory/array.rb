@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/context"
-require "openapi3_parser/node_factory"
-require "openapi3_parser/node_factory/type_checker"
-require "openapi3_parser/node/array"
-require "openapi3_parser/validation/validatable"
-
 module Openapi3Parser
   module NodeFactory
     class Array

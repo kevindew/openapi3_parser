@@ -2,8 +2,6 @@
 
 require "forwardable"
 
-require "openapi3_parser/node/map"
-
 module Openapi3Parser
   module Node
     # An array within a OpenAPI document.

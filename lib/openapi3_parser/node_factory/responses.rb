@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/context"
 require "openapi3_parser/node_factory/map"
-require "openapi3_parser/node_factory/response"
-require "openapi3_parser/node_factory/optional_reference"
-require "openapi3_parser/node/responses"
 
 module Openapi3Parser
   module NodeFactory

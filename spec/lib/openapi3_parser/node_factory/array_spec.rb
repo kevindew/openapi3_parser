@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/error"
-require "openapi3_parser/node_factory/array"
-require "openapi3_parser/node_factory/contact"
-require "openapi3_parser/node/array"
-require "openapi3_parser/node/contact"
-
 require "support/helpers/context"
 require "support/node_factory"
 

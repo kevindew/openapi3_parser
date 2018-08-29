@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/tag"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/external_documentation"
 

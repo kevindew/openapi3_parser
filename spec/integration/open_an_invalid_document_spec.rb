@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "openapi3_parser"
-require "openapi3_parser/error"
 
 RSpec.describe "Open an invalid document" do
   subject(:document) { Openapi3Parser.load(input) }

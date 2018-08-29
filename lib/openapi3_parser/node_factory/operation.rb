@@ -1,18 +1,8 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/operation"
-require "openapi3_parser/node_factory/map"
 require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/optional_reference"
-require "openapi3_parser/node_factory/array"
 require "openapi3_parser/node_factory/external_documentation"
-require "openapi3_parser/node_factory/parameter"
-require "openapi3_parser/node_factory/request_body"
 require "openapi3_parser/node_factory/responses"
-require "openapi3_parser/node_factory/callback"
-require "openapi3_parser/node_factory/server"
-require "openapi3_parser/node_factory/security_requirement"
-require "openapi3_parser/validators/duplicate_parameters"
 
 module Openapi3Parser
   module NodeFactory

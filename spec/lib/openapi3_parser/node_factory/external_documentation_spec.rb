@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factory/external_documentation"
-require "openapi3_parser/node/external_documentation"
-
 require "support/node_object_factory"
 require "support/helpers/context"
 

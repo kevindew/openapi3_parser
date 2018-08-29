@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/node/object"
-require "openapi3_parser/node/components"
 
 module Openapi3Parser
   module Node

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factory/contact"
-require "openapi3_parser/node_factory/fields/reference"
-
 require "support/helpers/context"
 
 RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do

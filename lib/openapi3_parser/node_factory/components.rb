@@ -1,20 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/components"
 require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/optional_reference"
-require "openapi3_parser/node_factory/map"
-require "openapi3_parser/node_factory/schema"
-require "openapi3_parser/node_factory/response"
-require "openapi3_parser/node_factory/parameter"
-require "openapi3_parser/node_factory/example"
-require "openapi3_parser/node_factory/request_body"
-require "openapi3_parser/node_factory/header"
-require "openapi3_parser/node_factory/security_scheme"
-require "openapi3_parser/node_factory/link"
-require "openapi3_parser/node_factory/callback"
-require "openapi3_parser/validation/input_validator"
-require "openapi3_parser/validators/component_keys"
 
 module Openapi3Parser
   module NodeFactory

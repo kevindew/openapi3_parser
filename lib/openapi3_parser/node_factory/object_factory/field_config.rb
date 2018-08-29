@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/error"
-require "openapi3_parser/node_factory/type_checker"
-
 module Openapi3Parser
   module NodeFactory
     module ObjectFactory

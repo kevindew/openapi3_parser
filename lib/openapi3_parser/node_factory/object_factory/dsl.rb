@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "ostruct"
-
 require "openapi3_parser/node_factory/object_factory/field_config"
 
 module Openapi3Parser

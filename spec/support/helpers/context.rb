@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/context"
-require "openapi3_parser/context/location"
-require "openapi3_parser/document"
-require "openapi3_parser/source_input/raw"
-
 module Helpers
   module Context
     # rubocop:disable Metrics/ParameterLists

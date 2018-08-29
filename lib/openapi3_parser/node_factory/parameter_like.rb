@@ -35,8 +35,3 @@ module Openapi3Parser
 end
 
 # These are in the footer as a cyclic dependency can stop this module loading
-require "openapi3_parser/node_factory/optional_reference"
-require "openapi3_parser/node_factory/map"
-require "openapi3_parser/node_factory/schema"
-require "openapi3_parser/node_factory/example"
-require "openapi3_parser/node_factory/media_type"

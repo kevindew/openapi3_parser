@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/context/pointer"
-
 module Openapi3Parser
   class Context
     # Class used to represent a location within an OpenAPI document.

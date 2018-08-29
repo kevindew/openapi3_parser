@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/error"
-require "openapi3_parser/node_factory/field"
-
 require "support/helpers/context"
 require "support/node_factory"
 

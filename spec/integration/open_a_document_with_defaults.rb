@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require "openapi3_parser"
-require "openapi3_parser/error"
-require "openapi3_parser/node/schema"
 
 RSpec.describe "Open a document with recursive references" do
   subject(:document) { Openapi3Parser.load(input) }

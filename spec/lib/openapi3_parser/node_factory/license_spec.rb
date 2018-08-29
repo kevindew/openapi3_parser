@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factory/license"
-require "openapi3_parser/node/license"
-
 require "support/node_object_factory"
 require "support/helpers/context"
 

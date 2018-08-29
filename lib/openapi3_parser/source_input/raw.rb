@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/source_input"
-require "openapi3_parser/source_input/string_parser"
-require "openapi3_parser/source_input/resolve_next"
 
 module Openapi3Parser
   class SourceInput

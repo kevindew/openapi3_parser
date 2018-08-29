@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/header"
-require "openapi3_parser/node_factory/parameter_like"
 require "openapi3_parser/node_factory/object"
+require "openapi3_parser/node_factory/parameter_like"
 
 module Openapi3Parser
   module NodeFactory

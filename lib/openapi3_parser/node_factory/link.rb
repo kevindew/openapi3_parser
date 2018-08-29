@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/license"
-require "openapi3_parser/node_factory/map"
 require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/server"
 
 module Openapi3Parser
   module NodeFactory

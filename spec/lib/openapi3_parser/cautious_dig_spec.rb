@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/cautious_dig"
-
 RSpec.describe Openapi3Parser::CautiousDig do
   describe ".call" do
     subject { described_class.call(collection, *segments) }

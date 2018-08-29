@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/context/location"
-
 module Openapi3Parser
   # Context is a construct used in both the node factories and the nodes
   # themselves. It is used to represent the data, and the source of it, that

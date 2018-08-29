@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/error"
-
 module Openapi3Parser
   class Document
     class ReferenceRegister

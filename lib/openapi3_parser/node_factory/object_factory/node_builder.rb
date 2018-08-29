@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node_factory/type_checker"
-require "openapi3_parser/node_factory/object_factory/validator"
-require "openapi3_parser/node_factory/recursive_pointer"
-
 module Openapi3Parser
   module NodeFactory
     module ObjectFactory

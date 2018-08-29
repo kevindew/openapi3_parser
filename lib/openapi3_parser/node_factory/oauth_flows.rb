@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/oauth_flows"
-require "openapi3_parser/node_factory/oauth_flow"
 require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/optional_reference"
 
 module Openapi3Parser
   module NodeFactory

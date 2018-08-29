@@ -1,14 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/cautious_dig"
-require "openapi3_parser/context"
-require "openapi3_parser/context/pointer"
-require "openapi3_parser/document/reference_register"
-require "openapi3_parser/error"
-require "openapi3_parser/node_factory/openapi"
-require "openapi3_parser/source"
-require "openapi3_parser/validation/error_collection"
-
 require "forwardable"
 
 module Openapi3Parser

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/source_input/string_parser"
-
 RSpec.describe Openapi3Parser::SourceInput::StringParser do
   describe "#call" do
     subject { described_class.call(input, filename) }

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/validators/duplicate_parameters"
-
 RSpec.describe Openapi3Parser::Validators::DuplicateParameters do
   describe ".call" do
     subject { described_class.call(parameters) }

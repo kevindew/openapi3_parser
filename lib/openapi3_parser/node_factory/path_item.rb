@@ -1,15 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/path_item"
-require "openapi3_parser/node_factory/fields/reference"
 require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/object_factory/node_builder"
-require "openapi3_parser/node_factory/optional_reference"
-require "openapi3_parser/node_factory/array"
-require "openapi3_parser/node_factory/server"
-require "openapi3_parser/node_factory/operation"
-require "openapi3_parser/node_factory/parameter"
-require "openapi3_parser/validators/duplicate_parameters"
 
 module Openapi3Parser
   module NodeFactory

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/validators/media_type"
-
 RSpec.describe Openapi3Parser::Validators::MediaType do
   describe ".call" do
     subject { described_class.call(media_type) }

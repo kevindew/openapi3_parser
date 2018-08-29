@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "openapi3_parser/node/server_variable"
 require "openapi3_parser/node_factory/object"
-require "openapi3_parser/node_factory/array"
 
 module Openapi3Parser
   module NodeFactory
