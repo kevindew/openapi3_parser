@@ -36,7 +36,7 @@ module Openapi3Parser
       end
 
       def parse_yaml
-        YAML.safe_load(input, [], [], true)
+        YAML.safe_load(input, [Date, Time], [], true)
       end
     end
   end
