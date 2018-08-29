@@ -1,3 +1,10 @@
+# 0.5.2
+
+- Fix outputting warnings for cyclic dependencies and undefined variables -
+  fixes: https://github.com/kevindew/openapi3_parser/issues/6
+- Add Date and Time to YAML safe classes so library doesn't crash on an
+  unquoted timestamp - fixes: https://github.com/kevindew/openapi3_parser/issues/7
+
 # 0.5.1
 
 - Bugfix for allowing maps to have extension like field names
