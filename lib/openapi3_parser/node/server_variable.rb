@@ -8,17 +8,17 @@ module Openapi3Parser
     class ServerVariable < Node::Object
       # @return [Node::Array<String>, nil]
       def enum
-        node_data["enum"]
+        self["enum"]
       end
 
       # @return [String]
       def default
-        node_data["default"]
+        self["default"]
       end
 
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]

@@ -8,7 +8,7 @@ module Openapi3Parser
     module ParameterLike
       # @return [String]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -18,52 +18,52 @@ module Openapi3Parser
 
       # @return [Boolean]
       def required?
-        node_data["required"]
+        self["required"]
       end
 
       # @return [Boolean]
       def deprecated?
-        node_data["deprecated"]
+        self["deprecated"]
       end
 
       # @return [Boolean]
       def allow_empty_value?
-        node_data["allowEmptyValue"]
+        self["allowEmptyValue"]
       end
 
       # @return [String, nil]
       def style
-        node_data["style"]
+        self["style"]
       end
 
       # @return [Boolean]
       def explode?
-        node_data["explode"]
+        self["explode"]
       end
 
       # @return [Boolean]
       def allow_reserved?
-        node_data["allowReserved"]
+        self["allowReserved"]
       end
 
       # @return [Schema, nil]
       def schema
-        node_data["schema"]
+        self["schema"]
       end
 
       # @return [Any]
       def example
-        node_data["example"]
+        self["example"]
       end
 
       # @return [Map<String, Example>, nil]
       def examples
-        node_data["examples"]
+        self["examples"]
       end
 
       # @return [Map<String, MediaType>, nil]
       def content
-        node_data["content"]
+        self["content"]
       end
     end
   end

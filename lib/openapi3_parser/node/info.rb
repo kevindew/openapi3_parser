@@ -8,12 +8,12 @@ module Openapi3Parser
     class Info < Node::Object
       # @return [String]
       def title
-        node_data["title"]
+        self["title"]
       end
 
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -23,22 +23,22 @@ module Openapi3Parser
 
       # @return [String, nil]
       def terms_of_service
-        node_data["termsOfService"]
+        self["termsOfService"]
       end
 
       # @return [Contact, nil]
       def contact
-        node_data["contact"]
+        self["contact"]
       end
 
       # @return [License, nil]
       def license
-        node_data["license"]
+        self["license"]
       end
 
       # @return [String]
       def version
-        node_data["version"]
+        self["version"]
       end
     end
   end

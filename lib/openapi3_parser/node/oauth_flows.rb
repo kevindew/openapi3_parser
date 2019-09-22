@@ -8,22 +8,22 @@ module Openapi3Parser
     class OauthFlows < Node::Object
       # @return [OauthFlow, nil]
       def implicit
-        node_data["implicit"]
+        self["implicit"]
       end
 
       # @return [OauthFlow, nil]
       def password
-        node_data["password"]
+        self["password"]
       end
 
       # @return [OauthFlow, nil]
       def client_credentials
-        node_data["clientCredentials"]
+        self["clientCredentials"]
       end
 
       # @return [OauthFlow, nil]
       def authorization_code
-        node_data["authorizationCode"]
+        self["authorizationCode"]
       end
     end
   end

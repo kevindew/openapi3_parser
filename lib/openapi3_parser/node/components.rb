@@ -8,47 +8,47 @@ module Openapi3Parser
     class Components < Node::Object
       # @return [Map<String, Schema>]
       def schemas
-        node_data["schemas"]
+        self["schemas"]
       end
 
       # @return [Map<String, Response>]
       def responses
-        node_data["responses"]
+        self["responses"]
       end
 
       # @return [Map<String, Parameter>]
       def parameters
-        node_data["parameters"]
+        self["parameters"]
       end
 
       # @return [Map<String, Example>]
       def examples
-        node_data["examples"]
+        self["examples"]
       end
 
       # @return [Map<String, RequestBody>]
       def request_bodies
-        node_data["requestBodies"]
+        self["requestBodies"]
       end
 
       # @return [Map<String, Header>]
       def headers
-        node_data["headers"]
+        self["headers"]
       end
 
       # @return [Map<String, SecurityScheme>]
       def security_schemes
-        node_data["securitySchemes"]
+        self["securitySchemes"]
       end
 
       # @return [Map<String, Link>]
       def links
-        node_data["links"]
+        self["links"]
       end
 
       # @return [Map<String, Callback>]
       def callbacks
-        node_data["callbacks"]
+        self["callbacks"]
       end
     end
   end

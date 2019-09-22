@@ -8,22 +8,22 @@ module Openapi3Parser
     class MediaType < Node::Object
       # @return [Schema, nil]
       def schema
-        node_data["schema"]
+        self["schema"]
       end
 
       # @return [Any]
       def example
-        node_data["example"]
+        self["example"]
       end
 
       # @return [Map<String, Example>]
       def examples
-        node_data["examples"]
+        self["examples"]
       end
 
       # @return [Map<String, Encoding>]
       def encoding
-        node_data["encoding"]
+        self["encoding"]
       end
     end
   end

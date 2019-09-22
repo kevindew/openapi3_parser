@@ -11,12 +11,12 @@ module Openapi3Parser
 
       # @return [String]
       def name
-        node_data["name"]
+        self["name"]
       end
 
       # @return [String]
       def in
-        node_data["in"]
+        self["in"]
       end
     end
   end

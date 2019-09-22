@@ -8,12 +8,12 @@ module Openapi3Parser
     class SecurityScheme < Node::Object
       # @return [String, nil]
       def type
-        node_data["type"]
+        self["type"]
       end
 
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -23,32 +23,32 @@ module Openapi3Parser
 
       # @return [String, nil]
       def name
-        node_data["name"]
+        self["name"]
       end
 
       # @return [String, nil]
       def in
-        node_data["in"]
+        self["in"]
       end
 
       # @return [String, nil]
       def scheme
-        node_data["scheme"]
+        self["scheme"]
       end
 
       # @return [String, nil]
       def bearer_format
-        node_data["bearerFormat"]
+        self["bearerFormat"]
       end
 
       # @return [OauthFlows, nil]
       def flows
-        node_data["flows"]
+        self["flows"]
       end
 
       # @return [String, nil]
       def open_id_connect_url
-        node_data["openIdConnectUrl"]
+        self["openIdConnectUrl"]
       end
     end
   end

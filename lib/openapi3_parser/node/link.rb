@@ -8,27 +8,27 @@ module Openapi3Parser
     class Link < Node::Object
       # @return [String, nil]
       def operation_ref
-        node_data["operationRef"]
+        self["operationRef"]
       end
 
       # @return [String, nil]
       def operation_id
-        node_data["operationId"]
+        self["operationId"]
       end
 
       # @return [Map<String, Parameter>]
       def parameters
-        node_data["parameters"]
+        self["parameters"]
       end
 
       # @return [Any]
       def request_body
-        node_data["requestBody"]
+        self["requestBody"]
       end
 
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -38,7 +38,7 @@ module Openapi3Parser
 
       # @return [Server, nil]
       def server
-        node_data["server"]
+        self["server"]
       end
     end
   end

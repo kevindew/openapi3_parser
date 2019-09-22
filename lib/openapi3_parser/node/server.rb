@@ -8,12 +8,12 @@ module Openapi3Parser
     class Server < Node::Object
       # @return [String]
       def url
-        node_data["url"]
+        self["url"]
       end
 
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -23,7 +23,7 @@ module Openapi3Parser
 
       # @return [Map<String, ServerVariable>]
       def variables
-        node_data["variables"]
+        self["variables"]
       end
     end
   end

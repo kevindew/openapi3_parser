@@ -8,27 +8,27 @@ module Openapi3Parser
     class Xml < Node::Object
       # @return [String, nil]
       def name
-        node_data["name"]
+        self["name"]
       end
 
       # @return [String, nil]
       def namespace
-        node_data["namespace"]
+        self["namespace"]
       end
 
       # @return [String, nil]
       def prefix
-        node_data["prefix"]
+        self["prefix"]
       end
 
       # @return [Boolean]
       def attribute?
-        node_data["attribute"]
+        self["attribute"]
       end
 
       # @return [Boolean]
       def wrapped?
-        node_data["wrapped"]
+        self["wrapped"]
       end
     end
   end

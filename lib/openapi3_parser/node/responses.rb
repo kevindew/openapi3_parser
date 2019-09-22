@@ -8,7 +8,7 @@ module Openapi3Parser
     class Responses < Node::Map
       # @return [Response]
       def default
-        node_data["default"]
+        self["default"]
       end
     end
   end

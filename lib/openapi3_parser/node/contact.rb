@@ -8,17 +8,17 @@ module Openapi3Parser
     class Contact < Node::Object
       # @return [String, nil]
       def name
-        data["name"]
+        self["name"]
       end
 
       # @return [String, nil]
       def url
-        data["url"]
+        self["url"]
       end
 
       # @return [String, nil]
       def email
-        data["email"]
+        self["email"]
       end
     end
   end

@@ -8,12 +8,12 @@ module Openapi3Parser
     class License < Node::Object
       # @return [String]
       def name
-        node_data["name"]
+        self["name"]
       end
 
       # @return [String, nil]
       def url
-        node_data["url"]
+        self["url"]
       end
     end
   end

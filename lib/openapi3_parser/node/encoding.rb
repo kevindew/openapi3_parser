@@ -8,27 +8,27 @@ module Openapi3Parser
     class Encoding < Node::Object
       # @return [String, nil]
       def content_type
-        node_data["contentType"]
+        self["contentType"]
       end
 
       # @return [Map<String, Header>]
       def headers
-        node_data["headers"]
+        self["headers"]
       end
 
       # @return [String, nil]
       def style
-        node_data["style"]
+        self["style"]
       end
 
       # @return [Boolean]
       def explode?
-        node_data["explode"]
+        self["explode"]
       end
 
       # @return [Boolean]
       def allow_reserved?
-        node_data["allowReserved"]
+        self["allowReserved"]
       end
     end
   end

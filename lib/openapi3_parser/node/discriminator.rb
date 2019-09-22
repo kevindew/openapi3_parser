@@ -8,12 +8,12 @@ module Openapi3Parser
     class Discriminator < Node::Object
       # @return [String]
       def property_name
-        node_data["propertyName"]
+        self["propertyName"]
       end
 
       # @return [Map<String, String>]
       def mapping
-        node_data["mapping"]
+        self["mapping"]
       end
     end
   end

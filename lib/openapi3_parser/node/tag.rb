@@ -8,12 +8,12 @@ module Openapi3Parser
     class Tag < Node::Object
       # @return [String]
       def name
-        node_data["name"]
+        self["name"]
       end
 
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -23,7 +23,7 @@ module Openapi3Parser
 
       # @return [ExternalDocumentation, nil]
       def external_docs
-        node_data["externalDocs"]
+        self["externalDocs"]
       end
     end
   end

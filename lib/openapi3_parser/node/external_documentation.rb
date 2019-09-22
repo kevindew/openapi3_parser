@@ -8,7 +8,7 @@ module Openapi3Parser
     class ExternalDocumentation < Node::Object
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -18,7 +18,7 @@ module Openapi3Parser
 
       # @return [String]
       def url
-        node_data["url"]
+        self["url"]
       end
     end
   end

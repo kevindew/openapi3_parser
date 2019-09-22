@@ -8,12 +8,12 @@ module Openapi3Parser
     class PathItem < Node::Object
       # @return [String, nil]
       def summary
-        node_data["summary"]
+        self["summary"]
       end
 
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -23,52 +23,52 @@ module Openapi3Parser
 
       # @return [Operation, nil]
       def get
-        node_data["get"]
+        self["get"]
       end
 
       # @return [Operation, nil]
       def put
-        node_data["put"]
+        self["put"]
       end
 
       # @return [Operation, nil]
       def post
-        node_data["post"]
+        self["post"]
       end
 
       # @return [Operation, nil]
       def delete
-        node_data["delete"]
+        self["delete"]
       end
 
       # @return [Operation, nil]
       def options
-        node_data["options"]
+        self["options"]
       end
 
       # @return [Operation, nil]
       def head
-        node_data["head"]
+        self["head"]
       end
 
       # @return [Operation, nil]
       def patch
-        node_data["patch"]
+        self["patch"]
       end
 
       # @return [Operation, nil]
       def trace
-        node_data["trace"]
+        self["trace"]
       end
 
       # @return [Node::Array<Server>]
       def servers
-        node_data["servers"]
+        self["servers"]
       end
 
       # @return [Node::Array<Parameter>]
       def parameters
-        node_data["parameters"]
+        self["parameters"]
       end
     end
   end

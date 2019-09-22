@@ -8,7 +8,7 @@ module Openapi3Parser
     class Response < Node::Object
       # @return [String]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String]
@@ -18,17 +18,17 @@ module Openapi3Parser
 
       # @return [Map<String, Header>]
       def headers
-        node_data["headers"]
+        self["headers"]
       end
 
       # @return [Map<String, MediaType>]
       def content
-        node_data["content"]
+        self["content"]
       end
 
       # @return [Map<String, Link>]
       def links
-        node_data["links"]
+        self["links"]
       end
     end
   end

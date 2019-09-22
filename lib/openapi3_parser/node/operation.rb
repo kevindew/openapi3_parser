@@ -8,17 +8,17 @@ module Openapi3Parser
     class Operation < Node::Object
       # @return [Node::Array<String>]
       def tags
-        node_data["tags"]
+        self["tags"]
       end
 
       # @return [String, nil]
       def summary
-        node_data["summary"]
+        self["summary"]
       end
 
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -28,47 +28,47 @@ module Openapi3Parser
 
       # @return [ExternalDocumentation, nil]
       def external_docs
-        node_data["externalDocs"]
+        self["externalDocs"]
       end
 
       # @return [String, nil]
       def operation_id
-        node_data["operationId"]
+        self["operationId"]
       end
 
       # @return [Node::Array<Parameter>]
       def parameters
-        node_data["parameters"]
+        self["parameters"]
       end
 
       # @return [RequestBody, nil]
       def request_body
-        node_data["requestBody"]
+        self["requestBody"]
       end
 
       # @return [Responses]
       def responses
-        node_data["responses"]
+        self["responses"]
       end
 
       # @return [Map<String, Callback>]
       def callbacks
-        node_data["callbacks"]
+        self["callbacks"]
       end
 
       # @return [Boolean]
       def deprecated?
-        node_data["deprecated"]
+        self["deprecated"]
       end
 
       # @return [Node::Array<SecurityRequirement>]
       def security
-        node_data["security"]
+        self["security"]
       end
 
       # @return [Node::Array<Server>]
       def servers
-        node_data["servers"]
+        self["servers"]
       end
     end
   end

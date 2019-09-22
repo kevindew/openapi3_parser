@@ -8,22 +8,22 @@ module Openapi3Parser
     class OauthFlow < Node::Object
       # @return [String, nil]
       def authorization_url
-        node_data["authorizationUrl"]
+        self["authorizationUrl"]
       end
 
       # @return [String, nil]
       def token_url
-        node_data["tokenUrl"]
+        self["tokenUrl"]
       end
 
       # @return [String, nil]
       def refresh_url
-        node_data["refreshUrl"]
+        self["refreshUrl"]
       end
 
       # @return [Map<String, String>]
       def scopes
-        node_data["scopes"]
+        self["scopes"]
       end
     end
   end

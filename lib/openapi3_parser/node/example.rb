@@ -8,12 +8,12 @@ module Openapi3Parser
     class Example < Node::Object
       # @return [String, nil]
       def summary
-        node_data["summary"]
+        self["summary"]
       end
 
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -23,12 +23,12 @@ module Openapi3Parser
 
       # @return [Object]
       def value
-        node_data["value"]
+        self["value"]
       end
 
       # @return [String, nil]
       def external_value
-        node_data["externalValue"]
+        self["externalValue"]
       end
     end
   end

@@ -9,134 +9,134 @@ module Openapi3Parser
     class Schema < Node::Object
       # @return [String, nil]
       def title
-        node_data["title"]
+        self["title"]
       end
 
       # @return [Numeric, nil]
       def multiple_of
-        node_data["multipleOf"]
+        self["multipleOf"]
       end
 
       # @return [Integer, nil]
       def maximum
-        node_data["maximum"]
+        self["maximum"]
       end
 
       # @return [Boolean]
       def exclusive_maximum?
-        node_data["exclusiveMaximum"]
+        self["exclusiveMaximum"]
       end
 
       # @return [Integer, nil]
       def minimum
-        node_data["minimum"]
+        self["minimum"]
       end
 
       # @return [Boolean]
       def exclusive_minimum?
-        node_data["exclusiveMinimum"]
+        self["exclusiveMinimum"]
       end
 
       # @return [Integer, nil]
       def max_length
-        node_data["maxLength"]
+        self["maxLength"]
       end
 
       # @return [Integer]
       def min_length
-        node_data["minLength"]
+        self["minLength"]
       end
 
       # @return [String, nil]
       def pattern
-        node_data["pattern"]
+        self["pattern"]
       end
 
       # @return [Integer, nil]
       def max_items
-        node_data["maxItems"]
+        self["maxItems"]
       end
 
       # @return [Integer]
       def min_items
-        node_data["minItems"]
+        self["minItems"]
       end
 
       # @return [Boolean]
       def unique_items?
-        node_data["uniqueItems"]
+        self["uniqueItems"]
       end
 
       # @return [Integer, nil]
       def max_properties
-        node_data["maxProperties"]
+        self["maxProperties"]
       end
 
       # @return [Integer]
       def min_properties
-        node_data["minProperties"]
+        self["minProperties"]
       end
 
       # @return [Node::Array<String>, nil]
       def required
-        node_data["required"]
+        self["required"]
       end
 
       # @return [Node::Array<Object>, nil]
       def enum
-        node_data["enum"]
+        self["enum"]
       end
 
       # @return [String, nil]
       def type
-        node_data["type"]
+        self["type"]
       end
 
       # @return [Node::Array<Schema>, nil]
       def all_of
-        node_data["allOf"]
+        self["allOf"]
       end
 
       # @return [Node::Array<Schema>, nil]
       def one_of
-        node_data["oneOf"]
+        self["oneOf"]
       end
 
       # @return [Node::Array<Schema>, nil]
       def any_of
-        node_data["anyOf"]
+        self["anyOf"]
       end
 
       # @return [Schema, nil]
       def not
-        node_data["not"]
+        self["not"]
       end
 
       # @return [Schema, nil]
       def items
-        node_data["items"]
+        self["items"]
       end
 
       # @return [Map<String, Schema>]
       def properties
-        node_data["properties"]
+        self["properties"]
       end
 
       # @return [Boolean]
       def additional_properties?
-        node_data["additionalProperties"] != false
+        self["additionalProperties"] != false
       end
 
       # @return [Schema, nil]
       def additional_properties_schema
-        properties = node_data["additionalProperties"]
+        properties = self["additionalProperties"]
         return if [true, false].include?(properties)
         properties
       end
 
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -146,52 +146,52 @@ module Openapi3Parser
 
       # @return [String, nil]
       def format
-        node_data["format"]
+        self["format"]
       end
 
       # @return [Any]
       def default
-        node_data["default"]
+        self["default"]
       end
 
       # @return [Boolean]
       def nullable?
-        node_data["nullable"]
+        self["nullable"]
       end
 
       # @return [Discriminator, nil]
       def disciminator
-        node_data["discriminator"]
+        self["discriminator"]
       end
 
       # @return [Boolean]
       def read_only?
-        node_data["readOnly"]
+        self["readOnly"]
       end
 
       # @return [Boolean]
       def write_only?
-        node_data["writeOnly"]
+        self["writeOnly"]
       end
 
       # @return [Xml, nil]
       def xml
-        node_data["xml"]
+        self["xml"]
       end
 
       # @return [ExternalDocumentation, nil]
       def external_docs
-        node_data["externalDocs"]
+        self["externalDocs"]
       end
 
       # @return [Any]
       def example
-        node_data["example"]
+        self["example"]
       end
 
       # @return [Boolean]
       def deprecated?
-        node_data["deprecated"]
+        self["deprecated"]
       end
     end
     # rubocop:enable ClassLength

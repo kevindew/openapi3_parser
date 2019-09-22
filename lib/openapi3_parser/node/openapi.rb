@@ -9,42 +9,42 @@ module Openapi3Parser
     class Openapi < Node::Object
       # @return [String]
       def openapi
-        node_data["openapi"]
+        self["openapi"]
       end
 
       # @return [Info]
       def info
-        node_data["info"]
+        self["info"]
       end
 
       # @return [Node::Array<Server>]
       def servers
-        node_data["servers"]
+        self["servers"]
       end
 
       # @return [Paths]
       def paths
-        node_data["paths"]
+        self["paths"]
       end
 
       # @return [Components]
       def components
-        node_data["components"]
+        self["components"]
       end
 
       # @return [Node::Array<SecurityRequirement>]
       def security
-        node_data["security"]
+        self["security"]
       end
 
       # @return [Node::Array<Tag>]
       def tags
-        node_data["tags"]
+        self["tags"]
       end
 
       # @return [ExternalDocumentation]
       def external_docs
-        node_data["externalDocs"]
+        self["externalDocs"]
       end
     end
   end

@@ -8,7 +8,7 @@ module Openapi3Parser
     class RequestBody < Node::Object
       # @return [String, nil]
       def description
-        node_data["description"]
+        self["description"]
       end
 
       # @return [String, nil]
@@ -18,12 +18,12 @@ module Openapi3Parser
 
       # @return [Map<String, MediaType>]
       def content
-        node_data["content"]
+        self["content"]
       end
 
       # @return [Boolean]
       def required?
-        node_data["required"]
+        self["required"]
       end
     end
   end
