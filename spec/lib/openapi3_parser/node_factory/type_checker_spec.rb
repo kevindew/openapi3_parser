@@ -4,8 +4,8 @@ require "support/helpers/context"
 
 RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
   include Helpers::Context
-  let(:context) { create_context(input) }
-  let(:factory) { double("factory", context: context) }
+  let(:node_factory_context) { create_node_factory_context(input) }
+  let(:factory) { double("factory", context: node_factory_context) }
 
   describe ".validate_type" do
     let(:validatable) { Openapi3Parser::Validation::Validatable.new(factory) }
@@ -30,7 +30,7 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
         expect(validatable.errors).to include(
           Openapi3Parser::Validation::Error.new(
             "Invalid type. Expected Integer",
-            context,
+            node_factory_context,
             factory.class
           )
         )
@@ -40,7 +40,7 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
 
   describe ".raise_on_invalid_type" do
     subject(:raise_on_invalid_type) do
-      described_class.raise_on_invalid_type(context, type: type)
+      described_class.raise_on_invalid_type(node_factory_context, type: type)
     end
 
     context "when the type is valid" do
@@ -84,7 +84,7 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
         expect(validatable.errors).to include(
           Openapi3Parser::Validation::Error.new(
             "Invalid keys. Expected keys to be of type Integer",
-            context,
+            node_factory_context,
             factory.class
           )
         )
@@ -94,7 +94,7 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
 
   describe ".raise_on_invalid_keys" do
     subject(:raise_on_invalid_keys) do
-      described_class.raise_on_invalid_keys(context, type: type)
+      described_class.raise_on_invalid_keys(node_factory_context, type: type)
     end
 
     context "when the type is valid" do
@@ -125,7 +125,8 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
 
       it "validates without error" do
         expect do
-          described_class.raise_on_invalid_type(context, type: type)
+          described_class.raise_on_invalid_type(node_factory_context,
+                                                type: type)
         end.not_to raise_error
       end
     end
@@ -135,7 +136,8 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
 
       it "validates without error" do
         expect do
-          described_class.raise_on_invalid_type(context, type: type)
+          described_class.raise_on_invalid_type(node_factory_context,
+                                                type: type)
         end.not_to raise_error
       end
     end
@@ -148,7 +150,8 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
         error_message = "Invalid type for #/: Expected Boolean"
 
         expect do
-          described_class.raise_on_invalid_type(context, type: type)
+          described_class.raise_on_invalid_type(node_factory_context,
+                                                type: type)
         end.to raise_error(error_class, error_message)
       end
     end
@@ -163,7 +166,7 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
       error_message = "Expected odd to be a Class not a String"
 
       expect do
-        described_class.raise_on_invalid_type(context, type: type)
+        described_class.raise_on_invalid_type(node_factory_context, type: type)
       end.to raise_error(error_class, error_message)
     end
   end

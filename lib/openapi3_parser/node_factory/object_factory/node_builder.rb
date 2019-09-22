@@ -8,8 +8,8 @@ module Openapi3Parser
           new(factory).errors
         end
 
-        def self.node_data(factory)
-          new(factory).node_data
+        def self.node_data(factory, parent_context)
+          new(factory).node_data(parent_context)
         end
 
         def initialize(factory)
@@ -29,11 +29,11 @@ module Openapi3Parser
           validatable.collection
         end
 
-        def node_data
-          return build_node_data if empty_and_allowed_to_be?
+        def node_data(parent_context)
+          return build_node_data(parent_context) if empty_and_allowed_to_be?
           TypeChecker.raise_on_invalid_type(factory.context, type: ::Hash)
           validate(raise_on_invalid: true)
-          build_node_data
+          build_node_data(parent_context)
         end
 
         private_class_method :new
@@ -50,40 +50,33 @@ module Openapi3Parser
           Validator.call(factory, raise_on_invalid)
         end
 
-        def build_node_data
+        def build_node_data(parent_context)
           return if factory.nil_input? && factory.data.nil?
 
-          factory.data.each_with_object(NodeData.new) do |(key, value), memo|
-            memo[key] = if node_is_recursive_pointer?(value)
-                          value.recursive_pointer
-                        else
-                          resolve_value(key, value)
-                        end
+          factory.data.each_with_object({}) do |(key, value), memo|
+            memo[key] = resolve_value(key, value, parent_context)
           end
         end
 
-        def resolve_value(key, value)
+        def resolve_value(key, value, parent_context)
+          resolved = determine_value_or_default(key, value)
+
+          if resolved.respond_to?(:node)
+            Node::Placeholder.new(value, key, parent_context)
+          else
+            resolved
+          end
+        end
+
+        def determine_value_or_default(key, value)
           config = factory.field_configs[key]
-          resolved_value = value.respond_to?(:node) ? value.node : value
 
           # let a field config default take precedence if value is a nil_input?
           if (value.respond_to?(:nil_input?) && value.nil_input?) || value.nil?
             default = config&.default(factory)
-            default.nil? ? resolved_value : default
+            default.nil? ? value : default
           else
-            resolved_value
-          end
-        end
-
-        def node_is_recursive_pointer?(value_factory)
-          return false unless value_factory.respond_to?(:in_recursive_loop?)
-          value_factory.in_recursive_loop?
-        end
-
-        class NodeData < ::Hash
-          def [](key)
-            item = super(key)
-            item.is_a?(NodeFactory::RecursivePointer) ? item.node : item
+            value
           end
         end
       end

@@ -46,11 +46,9 @@ module Openapi3Parser
         @errors ||= ValidNodeBuilder.errors(self)
       end
 
-      def node
-        @node ||= begin
-                    data = ValidNodeBuilder.data(self)
-                    data.nil? ? nil : build_node(data)
-                  end
+      def node(node_context)
+        data = ValidNodeBuilder.data(self, node_context)
+        data.nil? ? nil : build_node(data, node_context)
       end
 
       def inspect
@@ -84,8 +82,8 @@ module Openapi3Parser
         end
       end
 
-      def build_node(data)
-        Node::Map.new(data, context) if data
+      def build_node(data, node_context)
+        Node::Map.new(data, node_context) if data
       end
 
       def build_resolved_input
@@ -105,8 +103,8 @@ module Openapi3Parser
           new(factory).errors
         end
 
-        def self.data(factory)
-          new(factory).data
+        def self.data(factory, parent_context)
+          new(factory).data(parent_context)
         end
 
         def initialize(factory)
@@ -122,7 +120,7 @@ module Openapi3Parser
           validatable.collection
         end
 
-        def data
+        def data(parent_context)
           return default_value if factory.nil_input?
 
           TypeChecker.raise_on_invalid_type(factory.context, type: ::Hash)
@@ -131,7 +129,11 @@ module Openapi3Parser
           validate(raise_on_invalid: true)
 
           factory.data.each_with_object({}) do |(key, value), memo|
-            memo[key] = value.respond_to?(:node) ? value.node : value
+            memo[key] = if value.respond_to?(:node)
+                          Node::Placeholder.new(value, key, parent_context)
+                        else
+                          value
+                        end
           end
         end
 

@@ -3,7 +3,7 @@
 require "cgi"
 
 module Openapi3Parser
-  class Context
+  class Source
     # A class to decorate the array of fields that make up a pointer and
     # provide common means to convert it into different representations.
     class Pointer

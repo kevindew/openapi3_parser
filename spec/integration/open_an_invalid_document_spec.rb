@@ -23,7 +23,9 @@ RSpec.describe "Open an invalid document" do
 
   it { is_expected.to_not be_valid }
 
-  it "raises an exception accessing the root" do
-    expect { document.root }.to raise_error(Openapi3Parser::Error)
+  it "raises an exception accessing the erroneous node" do
+    expect { document.openapi }.not_to raise_error
+    expect { document.components.examples["test"] }
+      .to raise_error(Openapi3Parser::Error)
   end
 end

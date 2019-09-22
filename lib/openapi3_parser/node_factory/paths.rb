@@ -31,8 +31,8 @@ module Openapi3Parser
 
       private
 
-      def build_node(data)
-        Node::Paths.new(data, context)
+      def build_node(data, node_context)
+        Node::Paths.new(data, node_context)
       end
 
       def validate(validatable)

@@ -39,11 +39,9 @@ module Openapi3Parser
         @errors ||= ValidNodeBuilder.errors(self)
       end
 
-      def node
-        @node ||= begin
-                    data = ValidNodeBuilder.data(self)
-                    data.nil? ? nil : build_node(data)
-                  end
+      def node(node_context)
+        data = ValidNodeBuilder.data(self)
+        data.nil? ? nil : build_node(data, node_context)
       end
 
       def inspect
@@ -52,7 +50,7 @@ module Openapi3Parser
 
       private
 
-      def build_node(data)
+      def build_node(data, _node_context)
         data
       end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples "mutually exclusive example" do
-  subject { described_class.new(context) }
+  subject { described_class.new(node_factory_context) }
 
   context "when neither example or examples is provided" do
     let(:example) { nil }

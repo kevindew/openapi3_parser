@@ -42,12 +42,20 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
       }
     end
 
-    let(:context) { create_context(input, document_input: document_input) }
+    let(:node_factory_context) do
+      create_node_factory_context(input, document_input: document_input)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "items" do
-    subject { described_class.new(context) }
-    let(:context) { create_context("type" => type, "items" => items) }
+    subject { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context("type" => type, "items" => items)
+    end
 
     context "when type is not array and items is not provided" do
       let(:type) { "string" }
@@ -73,9 +81,10 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
   end
 
   describe "writeOnly and readOnly" do
-    subject { described_class.new(context) }
-    let(:context) do
-      create_context("readOnly" => read_only, "writeOnly" => write_only)
+    subject { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context("readOnly" => read_only,
+                                  "writeOnly" => write_only)
     end
 
     context "when both are true" do
@@ -90,31 +99,61 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
   end
 
   it_behaves_like "default field", field: "nullable", defaults_to: false do
-    let(:context) { create_context("nullable" => nullable) }
+    let(:node_factory_context) do
+      create_node_factory_context("nullable" => nullable)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   it_behaves_like "default field",
-                  field: "readOnly", defaults_to: false, var_name: :read_only do
-                    let(:context) { create_context("readOnly" => read_only) }
-                  end
+                  field: "readOnly",
+                  defaults_to: false,
+                  var_name: :read_only do
+    let(:node_factory_context) do
+      create_node_factory_context("readOnly" => read_only)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
+  end
 
   it_behaves_like "default field",
-                  field: "writeOnly", defaults_to: false,
+                  field: "writeOnly",
+                  defaults_to: false,
                   var_name: :write_only do
-                    let(:context) { create_context("writeOnly" => write_only) }
-                  end
+    let(:node_factory_context) do
+      create_node_factory_context("writeOnly" => write_only)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
+  end
 
   it_behaves_like "default field",
-                  field: "deprecated", defaults_to: false,
+                  field: "deprecated",
+                  defaults_to: false,
                   var_name: :deprecated do
-                    let(:context) { create_context("deprecated" => deprecated) }
-                  end
+    let(:node_factory_context) do
+      create_node_factory_context("deprecated" => deprecated)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
+  end
 
   describe "additionalProperties" do
     subject do
-      described_class.new(
-        create_context("additionalProperties" => additional_properties)
+      context = create_node_factory_context(
+        "additionalProperties" => additional_properties
       )
+
+      described_class.new(context)
     end
 
     context "when it is set to true" do

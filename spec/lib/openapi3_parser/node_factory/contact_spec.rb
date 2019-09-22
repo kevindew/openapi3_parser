@@ -13,12 +13,15 @@ RSpec.describe Openapi3Parser::NodeFactory::Contact do
       }
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "url" do
-    subject(:factory) { described_class.new(context) }
-    let(:context) { create_context("url" => url) }
+    subject(:factory) { described_class.new(node_factory_context) }
+    let(:node_factory_context) { create_node_factory_context("url" => url) }
 
     context "when url is an actual url" do
       let(:url) { "https://example.com/path" }
@@ -32,8 +35,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Contact do
   end
 
   describe "email" do
-    subject(:factory) { described_class.new(context) }
-    let(:context) { create_context("email" => email) }
+    subject(:factory) { described_class.new(node_factory_context) }
+    let(:node_factory_context) { create_node_factory_context("email" => email) }
 
     context "when email is an actual email" do
       let(:email) { "kevin@example.com" }

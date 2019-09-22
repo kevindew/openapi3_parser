@@ -2,38 +2,37 @@
 
 module Helpers
   module Context
-    # rubocop:disable Metrics/ParameterLists
-    def create_context(input,
-                       document_input: {},
-                       document: nil,
-                       pointer_segments: [],
-                       referenced_by: nil,
-                       is_reference: false)
+    def create_node_factory_context(input,
+                                    document_input: {},
+                                    document: nil,
+                                    pointer_segments: [])
       source_input = Openapi3Parser::SourceInput::Raw.new(document_input)
       document ||= Openapi3Parser::Document.new(source_input)
-      location = Openapi3Parser::Context::Location
-      document_location = location.new(document.root_source, pointer_segments)
-      Openapi3Parser::Context.new(input,
-                                  document_location: document_location,
-                                  referenced_by: referenced_by,
-                                  is_reference: is_reference)
+      location = Openapi3Parser::Source::Location.new(
+        document.root_source,
+        pointer_segments
+      )
+      Openapi3Parser::NodeFactory::Context.new(input, source_location: location)
     end
-    # rubocop:enable Metrics/ParameterLists
 
-    def create_context_location(source_input,
-                                document: nil,
-                                pointer_segments: [])
-      source = if !document
-                 Openapi3Parser::Document.new(source_input).root_source
-               else
-                 Openapi3Parser::Source.new(
-                   source_input,
-                   document,
-                   Openapi3Parser::Document::ReferenceRegister.new
-                 )
-               end
+    def node_factory_context_to_node_context(node_factory_context)
+      Openapi3Parser::Node::Context.new(
+        node_factory_context.input,
+        document_location: node_factory_context.source_location,
+        source_location: node_factory_context.source_location
+      )
+    end
 
-      Openapi3Parser::Context::Location.new(source, pointer_segments)
+    def create_node_context(input, document_input: {}, pointer_segments: [])
+      source_input = Openapi3Parser::SourceInput::Raw.new(document_input)
+      document = Openapi3Parser::Document.new(source_input)
+      location = Openapi3Parser::Source::Location.new(
+        document.root_source,
+        pointer_segments
+      )
+      Openapi3Parser::Node::Context.new(input,
+                                        document_location: location,
+                                        source_location: location)
     end
   end
 end

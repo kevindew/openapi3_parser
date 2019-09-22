@@ -5,12 +5,12 @@ require "support/helpers/context"
 RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
   include Helpers::Context
 
-  def create_contact_validatable(context = nil)
+  def create_contact_validatable(node_factory_context = nil)
     Openapi3Parser::Validation::Validatable.new(
       Openapi3Parser::NodeFactory::Contact.new(
-        create_context("name" => "Mike")
+        create_node_factory_context("name" => "Mike")
       ),
-      context: context
+      context: node_factory_context
     )
   end
 
@@ -29,13 +29,16 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
   end
 
   describe "#initialize_factory" do
-    let(:context) { create_context("name" => "Mike") }
+    let(:node_factory_context) do
+      create_node_factory_context("name" => "Mike")
+    end
+
     let(:parent_factory) { nil }
 
     subject do
       described_class
         .new(factory: factory)
-        .initialize_factory(context, parent_factory)
+        .initialize_factory(node_factory_context, parent_factory)
     end
 
     shared_examples "initialises Contact factory" do
@@ -51,8 +54,8 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
       let(:factory) { :contact_factory }
       let(:parent_factory) do
         class BasicFactory
-          def contact_factory(context)
-            Openapi3Parser::NodeFactory::Contact.new(context)
+          def contact_factory(node_factory_context)
+            Openapi3Parser::NodeFactory::Contact.new(node_factory_context)
           end
         end
         BasicFactory.new
@@ -84,7 +87,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
   end
 
   describe "#check_input_type" do
-    let(:validatable) { create_contact_validatable(context) }
+    let(:validatable) { create_contact_validatable(node_factory_context) }
     let(:building_node) { false }
 
     subject(:check_input_type) do
@@ -94,21 +97,21 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
 
     context "when input type is valid" do
       let(:input_type) { String }
-      let(:context) { create_context("a string") }
+      let(:node_factory_context) { create_node_factory_context("a string") }
 
       it { is_expected.to be true }
     end
 
     context "when context input is nil" do
       let(:input_type) { String }
-      let(:context) { create_context(nil) }
+      let(:node_factory_context) { create_node_factory_context(nil) }
 
       it { is_expected.to be true }
     end
 
     context "when input type is invalid and building_node is false" do
       let(:input_type) { String }
-      let(:context) { create_context(1) }
+      let(:node_factory_context) { create_node_factory_context(1) }
       let(:building_node) { false }
 
       it { is_expected.to be false }
@@ -121,7 +124,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
 
     context "when input type is invalid and building_node is true" do
       let(:input_type) { String }
-      let(:context) { create_context(1) }
+      let(:node_factory_context) { create_node_factory_context(1) }
       let(:building_node) { true }
 
       it "raises an InvalidType error" do
@@ -132,8 +135,8 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
   end
 
   describe "#validate_field" do
-    let(:context) { create_context("a string") }
-    let(:validatable) { create_contact_validatable(context) }
+    let(:node_factory_context) { create_node_factory_context("a string") }
+    let(:validatable) { create_contact_validatable(node_factory_context) }
     let(:building_node) { false }
 
     subject(:validate_field) do
@@ -149,7 +152,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
 
     context "when context input is nil" do
       let(:validate) { ->(validatable) { validatable.add_error("bad") } }
-      let(:context) { create_context(nil) }
+      let(:node_factory_context) { create_node_factory_context(nil) }
 
       it { is_expected.to be true }
     end

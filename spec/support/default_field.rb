@@ -3,7 +3,9 @@
 RSpec.shared_examples "default field" do |field:, defaults_to:, var_name: nil|
   var_name ||= field.to_sym
 
-  subject(:node) { described_class.new(context).node }
+  subject(:node) do
+    described_class.new(node_factory_context).node(node_context)
+  end
 
   context "when #{field} is not set" do
     let(var_name) { nil }

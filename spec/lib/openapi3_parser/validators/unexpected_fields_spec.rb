@@ -6,10 +6,10 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
   include Helpers::Context
 
   describe ".call" do
-    let(:context) { create_context({}) }
+    let(:node_factory_context) { create_node_factory_context({}) }
     let(:validatable) do
       Openapi3Parser::Validation::Validatable.new(
-        Openapi3Parser::NodeFactory::Map.new(context)
+        Openapi3Parser::NodeFactory::Map.new(node_factory_context)
       )
     end
     let(:allow_extensions) { true }
@@ -28,8 +28,8 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
     end
 
     describe "allow_extensions option" do
-      let(:context) do
-        create_context(
+      let(:node_factory_context) do
+        create_node_factory_context(
           "x-extension" => "my extension",
           "x-extension-2" => "my other extension"
         )
@@ -56,7 +56,9 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
     end
 
     describe "allowed_fields option" do
-      let(:context) { create_context("fieldA" => "My field") }
+      let(:node_factory_context) do
+        create_node_factory_context("fieldA" => "My field")
+      end
 
       context "when it includes the fields" do
         let(:allowed_fields) { %w[fieldA fieldB] }
@@ -77,9 +79,11 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
       end
 
       context "when it includes extesnions and they're allowed" do
-        let(:context) do
-          create_context("fieldA" => "My field", "x-test" => "my extension")
+        let(:node_factory_context) do
+          create_node_factory_context("fieldA" => "My field",
+                                      "x-test" => "my extension")
         end
+
         let(:allowed_fields) { %w[fieldA] }
         let(:allowed_extensions) { true }
         it "raises an error on extensions" do
@@ -89,7 +93,10 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
     end
 
     describe "raise_on_invalid option" do
-      let(:context) { create_context("fieldA" => "My field") }
+      let(:node_factory_context) do
+        create_node_factory_context("fieldA" => "My field")
+      end
+
       let(:allowed_fields) { %w[fieldB] }
 
       context "when it is false" do

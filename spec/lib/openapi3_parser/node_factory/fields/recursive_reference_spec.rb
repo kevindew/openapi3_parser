@@ -2,7 +2,7 @@
 
 require "support/helpers/context"
 
-RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
+RSpec.describe Openapi3Parser::NodeFactory::Fields::RecursiveReference do
   include Helpers::Context
 
   let(:factory_class) { Openapi3Parser::NodeFactory::Contact }
@@ -15,7 +15,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
   end
 
   describe "#resolved_input" do
-    subject do
+    subject(:resolved_input) do
       described_class.new(factory_context, factory_class).resolved_input
     end
 
@@ -24,15 +24,23 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
         { "reference" => { "name" => "Joe" } }
       end
 
-      it { is_expected.to match(hash_including("name" => "Joe")) }
+      it { is_expected.to be_a(described_class::RecursiveResolvedInput) }
+
+      it "has the value" do
+        expect(resolved_input["name"]).to eq "Joe"
+      end
     end
 
+    # this should never happen as for it to be recusive implies a nested
+    # object
     context "when reference can't be resolved" do
       let(:document_input) do
         { "not_reference" => {} }
       end
 
-      it { is_expected.to be_nil }
+      it "has a nil value" do
+        expect(resolved_input.value).to be_nil
+      end
     end
   end
 

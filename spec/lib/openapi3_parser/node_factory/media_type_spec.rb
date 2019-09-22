@@ -56,13 +56,26 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
       }
     end
 
-    let(:context) { create_context(input, document_input: document_input) }
+    let(:node_factory_context) do
+      create_node_factory_context(input, document_input: document_input)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "examples default value" do
-    subject(:node) { described_class.new(context).node }
-    let(:context) do
-      create_context("examples" => nil)
+    subject(:node) do
+      described_class.new(node_factory_context).node(node_context)
+    end
+
+    let(:node_factory_context) do
+      create_node_factory_context("examples" => nil)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
     end
 
     it "defaults to a value of nil" do
@@ -71,8 +84,8 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
   end
 
   it_behaves_like "mutually exclusive example" do
-    let(:context) do
-      create_context(
+    let(:node_factory_context) do
+      create_node_factory_context(
         "example" => example,
         "examples" => examples
       )
@@ -80,13 +93,14 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
   end
 
   describe "encoding" do
-    subject { described_class.new(context) }
-    let(:context) do
-      create_context(
+    subject { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context(
         "schema" => schema,
         "encoding" => encoding
       )
     end
+
     let(:schema) do
       {
         "type" => "object",

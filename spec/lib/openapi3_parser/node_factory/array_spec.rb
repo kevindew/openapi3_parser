@@ -5,7 +5,7 @@ require "support/node_factory"
 
 RSpec.describe Openapi3Parser::NodeFactory::Array do
   include Helpers::Context
-  let(:context) { create_context(input) }
+  let(:node_factory_context) { create_node_factory_context(input) }
   let(:input) { [] }
 
   let(:default) { [] }
@@ -13,7 +13,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Array do
   let(:value_factory) { nil }
   let(:validate) { nil }
   let(:instance) do
-    described_class.new(context,
+    described_class.new(node_factory_context,
                         default: default,
                         value_input_type: value_input_type,
                         value_factory: value_factory,
@@ -33,7 +33,10 @@ RSpec.describe Openapi3Parser::NodeFactory::Array do
   end
 
   describe "#node" do
-    subject(:node) { instance.node }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
+    subject(:node) { instance.node(node_context) }
 
     it { is_expected.to be_a(Openapi3Parser::Node::Array) }
 
@@ -44,7 +47,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Array do
       it "raises an InvalidType error" do
         error_type = Openapi3Parser::Error::InvalidType
         error_message = "Invalid type for #/1: Expected Object"
-        expect { instance.node }
+        expect { instance.node(node_context) }
           .to raise_error(error_type, error_message)
       end
     end
@@ -70,7 +73,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Array do
           { "name" => "Kenneth" }
         ]
       end
-      subject(:item) { instance.node.first }
+      subject(:item) { instance.node(node_context).first }
 
       it "returns items created by the value factory" do
         expect(item).to be_a(Openapi3Parser::Node::Contact)

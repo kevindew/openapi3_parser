@@ -6,10 +6,10 @@ RSpec.describe Openapi3Parser::Validators::RequiredFields do
   include Helpers::Context
 
   describe ".call" do
-    let(:context) { create_context({}) }
+    let(:node_factory_context) { create_node_factory_context({}) }
     let(:validatable) do
       Openapi3Parser::Validation::Validatable.new(
-        double("factory", context: context)
+        double("factory", context: node_factory_context)
       )
     end
     let(:required_fields) { [] }

@@ -9,22 +9,22 @@ module Openapi3Parser
   #   The source input which provides the data
   # @attr_reader [Document]                     document
   #   The document that this source is associated with
-  # @attr_reader [Document::ReferenceRegister]  reference_register
-  #   An object to track references for a document
+  # @attr_reader [Document::ReferenceRegistry]  reference_registry
+  #   An object that tracks factories for all references
   # @attr_reader [Source, nil]                  parent
   #   Set to a Source if this source was created due to a reference within
   #   a different Source
   class Source
-    attr_reader :source_input, :document, :reference_register, :parent
+    attr_reader :source_input, :document, :reference_registry, :parent
 
     # @param  [SourceInput]                   source_input
     # @param  [Document]                      document
-    # @param  [Document::ReferenceRegister]   reference_register
+    # @param  [Document::ReferenceRegistry]   reference_registry
     # @param  [Source, nil]                   parent
-    def initialize(source_input, document, reference_register, parent = nil)
+    def initialize(source_input, document, reference_registry, parent = nil)
       @source_input = source_input
       @document = document
-      @reference_register = reference_register
+      @reference_registry = reference_registry
       @parent = parent
     end
 
@@ -43,23 +43,14 @@ module Openapi3Parser
       document.root_source == self
     end
 
-    # Used to register a reference with the underlying document and return a
-    # reference resolver to access the object referenced
-    #
-    # @param  [String]        given_reference   The reference as text
-    # @param  [NodeFactory]   factory           Factory class for the expected
-    #                                           eventual resource
-    # @param  [Context]       context           The context of the object
-    #                                           calling this reference
-    # @return [ReferenceResolver]
-    def register_reference(given_reference, factory, context)
+    def resolve_reference(given_reference, unbuilt_factory, context)
       reference = Reference.new(given_reference)
-      ReferenceResolver.new(
-        reference, factory, context
-      ).tap do |resolver|
-        next if resolver.in_root_source?
-        reference_register.register(resolver.reference_factory)
-      end
+      source = context.source.resolve_source(reference)
+      source_location = Source::Location.new(source, reference.json_pointer)
+      built_factory = reference_registry.resolve(unbuilt_factory,
+                                                 source_location,
+                                                 context.source_location)
+      ResolvedReference.new(reference, built_factory)
     end
 
     # Access/create the source object for a reference
@@ -71,15 +62,15 @@ module Openapi3Parser
         # I found the spec wasn't fully clear on expected behaviour if a source
         # references a fragment that doesn't exist in it's current document
         # and just the root source. I'm assuming to be consistent with URI a
-        # fragment only reference only references current JSON document. This
-        # could be incorrect though.
+        # fragment only references the current JSON document. This could be
+        # incorrect though.
         self
       else
         next_source_input = source_input.resolve_next(reference)
         source = document.source_for_source_input(next_source_input)
         source || self.class.new(next_source_input,
                                  document,
-                                 reference_register,
+                                 reference_registry,
                                  self)
       end
     end

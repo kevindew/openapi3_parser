@@ -14,13 +14,16 @@ RSpec.describe Openapi3Parser::NodeFactory::Xml do
       }
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "namespace" do
-    subject(:factory) { described_class.new(context) }
-    let(:context) do
-      create_context(
+    subject(:factory) { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context(
         "namespace" => namespace,
         "prefix" => "sample"
       )

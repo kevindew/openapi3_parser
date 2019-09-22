@@ -166,7 +166,7 @@ RSpec.describe Openapi3Parser::Document do
     end
 
     context "when a pointer is provided" do
-      let(:pointer) { Openapi3Parser::Context::Pointer.new(%w[info]) }
+      let(:pointer) { Openapi3Parser::Source::Pointer.new(%w[info]) }
 
       it { is_expected.to be_an_instance_of(Openapi3Parser::Node::Info) }
     end
@@ -204,7 +204,7 @@ RSpec.describe Openapi3Parser::Document do
     end
 
     context "when a pointer is provided" do
-      let(:pointer) { Openapi3Parser::Context::Pointer.new(%w[info version]) }
+      let(:pointer) { Openapi3Parser::Source::Pointer.new(%w[info version]) }
 
       it { is_expected.to eq "1.0.0" }
     end

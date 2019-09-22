@@ -14,10 +14,14 @@ RSpec.describe Openapi3Parser::Validation::ErrorCollection do
                    pointer_segments: [],
                    document: nil,
                    factory_class: nil)
-    context = create_context({},
-                             pointer_segments: pointer_segments,
-                             document: document)
-    Openapi3Parser::Validation::Error.new(message, context, factory_class)
+    node_factory_context = create_node_factory_context(
+      {},
+      pointer_segments: pointer_segments,
+      document: document
+    )
+    Openapi3Parser::Validation::Error.new(message,
+                                          node_factory_context,
+                                          factory_class)
   end
 
   describe ".combine" do

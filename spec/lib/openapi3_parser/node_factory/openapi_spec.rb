@@ -18,24 +18,31 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
 
   it_behaves_like "node object factory", Openapi3Parser::Node::Openapi do
     let(:input) { minimal_openapi_definition }
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   context "when input is nil" do
-    subject(:factory) { described_class.new(context) }
+    subject(:factory) { described_class.new(node_factory_context) }
     let(:input) { nil }
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
 
     it { is_expected.to_not be_valid }
     it "raises error accessing node" do
-      expect { subject.node }.to raise_error(Openapi3Parser::Error)
+      expect { subject.node(node_context) }
+        .to raise_error(Openapi3Parser::Error)
     end
   end
 
   describe "tags" do
-    subject(:factory) { described_class.new(context) }
+    subject(:factory) { described_class.new(node_factory_context) }
     let(:input) { minimal_openapi_definition.merge("tags" => tags) }
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
 
     context "when tags contains no duplicate names" do
       let(:tags) do

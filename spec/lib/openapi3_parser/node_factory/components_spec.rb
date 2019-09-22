@@ -106,11 +106,19 @@ RSpec.describe Openapi3Parser::NodeFactory::Components do
 
     let(:document_input) { { "components" => input } }
 
-    let(:context) { create_context(input, document_input: document_input) }
+    let(:node_factory_context) do
+      create_node_factory_context(input, document_input: document_input)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "key format" do
-    subject { described_class.new(create_context(input)) }
+    subject do
+      described_class.new(create_node_factory_context(input))
+    end
     let(:input) do
       {
         "responses" => {

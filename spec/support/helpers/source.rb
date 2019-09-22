@@ -1,7 +1,27 @@
 # frozen_string_literal: true
 
 module Helpers
-  module SourceInput
+  module Source
+    def create_source_location(source_input,
+                               document: nil,
+                               pointer_segments: [])
+      source = create_source(source_input, document: document)
+      Openapi3Parser::Source::Location.new(source, pointer_segments)
+    end
+
+    def create_source(source_input, document: nil)
+      unless source_input.is_a?(Openapi3Parser::SourceInput)
+        source_input = Openapi3Parser::SourceInput::Raw.new(source_input)
+      end
+
+      if !document
+        Openapi3Parser::Document.new(source_input).root_source
+      else
+        registry = Openapi3Parser::Document::ReferenceRegistry.new
+        Openapi3Parser::Source.new(source_input, document, registry)
+      end
+    end
+
     def create_file_source_input(data: {},
                                  path: "/path/to/openapi.yaml",
                                  working_directory: nil)

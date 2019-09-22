@@ -21,12 +21,17 @@ RSpec.describe Openapi3Parser::NodeFactory::RequestBody do
       }
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "content" do
-    subject { described_class.new(context) }
-    let(:context) { create_context("content" => content) }
+    subject { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context("content" => content)
+    end
 
     context "when content is an empty hash" do
       let(:content) { {} }
@@ -74,9 +79,14 @@ RSpec.describe Openapi3Parser::NodeFactory::RequestBody do
   end
 
   describe "required" do
-    subject { described_class.new(context).node["required"] }
-    let(:context) do
-      create_context("content" => { "*/*" => {} }, "required" => required)
+    subject do
+      node_context = node_factory_context_to_node_context(node_factory_context)
+      described_class.new(node_factory_context).node(node_context)["required"]
+    end
+
+    let(:node_factory_context) do
+      create_node_factory_context("content" => { "*/*" => {} },
+                                  "required" => required)
     end
 
     context "when required is set" do

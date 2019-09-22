@@ -43,8 +43,8 @@ module Openapi3Parser
         @errors ||= ObjectFactory::NodeBuilder.errors(self)
       end
 
-      def node
-        @node ||= build_node
+      def node(node_context)
+        build_node(node_context)
       end
 
       def can_use_default?
@@ -99,9 +99,9 @@ module Openapi3Parser
         end
       end
 
-      def build_node
-        data = ObjectFactory::NodeBuilder.node_data(self)
-        build_object(data, context) if data
+      def build_node(node_context)
+        data = ObjectFactory::NodeBuilder.node_data(self, node_context)
+        build_object(data, node_context) if data
       end
     end
   end

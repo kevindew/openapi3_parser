@@ -1,27 +1,27 @@
 # frozen_string_literal: true
 
+require "forwardable"
 require "openapi3_parser/node_factory/field"
 
 module Openapi3Parser
   module NodeFactory
     module Fields
-      class Reference < NodeFactory::Field
+      class RecursiveReference < NodeFactory::Field
         def initialize(context, factory)
           super(context, input_type: String, validate: :validate)
           @factory = factory
           @reference = context.input
-          @resolved_reference = create_resolved_reference
         end
 
         def resolved_input
           return unless resolved_reference
 
-          resolved_reference.resolved_input
+          RecursiveResolvedInput.new(resolved_reference.factory)
         end
 
         private
 
-        attr_reader :reference, :factory, :resolved_reference
+        attr_reader :reference, :factory
 
         def build_node(_data, node_context)
           reference_context = Node::Context.resolved_reference(
@@ -44,9 +44,30 @@ module Openapi3Parser
           @reference_validator ||= Validators::Reference.new(reference)
         end
 
-        def create_resolved_reference
+        def resolved_reference
           return unless reference_validator.valid?
-          context.resolve_reference(reference, factory)
+          # We lazy load the reference here to allow time for it to have been
+          # already created as part of initialize on the first instance of this
+          # recursive field, without this we can slip into an eternal loop :-(
+          @resolved_reference ||= context.resolve_reference(reference, factory)
+        end
+
+        # Used in the place of a hash for resolved input so the value can
+        # be looked up at runtime avoiding a recursive loop.
+        class RecursiveResolvedInput
+          extend Forwardable
+          include Enumerable
+
+          def_delegators :value, :each, :[], :keys
+          attr_reader :factory
+
+          def initialize(factory)
+            @factory = factory
+          end
+
+          def value
+            @factory.resolved_input
+          end
         end
       end
     end

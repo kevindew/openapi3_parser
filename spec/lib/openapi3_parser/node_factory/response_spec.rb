@@ -37,13 +37,17 @@ RSpec.describe Openapi3Parser::NodeFactory::Response do
       }
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "content" do
-    subject { described_class.new(context) }
-    let(:context) do
-      create_context("description" => "Description", "content" => content)
+    subject { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context("description" => "Description",
+                                  "content" => content)
     end
 
     context "when content is an empty hash" do
@@ -78,9 +82,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Response do
   end
 
   describe "links" do
-    subject { described_class.new(context) }
-    let(:context) do
-      create_context(
+    subject { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context(
         "description" => "Description",
         "links" => { key => { "operationRef" => "#/test" } }
       )

@@ -15,12 +15,17 @@ RSpec.describe Openapi3Parser::NodeFactory::Example do
       }
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "externalValue" do
-    subject(:factory) { described_class.new(context) }
-    let(:context) { create_context("externalValue" => external_value) }
+    subject(:factory) { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context("externalValue" => external_value)
+    end
 
     context "when externalValue is an actual url" do
       let(:external_value) { "https://example.com/path" }
@@ -34,10 +39,11 @@ RSpec.describe Openapi3Parser::NodeFactory::Example do
   end
 
   describe "mutually exclusive value externalValue" do
-    subject { described_class.new(context) }
+    subject { described_class.new(node_factory_context) }
 
-    let(:context) do
-      create_context("value" => value, "externalValue" => external_value)
+    let(:node_factory_context) do
+      create_node_factory_context("value" => value,
+                                  "externalValue" => external_value)
     end
     let(:value) { nil }
     let(:external_value) { nil }

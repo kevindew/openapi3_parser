@@ -28,7 +28,10 @@ RSpec.describe Openapi3Parser::NodeFactory::Responses do
       }
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "valid keys" do
@@ -43,8 +46,10 @@ RSpec.describe Openapi3Parser::NodeFactory::Responses do
       }
     end
 
-    subject { described_class.new(context) }
-    let(:context) { create_context(key_value => response) }
+    subject { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context(key_value => response)
+    end
 
     context "when the key_value is a status code range" do
       let(:key_value) { "2XX" }

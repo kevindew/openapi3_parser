@@ -20,12 +20,24 @@ RSpec.describe Openapi3Parser::NodeFactory::Encoding do
       }
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "default explode" do
-    subject(:node) { described_class.new(context).node }
-    let(:context) { create_context("style" => style) }
+    subject(:node) do
+      described_class.new(node_factory_context).node(node_context)
+    end
+
+    let(:node_factory_context) do
+      create_node_factory_context("style" => style)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
 
     context "when style is 'form'" do
       let(:style) { "form" }

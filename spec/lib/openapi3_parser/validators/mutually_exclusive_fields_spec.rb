@@ -6,10 +6,10 @@ RSpec.describe Openapi3Parser::Validators::MutuallyExclusiveFields do
   include Helpers::Context
 
   describe ".call" do
-    let(:context) { create_context({}) }
+    let(:node_factory_context) { create_node_factory_context({}) }
     let(:validatable) do
       Openapi3Parser::Validation::Validatable.new(
-        double("factory", context: context)
+        double("factory", context: node_factory_context)
       )
     end
     let(:mutually_exclusive_fields) { [] }
@@ -32,7 +32,9 @@ RSpec.describe Openapi3Parser::Validators::MutuallyExclusiveFields do
         [OpenStruct.new(fields: %w[a b], required: false)]
       end
 
-      let(:context) { create_context("a" => true, "b" => true) }
+      let(:node_factory_context) do
+        create_node_factory_context("a" => true, "b" => true)
+      end
 
       it "raises an error" do
         expect { call }
@@ -49,7 +51,7 @@ RSpec.describe Openapi3Parser::Validators::MutuallyExclusiveFields do
         [OpenStruct.new(fields: %w[a b], required: false)]
       end
 
-      let(:context) { create_context({}) }
+      let(:node_factory_context) { create_node_factory_context({}) }
 
       it "doesn't raise an error" do
         expect { call }.not_to raise_error
@@ -61,7 +63,7 @@ RSpec.describe Openapi3Parser::Validators::MutuallyExclusiveFields do
         [OpenStruct.new(fields: %w[a b], required: true)]
       end
 
-      let(:context) { create_context({}) }
+      let(:node_factory_context) { create_node_factory_context({}) }
 
       it "raises an error" do
         expect { call }
@@ -77,7 +79,7 @@ RSpec.describe Openapi3Parser::Validators::MutuallyExclusiveFields do
         [OpenStruct.new(fields: %w[a b], required: true)]
       end
       let(:raise_on_invalid) { false }
-      let(:context) { create_context({}) }
+      let(:node_factory_context) { create_node_factory_context({}) }
 
       it "doesn't raise errors" do
         expect { call }.not_to raise_error

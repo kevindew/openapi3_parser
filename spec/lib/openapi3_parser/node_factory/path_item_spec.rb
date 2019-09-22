@@ -64,13 +64,19 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
       }
     end
 
-    let(:context) { create_context(input, document_input: document_input) }
+    let(:node_factory_context) do
+      create_node_factory_context(input, document_input: document_input)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "parameters" do
     subject do
       described_class.new(
-        create_context("parameters" => parameters)
+        create_node_factory_context("parameters" => parameters)
       )
     end
 
@@ -108,13 +114,15 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
       }
     end
 
-    let(:context) { create_context(input, document_input: document_input) }
+    let(:node_factory_context) do
+      create_node_factory_context(input, document_input: document_input)
+    end
 
     let(:reference_input) do
       { "summary" => "My summary" }
     end
 
-    let(:instance) { described_class.new(context) }
+    let(:instance) { described_class.new(node_factory_context) }
 
     it "can be accessed via resolved_input" do
       expect(instance.resolved_input).to match(
@@ -123,7 +131,8 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
     end
 
     it "is within the node" do
-      expect(instance.node.summary).to eq "My summary"
+      node_context = node_factory_context_to_node_context(node_factory_context)
+      expect(instance.node(node_context).summary).to eq "My summary"
     end
 
     context "when both structures contain the same field" do
@@ -139,7 +148,12 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
           hash_including("summary" => "A different summary")
         )
 
-        expect(instance.node.summary).to eq "A different summary"
+        node_context = node_factory_context_to_node_context(
+          node_factory_context
+        )
+
+        expect(instance.node(node_context).summary)
+          .to eq "A different summary"
       end
     end
   end

@@ -6,9 +6,11 @@ RSpec.describe Openapi3Parser::Validation::Error do
   include Helpers::Context
 
   describe ".for_type" do
-    subject { described_class.new(message, context, factory_class).for_type }
+    subject do
+      described_class.new(message, node_factory_context, factory_class).for_type
+    end
     let(:message) { "" }
-    let(:context) { create_context({}) }
+    let(:node_factory_context) { create_node_factory_context({}) }
 
     context "when factory_class is nil" do
       let(:factory_class) { nil }

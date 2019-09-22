@@ -7,8 +7,8 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
 
   describe ".call" do
     let(:factory_class) { Class.new(Openapi3Parser::NodeFactory::Object) }
-    let(:context) { create_context(input) }
-    let(:factory) { factory_class.new(context) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:factory) { factory_class.new(node_factory_context) }
     let(:input) { {} }
     let(:building_node) { false }
 
@@ -103,11 +103,14 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
       context "and we are not building the node" do
         let(:building_node) { false }
         let(:error) do
-          Openapi3Parser::Validation::Error.new(
-            "invalid",
-            Openapi3Parser::Context.next_field(context, "name"),
-            factory_class
+          context = Openapi3Parser::NodeFactory::Context.next_field(
+            node_factory_context,
+            "name"
           )
+
+          Openapi3Parser::Validation::Error.new("invalid",
+                                                context,
+                                                factory_class)
         end
         it { is_expected.to include(error) }
       end
@@ -135,7 +138,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
         let(:building_node) { false }
         let(:error) do
           Openapi3Parser::Validation::Error.new("fail",
-                                                context,
+                                                node_factory_context,
                                                 factory_class)
         end
         it { is_expected.to include(error) }

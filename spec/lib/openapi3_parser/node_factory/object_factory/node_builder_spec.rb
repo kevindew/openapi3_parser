@@ -8,7 +8,9 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
   describe ".errors" do
     let(:input) { nil }
     let(:factory) do
-      Openapi3Parser::NodeFactory::Contact.new(create_context(input))
+      Openapi3Parser::NodeFactory::Contact.new(
+        create_node_factory_context(input)
+      )
     end
 
     subject { described_class.errors(factory) }
@@ -48,11 +50,17 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
 
   describe ".node_data" do
     let(:input) { nil }
-    let(:factory) do
-      Openapi3Parser::NodeFactory::Contact.new(create_context(input))
+    let(:node_factory_context) { create_node_factory_context(input) }
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
     end
 
-    subject(:node_data) { described_class.node_data(factory) }
+    let(:factory) do
+      Openapi3Parser::NodeFactory::Contact.new(node_factory_context)
+    end
+
+    subject(:node_data) { described_class.node_data(factory, node_context) }
 
     context "when given a nil input and factory allows that" do
       let(:input) { nil }

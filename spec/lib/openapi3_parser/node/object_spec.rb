@@ -10,7 +10,7 @@ RSpec.describe Openapi3Parser::Node::Object do
 
     let(:data) { {} }
     let(:context) do
-      create_context(
+      create_node_context(
         {},
         document_input: {
           "openapi" => "3.0.0",

@@ -25,13 +25,18 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
       }
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "in" do
-    subject(:factory) { described_class.new(context) }
-    let(:context) do
-      create_context("name" => "name", "in" => in_value, "required" => true)
+    subject(:factory) { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context("name" => "name",
+                                  "in" => in_value,
+                                  "required" => true)
     end
 
     context "when in is 'query'" do
@@ -65,10 +70,12 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
   end
 
   describe "required" do
-    subject(:factory) { described_class.new(context) }
+    subject(:factory) { described_class.new(node_factory_context) }
     let(:in_value) { "path" }
-    let(:context) do
-      create_context("name" => "name", "in" => in_value, "required" => required)
+    let(:node_factory_context) do
+      create_node_factory_context("name" => "name",
+                                  "in" => in_value,
+                                  "required" => required)
     end
 
     context "when in is path and required is true" do
@@ -92,9 +99,18 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
   end
 
   describe "default style value" do
-    subject(:node) { described_class.new(context).node }
-    let(:context) do
-      create_context("name" => "name", "in" => in_value, "required" => true)
+    subject(:node) do
+      described_class.new(node_factory_context).node(node_context)
+    end
+
+    let(:node_factory_context) do
+      create_node_factory_context("name" => "name",
+                                  "in" => in_value,
+                                  "required" => true)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
     end
 
     context "when in is path" do
@@ -120,9 +136,18 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
   end
 
   describe "default explode value" do
-    subject(:node) { described_class.new(context).node }
-    let(:context) do
-      create_context("name" => "name", "in" => "query", "style" => style)
+    subject(:node) do
+      described_class.new(node_factory_context).node(node_context)
+    end
+
+    let(:node_factory_context) do
+      create_node_factory_context("name" => "name",
+                                  "in" => "query",
+                                  "style" => style)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
     end
 
     context "when style is form" do
@@ -141,10 +166,18 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
   end
 
   describe "content" do
-    subject(:factory) { described_class.new(context) }
-    let(:context) do
-      create_context("name" => "name", "in" => "query", "content" => content)
+    subject(:factory) { described_class.new(node_factory_context) }
+
+    let(:node_factory_context) do
+      create_node_factory_context("name" => "name",
+                                  "in" => "query",
+                                  "content" => content)
     end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
+
     let(:message) { "Must only have one item" }
 
     context "when there is a nil content entry" do
@@ -152,7 +185,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
       it { is_expected.to be_valid }
 
       it "defaults to a nil value" do
-        expect(factory.node.content).to be nil
+        expect(factory.node(node_context).content).to be nil
       end
     end
 
@@ -197,8 +230,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
   end
 
   it_behaves_like "mutually exclusive example" do
-    let(:context) do
-      create_context(
+    let(:node_factory_context) do
+      create_node_factory_context(
         "name" => "name",
         "in" => "query",
         "example" => example,

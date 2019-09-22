@@ -22,11 +22,14 @@ module Openapi3Parser
 
       private
 
-      def build_object(data, context)
-        ref = data.delete("$ref")
-        return Node::PathItem.new(data, context) unless ref
+      def build_object(data, node_context)
+        ref = data.delete("$ref").node
+        return Node::PathItem.new(data, node_context) unless ref
 
-        Node::PathItem.new(merge_data(ref.node_data, data), ref.node_context)
+        context = data.empty? ? ref.node_context : node_context
+        data = merge_data(ref.node_data, data)
+
+        Node::PathItem.new(data, context)
       end
 
       def ref_factory(context)

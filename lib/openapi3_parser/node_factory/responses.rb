@@ -26,8 +26,8 @@ module Openapi3Parser
 
       private
 
-      def build_node(data)
-        Node::Responses.new(data, context)
+      def build_node(data, node_context)
+        Node::Responses.new(data, node_context)
       end
 
       def validate_keys(validatable)

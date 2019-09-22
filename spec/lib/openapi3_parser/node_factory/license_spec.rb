@@ -10,13 +10,16 @@ RSpec.describe Openapi3Parser::NodeFactory::License do
 
   it_behaves_like "node object factory", Openapi3Parser::Node::License do
     let(:input) { minimal_license_definition }
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "url" do
-    subject(:factory) { described_class.new(context) }
-    let(:context) do
-      create_context(
+    subject(:factory) { described_class.new(node_factory_context) }
+    let(:node_factory_context) do
+      create_node_factory_context(
         minimal_license_definition.merge("url" => url)
       )
     end

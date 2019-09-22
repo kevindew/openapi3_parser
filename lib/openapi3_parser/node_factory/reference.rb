@@ -15,26 +15,22 @@ module Openapi3Parser
       end
 
       def in_recursive_loop?
-        data["$ref"].in_recursive_loop?
-      end
-
-      def recursive_pointer
-        NodeFactory::RecursivePointer.new(data["$ref"].reference_context)
+        data["$ref"].context.self_referencing?
       end
 
       private
 
-      def build_node
-        if in_recursive_loop?
-          raise Error::InRecursiveStructure,
-                "Can't build node as it references itself, use "\
-                "recursive_pointer"
-        end
-        data["$ref"].node
+      def build_node(node_context)
+        # @todo this should raise an error if the reference is invalid
+        data["$ref"].node(node_context)
       end
 
       def ref_factory(context)
-        NodeFactory::Fields::Reference.new(context, factory)
+        if context.self_referencing?
+          NodeFactory::Fields::RecursiveReference.new(context, factory)
+        else
+          NodeFactory::Fields::Reference.new(context, factory)
+        end
       end
 
       def build_resolved_input

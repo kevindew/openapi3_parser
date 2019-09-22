@@ -6,21 +6,27 @@ require "support/node_factory"
 RSpec.describe Openapi3Parser::NodeFactory::Field do
   include Helpers::Context
 
-  let(:context) { create_context(input) }
+  let(:node_factory_context) { create_node_factory_context(input) }
   let(:input) { "input" }
   let(:input_type) { nil }
   let(:validate) { nil }
 
   let(:instance) do
-    described_class.new(context, input_type: input_type, validate: validate)
+    described_class.new(node_factory_context,
+                        input_type: input_type,
+                        validate: validate)
   end
 
   it_behaves_like "node factory", ::Integer do
-    let(:context) { create_context(1) }
+    let(:node_factory_context) { create_node_factory_context(1) }
   end
 
   describe "#node" do
-    subject { instance.node }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
+
+    subject { instance.node(node_context) }
 
     it { is_expected.to eq(input) }
 
@@ -34,7 +40,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Field do
       let(:input) { "input" }
 
       it "raises an InvalidType error" do
-        expect { instance.node }
+        expect { instance.node(node_context) }
           .to raise_error(Openapi3Parser::Error::InvalidType)
       end
     end
@@ -45,7 +51,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Field do
       end
 
       it "raises an error" do
-        expect { instance.node }
+        expect { instance.node(node_context) }
           .to raise_error(Openapi3Parser::Error::InvalidData)
       end
     end

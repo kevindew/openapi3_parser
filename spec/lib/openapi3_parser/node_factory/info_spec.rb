@@ -20,15 +20,18 @@ RSpec.describe Openapi3Parser::NodeFactory::Info do
       )
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "terms of service" do
-    subject(:factory) { described_class.new(context) }
+    subject(:factory) { described_class.new(node_factory_context) }
     let(:input) do
       minimal_info_definition.merge("termsOfService" => terms_of_service)
     end
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
 
     context "when terms of service is a url" do
       let(:terms_of_service) { "https://example.com/path" }

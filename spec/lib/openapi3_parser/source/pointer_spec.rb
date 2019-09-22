@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Openapi3Parser::Context::Pointer do
+RSpec.describe Openapi3Parser::Source::Pointer do
   describe ".from_fragment" do
     subject { described_class.from_fragment(fragment) }
 

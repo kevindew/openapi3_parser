@@ -14,7 +14,7 @@ module Openapi3Parser
       extend Forwardable
       include Enumerable
 
-      def_delegators :node_data, :each, :[], :empty?
+      def_delegators :node_data, :empty?
       attr_reader :node_data, :node_context
 
       # @param [::Array] data     data used to populate this node
@@ -24,8 +24,16 @@ module Openapi3Parser
         @node_context = context
       end
 
+      def [](index)
+        Placeholder.resolve(node_data[index])
+      end
+
+      def each
+        node_data.each_index { |index| yield(self[index]) }
+      end
+
       # Used to access a node relative to this node
-      # @param  [Context::Pointer, ::Array, ::String] pointer_like
+      # @param  [Source::Pointer, ::Array, ::String] pointer_like
       # @return anything
       def node_at(pointer_like)
         current_pointer = node_context.document_location.pointer

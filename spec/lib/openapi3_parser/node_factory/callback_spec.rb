@@ -35,6 +35,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Callback do
       }
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 end

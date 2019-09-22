@@ -8,7 +8,7 @@ module Openapi3Parser
       extend Forwardable
       include Enumerable
 
-      def_delegators :node_data, :each, :keys, :empty?
+      def_delegators :node_data, :keys, :empty?
       attr_reader :node_data, :node_context
 
       def initialize(data, context)
@@ -32,7 +32,7 @@ module Openapi3Parser
       #
       # @return anything
       def [](value)
-        node_data[value.to_s]
+        Placeholder.resolve(node_data[value.to_s])
       end
 
       # Look up an extension provided for this map, doesn't need a prefix of
@@ -45,11 +45,15 @@ module Openapi3Parser
       #
       # @return [Hash, Array, Numeric, String, true, false, nil]
       def extension(value)
-        node_data["x-#{value}"]
+        self["x-#{value}"]
+      end
+
+      def each
+        node_data.each_key { |key| yield(self[key]) }
       end
 
       # Used to access a node relative to this node
-      # @param  [Context::Pointer, ::Array, ::String] pointer_like
+      # @param  [Source::Pointer, ::Array, ::String] pointer_like
       # @return anything
       def node_at(pointer_like)
         current_pointer = node_context.document_location.pointer

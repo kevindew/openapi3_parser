@@ -80,8 +80,8 @@ module Openapi3Parser
 
     # @param [SourceInput] source_input
     def initialize(source_input)
-      @reference_register = ReferenceRegister.new
-      @root_source = Source.new(source_input, self, reference_register)
+      @reference_registry = ReferenceRegistry.new
+      @root_source = Source.new(source_input, self, reference_registry)
       @warnings = []
       @openapi_version = determine_openapi_version(root_source.data["openapi"])
       @build_in_progress = false
@@ -90,7 +90,7 @@ module Openapi3Parser
 
     # @return [Node::Openapi]
     def root
-      factory.node
+      @root ||= factory.node(Node::Context.root(factory.context))
     end
 
     # All the additional sources that have been referenced as part of loading
@@ -99,7 +99,7 @@ module Openapi3Parser
     # @return [Array<Source>]
     def reference_sources
       build unless built
-      reference_register.sources
+      reference_registry.sources.reject(&:root?)
     end
 
     # All of the sources involved in this OpenAPI document
@@ -131,8 +131,8 @@ module Openapi3Parser
     # resolved_input refers to the input with references resolevd and all
     # optional fields existing
     #
-    # @param [Context::Pointer, String, Array]      pointer
-    # @param [Context::Pointer, String, Array, nil] relative_to
+    # @param [Source::Pointer, String, Array]      pointer
+    # @param [Source::Pointer, String, Array, nil] relative_to
     # @return anything
     def resolved_input_at(pointer, relative_to = nil)
       look_up_pointer(pointer, relative_to, factory.resolved_input)
@@ -145,8 +145,8 @@ module Openapi3Parser
     # document.node_at("#/components/schemas")
     # document.node_at(%w[components schemas])
     #
-    # @param [Context::Pointer, String, Array]      pointer
-    # @param [Context::Pointer, String, Array, nil] relative_to
+    # @param [Source::Pointer, String, Array]      pointer
+    # @param [Source::Pointer, String, Array, nil] relative_to
     # @return anything
     def node_at(pointer, relative_to = nil)
       look_up_pointer(pointer, relative_to, root)
@@ -160,11 +160,11 @@ module Openapi3Parser
 
     private
 
-    attr_reader :reference_register, :built, :build_in_progress
+    attr_reader :reference_registry, :built, :build_in_progress
 
     def look_up_pointer(pointer, relative_pointer, subject)
-      merged_pointer = Context::Pointer.merge_pointers(relative_pointer,
-                                                       pointer)
+      merged_pointer = Source::Pointer.merge_pointers(relative_pointer,
+                                                      pointer)
       CautiousDig.call(subject, *merged_pointer.segments)
     end
 
@@ -175,9 +175,9 @@ module Openapi3Parser
     def build
       return if build_in_progress || built
       @build_in_progress = true
-      context = Context.root(root_source.data, root_source)
+      context = NodeFactory::Context.root(root_source.data, root_source)
       @factory = NodeFactory::Openapi.new(context)
-      reference_register.freeze
+      reference_registry.freeze
       @warnings.freeze
       @build_in_progress = false
       @built = true
@@ -210,7 +210,7 @@ module Openapi3Parser
 
     def reference_factories
       build unless built
-      reference_register.factories
+      reference_registry.factories.reject { |f| f.context.source.root? }
     end
   end
 end

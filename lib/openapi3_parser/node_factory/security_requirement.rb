@@ -11,8 +11,8 @@ module Openapi3Parser
 
       private
 
-      def build_node(data)
-        Node::SecurityRequirement.new(data, context)
+      def build_node(data, node_context)
+        Node::SecurityRequirement.new(data, node_context)
       end
     end
   end

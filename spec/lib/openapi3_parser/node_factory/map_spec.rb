@@ -5,7 +5,7 @@ require "support/node_factory"
 
 RSpec.describe Openapi3Parser::NodeFactory::Map do
   include Helpers::Context
-  let(:context) { create_context(input) }
+  let(:node_factory_context) { create_node_factory_context(input) }
   let(:input) { {} }
 
   let(:allow_extensions) { false }
@@ -15,7 +15,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
   let(:validate) { nil }
 
   let(:instance) do
-    described_class.new(context,
+    described_class.new(node_factory_context,
                         allow_extensions: allow_extensions,
                         default: default,
                         value_input_type: value_input_type,
@@ -36,7 +36,10 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
   end
 
   describe "#node" do
-    subject { instance.node }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
+    subject { instance.node(node_context) }
 
     it { is_expected.to be_a(Openapi3Parser::Node::Map) }
 
@@ -47,7 +50,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
       it "raises an InvalidType error" do
         error_type = Openapi3Parser::Error::InvalidType
         error_message = "Invalid type for #/b: Expected Object"
-        expect { instance.node }
+        expect { instance.node(node_context) }
           .to raise_error(error_type, error_message)
       end
     end
@@ -74,7 +77,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
       end
 
       it "raises an InvalidType error" do
-        expect { instance.node }
+        expect { instance.node(node_context) }
           .to raise_error(Openapi3Parser::Error::InvalidType)
       end
     end
@@ -88,7 +91,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
       end
 
       it "raises an InvalidType error" do
-        expect { instance.node }
+        expect { instance.node(node_context) }
           .to raise_error(Openapi3Parser::Error::InvalidType)
       end
     end
@@ -104,7 +107,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
       end
 
       it "doesn't raise an InvalidType error" do
-        expect { instance.node }.not_to raise_error
+        expect { instance.node(node_context) }.not_to raise_error
       end
     end
 
@@ -115,7 +118,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
           "item" => { "name" => "Kenneth" }
         }
       end
-      subject(:item) { instance.node["item"] }
+      subject(:item) { instance.node(node_context)["item"] }
 
       it "returns items created by the value factory" do
         expect(item).to be_a(Openapi3Parser::Node::Contact)
@@ -128,7 +131,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
       end
 
       it "raises an error" do
-        expect { instance.node }
+        expect { instance.node(node_context) }
           .to raise_error(Openapi3Parser::Error::InvalidData)
       end
     end

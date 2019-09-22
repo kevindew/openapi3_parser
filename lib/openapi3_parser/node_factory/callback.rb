@@ -13,8 +13,8 @@ module Openapi3Parser
 
       private
 
-      def build_node(data)
-        Node::Callback.new(data, context)
+      def build_node(data, node_context)
+        Node::Callback.new(data, node_context)
       end
     end
   end

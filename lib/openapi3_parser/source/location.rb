@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Openapi3Parser
-  class Context
+  class Source
     # Class used to represent a location within an OpenAPI document.
     # It contains a source, which is the source file/data used for the contents
     # and the pointer which indicates where in the object like file the data is
@@ -26,6 +26,10 @@ module Openapi3Parser
 
       def to_s
         source.relative_to_root + pointer.fragment
+      end
+
+      def data
+        source.data_at_pointer(pointer.segments)
       end
 
       def inspect

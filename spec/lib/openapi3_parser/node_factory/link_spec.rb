@@ -14,14 +14,17 @@ RSpec.describe Openapi3Parser::NodeFactory::Link do
       }
     end
 
-    let(:context) { create_context(input) }
+    let(:node_factory_context) { create_node_factory_context(input) }
+    let(:node_context) do
+      node_factory_context_to_node_context(node_factory_context)
+    end
   end
 
   describe "mutually exclusive operationRef operationId" do
-    subject { described_class.new(context) }
+    subject { described_class.new(node_factory_context) }
 
-    let(:context) do
-      create_context(
+    let(:node_factory_context) do
+      create_node_factory_context(
         "operationRef" => operation_ref,
         "operationId" => operation_id
       )
