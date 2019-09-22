@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "openapi3_parser"
 require "webmock/rspec"
 require "support/matchers/have_validation_error"
 
