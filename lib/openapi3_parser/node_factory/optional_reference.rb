@@ -7,6 +7,10 @@ module Openapi3Parser
         @factory = factory
       end
 
+      def object_type
+        "#{self.class}[#{factory.object_type}]}"
+      end
+
       def call(context)
         reference = context.input.is_a?(Hash) && context.input["$ref"]
 

@@ -18,6 +18,10 @@ module Openapi3Parser
 
       attr_reader :context, :data
 
+      def self.object_type
+        to_s
+      end
+
       def initialize(context)
         @context = context
         @data = build_data(context.input)

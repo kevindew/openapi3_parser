@@ -68,6 +68,22 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
           .not_to(change { instance.factories })
       end
     end
+
+    context "when the source is registered for a different factory type" do
+      before do
+        instance.resolve(Openapi3Parser::NodeFactory::Info,
+                         source_location,
+                         reference_location)
+      end
+
+      it { is_expected.to be_a(Openapi3Parser::NodeFactory::Contact) }
+
+      it "registers the factory" do
+        expect { resolve }
+          .to change { instance.factories }
+          .to include(an_instance_of(Openapi3Parser::NodeFactory::Contact))
+      end
+    end
   end
 
   describe "#freeze" do
@@ -76,14 +92,6 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
 
     it "freezes the object" do
       expect(instance).to be_frozen
-    end
-
-    it "freezes sources" do
-      expect(instance.sources).to be_frozen
-    end
-
-    it "freezes factories" do
-      expect(instance.factories).to be_frozen
     end
   end
 end

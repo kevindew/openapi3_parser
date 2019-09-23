@@ -3,25 +3,29 @@
 module Openapi3Parser
   class Document
     class ReferenceRegistry
-      attr_reader :sources, :factories
+      attr_reader :sources
 
       def initialize
         @sources = []
-        @factories = []
+        @factories_by_type = {}
       end
 
       def freeze
         sources.freeze
-        factories.freeze
+        factories_by_type.freeze.each(&:freeze)
         super
+      end
+
+      def factories
+        factories_by_type.values.flatten
       end
 
       def resolve(unbuilt_factory, source_location, reference_location)
         source = source_location.source
         sources << source unless sources.include?(source)
+        object_type = unbuilt_factory.object_type
 
-        existing_factory = factories.find do |f|
-          # @todo some type matching
+        existing_factory = factories_by_type[object_type]&.find do |f|
           f.context.source_location == source_location
         end
 
@@ -31,12 +35,15 @@ module Openapi3Parser
                                 source_location,
                                 reference_location)
 
-        factories << factory
+        factories_by_type[object_type] ||= []
+        factories_by_type[object_type] << factory
 
         factory
       end
 
       private
+
+      attr_reader :factories_by_type
 
       def build_factory(unbuilt_factory, source_location, reference_location)
         next_context = NodeFactory::Context.resolved_reference(
