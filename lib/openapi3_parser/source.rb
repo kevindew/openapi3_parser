@@ -43,14 +43,27 @@ module Openapi3Parser
       document.root_source == self
     end
 
-    def resolve_reference(given_reference, unbuilt_factory, context)
+    def resolve_reference(given_reference,
+                          unbuilt_factory,
+                          context,
+                          recursive: false)
       reference = Reference.new(given_reference)
-      source = context.source.resolve_source(reference)
-      source_location = Source::Location.new(source, reference.json_pointer)
-      built_factory = reference_registry.resolve(unbuilt_factory,
-                                                 source_location,
-                                                 context.source_location)
-      ResolvedReference.new(reference, built_factory)
+      resolved_source = resolve_source(reference)
+      source_location = Source::Location.new(resolved_source,
+                                             reference.json_pointer)
+
+      unless recursive
+        reference_registry.register(unbuilt_factory,
+                                    source_location,
+                                    context)
+      end
+
+      ResolvedReference.new(
+        reference: reference,
+        source_location: source_location,
+        object_type: unbuilt_factory.object_type,
+        reference_registry: reference_registry
+      )
     end
 
     # Access/create the source object for a reference

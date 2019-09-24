@@ -41,10 +41,12 @@ module Openapi3Parser
       # @param  [NodeFactory::Context]  reference_factory_context
       # @return [Node::Context]
       def self.resolved_reference(current_context, reference_factory_context)
+        reference_locations = reference_factory_context.reference_locations
+
         new(reference_factory_context.input,
             document_location: current_context.document_location,
             source_location: reference_factory_context.source_location,
-            reference_location: reference_factory_context.reference_location)
+            reference_location: reference_locations.first)
       end
 
       attr_reader :input,

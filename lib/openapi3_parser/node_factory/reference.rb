@@ -15,7 +15,21 @@ module Openapi3Parser
       end
 
       def in_recursive_loop?
-        data["$ref"].context.self_referencing?
+        data["$ref"].self_referencing?
+      end
+
+      def referenced_factory
+        data["$ref"].referenced_factory
+      end
+
+      def resolves?(control_factory = nil)
+        control_factory ||= self
+
+        return true unless referenced_factory.is_a?(Reference)
+        # recursive loop of references that never references an object
+        return false if referenced_factory == control_factory
+
+        referenced_factory.resolves?(control_factory)
       end
 
       private
@@ -26,11 +40,7 @@ module Openapi3Parser
       end
 
       def ref_factory(context)
-        if context.self_referencing?
-          NodeFactory::Fields::RecursiveReference.new(context, factory)
-        else
-          NodeFactory::Fields::Reference.new(context, factory)
-        end
+        NodeFactory::Fields::Reference.new(context, factory)
       end
 
       def build_resolved_input

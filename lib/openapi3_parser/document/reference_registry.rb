@@ -20,35 +20,45 @@ module Openapi3Parser
         factories_by_type.values.flatten
       end
 
-      def resolve(unbuilt_factory, source_location, reference_location)
-        source = source_location.source
-        sources << source unless sources.include?(source)
+      def register(unbuilt_factory, source_location, reference_factory_context)
+        register_source(source_location.source)
         object_type = unbuilt_factory.object_type
-
-        existing_factory = factories_by_type[object_type]&.find do |f|
-          f.context.source_location == source_location
-        end
+        existing_factory = factory(object_type, source_location)
 
         return existing_factory if existing_factory
 
-        factory = build_factory(unbuilt_factory,
-                                source_location,
-                                reference_location)
+        build_factory(
+          unbuilt_factory,
+          source_location,
+          reference_factory_context
+        ).tap { |f| register_factory(object_type, f) }
+      end
 
-        factories_by_type[object_type] ||= []
-        factories_by_type[object_type] << factory
-
-        factory
+      def factory(object_type, source_location)
+        factories_by_type[object_type]&.find do |f|
+          f.context.source_location == source_location
+        end
       end
 
       private
 
       attr_reader :factories_by_type
 
-      def build_factory(unbuilt_factory, source_location, reference_location)
+      def register_source(source)
+        sources << source unless sources.include?(source)
+      end
+
+      def register_factory(object_type, factory)
+        factories_by_type[object_type] ||= []
+        factories_by_type[object_type] << factory
+      end
+
+      def build_factory(unbuilt_factory,
+                        source_location,
+                        reference_factory_context)
         next_context = NodeFactory::Context.resolved_reference(
-          source_location: source_location,
-          reference_location: reference_location
+          reference_factory_context,
+          source_location: source_location
         )
 
         if unbuilt_factory.is_a?(Class)

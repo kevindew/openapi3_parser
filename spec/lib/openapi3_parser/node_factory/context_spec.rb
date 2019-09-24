@@ -13,8 +13,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
     let(:input) { {} }
     let(:source) { create_source(input) }
 
-    it "has no reference" do
-      expect(context.reference_location).to be_nil
+    it "has no references" do
+      expect(context.reference_locations).to be_empty
     end
 
     it "has an empty pointer" do
@@ -44,16 +44,17 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
   describe ".resolved_reference" do
     subject(:context) do
       described_class.resolved_reference(
-        source_location: source_location,
-        reference_location: reference_location
+        reference_context,
+        source_location: source_location
       )
     end
 
     let(:input) { "data" }
     let(:source_location) { create_source_location(input) }
 
-    let(:reference_location) do
-      create_source_location({}, document: source_location.source.document)
+    let(:reference_context) do
+      create_node_factory_context({},
+                                  document: source_location.source.document)
     end
 
     it "has the resolved reference data" do
@@ -65,7 +66,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
     end
 
     it "is knows the location of the reference" do
-      expect(context.reference_location).to be reference_location
+      expect(context.reference_locations)
+        .to eq [reference_context.source_location]
     end
   end
 

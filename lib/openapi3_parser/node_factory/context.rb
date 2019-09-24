@@ -29,41 +29,41 @@ module Openapi3Parser
         source_location = Source::Location.next_field(pc.source_location, field)
         new(input,
             source_location: source_location,
-            reference_location: pc.reference_location)
+            reference_locations: pc.reference_locations)
       end
 
       # Creates the context for a field that references another field
       #
+      # @param  [Context]           reference_context
       # @param  [Source::Location]  source_location
-      # @param  [Source::Location]  reference_location
       # @return [Context]
-      def self.resolved_reference(
-        source_location:,
-        reference_location:
-      )
+      def self.resolved_reference(reference_context, source_location:)
+        reference_locations = [reference_context.source_location] +
+                              reference_context.reference_locations
+
         new(source_location.data,
             source_location: source_location,
-            reference_location: reference_location)
+            reference_locations: reference_locations)
       end
 
-      attr_reader :input, :source_location, :reference_location
+      attr_reader :input, :source_location, :reference_locations
 
       # @param  [Object]                  input
       # @param  [Source::Location]        source_location
-      # @param  [Source::Location, nil]   reference_location
+      # @param  [Array<Source::Location>] reference_locations
       def initialize(input,
                      source_location:,
-                     reference_location: nil)
+                     reference_locations: [])
         @input = input
         @source_location = source_location
-        @reference_location = reference_location
+        @reference_locations = reference_locations
       end
 
       # @return [Boolean]
       def ==(other)
         input == other.input &&
           source_location == other.source_location &&
-          reference_location == other.reference_location
+          reference_locations == other.reference_locations
       end
 
       # @return [Source]
@@ -73,21 +73,22 @@ module Openapi3Parser
 
       # @param  [String]              reference
       # @param  [Object, Map, Array]  factory
+      # @param  [Boolean]             recursive
       # @return [Source::ResolvedReference]
-      def resolve_reference(reference, factory)
-        source.resolve_reference(reference, factory, self)
+      def resolve_reference(reference, factory, recursive: false)
+        source.resolve_reference(reference, factory, self, recursive: recursive)
       end
 
       # Used to show when an recursive reference loop has begun
       #
       # @return [Boolean]
       def self_referencing?
-        source_location == reference_location
+        reference_locations.include?(source_location)
       end
 
       def inspect
         %{#{self.class.name}(source_location: #{source_location}, } +
-          %{reference_location: #{reference_location})}
+          %{referenced_by: #{reference_locations.map(&:to_s).join(', ')})}
       end
 
       def location_summary
