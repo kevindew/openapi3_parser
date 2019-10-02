@@ -1,3 +1,9 @@
+# Unreleased
+
+- Re-use references for significantly faster initialisation and validation
+- Only error when accessing an invalid node rather than at root
+- Handle infinitely recursive references that never resolve
+
 # 0.5.2
 
 - Fix outputting warnings for cyclic dependencies and undefined variables -
@@ -34,4 +40,3 @@
 - Allow defaulting to empty arrays and maps
 - Configure rubydoc
 - Types returned documented for the nodes
-
