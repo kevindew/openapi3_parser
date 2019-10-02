@@ -8,13 +8,11 @@ module Openapi3Parser
       def_delegators :source_location, :source
       def_delegators :factory, :resolved_input, :node
 
-      attr_reader :reference, :source_location, :object_type
+      attr_reader :source_location, :object_type
 
-      def initialize(reference:,
-                     source_location:,
+      def initialize(source_location:,
                      object_type:,
                      reference_registry:)
-        @reference = reference
         @source_location = source_location
         @object_type = object_type
         @reference_registry = reference_registry
@@ -45,10 +43,7 @@ module Openapi3Parser
 
       def build_errors
         return source_unavailabe_error unless source.available?
-
-        unless source.has_pointer?(reference.json_pointer)
-          return pointer_missing_error
-        end
+        return pointer_missing_error unless source_location.pointer_defined?
 
         resolution_error unless factory.valid?
       end
@@ -59,7 +54,7 @@ module Openapi3Parser
 
       def pointer_missing_error
         suffix = source.root? ? "" : " in source #{source.relative_to_root}"
-        "#{reference} is not defined#{suffix}"
+        "#{source_location.pointer} is not defined#{suffix}"
       end
 
       def resolution_error

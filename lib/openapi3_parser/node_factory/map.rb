@@ -202,7 +202,7 @@ module Openapi3Parser
 
           first_error = validatable.errors.first
           raise Openapi3Parser::Error::InvalidData,
-                "Invalid data for #{first_error.context.location_summary}. "\
+                "Invalid data for #{first_error.context.location_summary}: "\
                 "#{first_error.message}"
         end
 

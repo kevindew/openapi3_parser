@@ -13,19 +13,19 @@ RSpec.describe Openapi3Parser::Validators::Reference do
 
     context "when it's not a string" do
       let(:input) { 12 }
-      let(:errors) { ["expected a string"] }
+      let(:errors) { ["Expected a string"] }
       it { is_expected.to match_array(errors) }
     end
 
     context "when it's an invalid URI" do
       let(:input) { "test test test" }
-      let(:errors) { ["could not parse as a URI"] }
+      let(:errors) { ["Could not parse as a URI"] }
       it { is_expected.to match_array(errors) }
     end
 
     context "when it's an invalid JSON pointer" do
       let(:input) { "./test#any-old-fragment" }
-      let(:errors) { ["invalid JSON pointer, expected a root slash"] }
+      let(:errors) { ["Invalid JSON pointer, expected a root slash"] }
       it { is_expected.to match_array(errors) }
     end
   end

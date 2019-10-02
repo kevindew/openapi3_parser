@@ -8,13 +8,10 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
   include Helpers::Source
 
   let(:instance) do
-    described_class.new(reference: reference,
-                        source_location: source_location,
+    described_class.new(source_location: source_location,
                         object_type: object_type,
                         reference_registry: reference_registry)
   end
-
-  let(:reference) { Openapi3Parser::Source::Reference.new("#/field") }
 
   let(:source_location) do
     create_source_location({ field: factory_input },
@@ -56,12 +53,12 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
     end
 
     context "when the reference pointer is not in the source" do
-      let(:reference) { Openapi3Parser::Source::Reference.new("#/different") }
-
-      it do
-        is_expected
-          .to include("#/different is not defined")
+      let(:source_location) do
+        create_source_location({ field: factory_input },
+                               pointer_segments: %w[different])
       end
+
+      it { is_expected.to include("#/different is not defined") }
     end
 
     context "when the factory is not valid" do

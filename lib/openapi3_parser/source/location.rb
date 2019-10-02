@@ -32,6 +32,10 @@ module Openapi3Parser
         source.data_at_pointer(pointer.segments)
       end
 
+      def pointer_defined?
+        source.has_pointer?(pointer.segments)
+      end
+
       def source_available?
         source.available?
       end
