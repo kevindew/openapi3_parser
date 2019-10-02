@@ -41,7 +41,8 @@ module Openapi3Parser
         reference_locations = [reference_context.source_location] +
                               reference_context.reference_locations
 
-        new(source_location.data,
+        data = source_location.data if source_location.source_available?
+        new(data,
             source_location: source_location,
             reference_locations: reference_locations)
       end

@@ -32,6 +32,10 @@ module Openapi3Parser
         source.data_at_pointer(pointer.segments)
       end
 
+      def source_available?
+        source.available?
+      end
+
       def inspect
         %{#{self.class.name}(source: #{source.inspect}, pointer: #{pointer})}
       end

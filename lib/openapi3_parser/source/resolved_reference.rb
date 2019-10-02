@@ -5,8 +5,8 @@ module Openapi3Parser
     class ResolvedReference
       extend Forwardable
 
-      def_delegators :factory, :resolved_input, :node
       def_delegators :source_location, :source
+      def_delegators :factory, :resolved_input, :node
 
       attr_reader :reference, :source_location, :object_type
 
@@ -54,18 +54,16 @@ module Openapi3Parser
       end
 
       def source_unavailabe_error
-        # @todo include a location
-        "Source is unavailable"
+        "Failed to open source #{source.relative_to_root}"
       end
 
       def pointer_missing_error
-        # @todo include a location and a pointer
-        "Source does not have pointer"
+        suffix = source.root? ? "" : " in source #{source.relative_to_root}"
+        "#{reference} is not defined#{suffix}"
       end
 
       def resolution_error
-        # @todo include exepected object
-        "Reference does not resolve to a valid object"
+        "#{source_location} does not resolve to a valid object"
       end
     end
   end
