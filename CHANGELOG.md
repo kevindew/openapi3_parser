@@ -1,5 +1,6 @@
 # Unreleased
 
+- Drop support for Ruby 2.3
 - Re-use references for significantly faster initialisation and validation
 - Only error when accessing an invalid node rather than at root
 - Handle infinitely recursive references that never resolve
