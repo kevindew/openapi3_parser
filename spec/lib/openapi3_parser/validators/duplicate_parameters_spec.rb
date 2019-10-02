@@ -38,5 +38,11 @@ RSpec.describe Openapi3Parser::Validators::DuplicateParameters do
         is_expected.to eq "Duplicate parameters: id in path, address in query"
       end
     end
+
+    context "when parameters are in the wrong type" do
+      let(:parameters) { [1, "string", [1, 2, 3], {}] }
+
+      it { is_expected.to be_nil }
+    end
   end
 end

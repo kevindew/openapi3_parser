@@ -127,5 +127,11 @@ RSpec.describe Openapi3Parser::NodeFactory::Operation do
 
       it { is_expected.not_to be_valid }
     end
+
+    context "when parameters are in the wrong type" do
+      let(:parameters) { [1, "string"] }
+
+      it { is_expected.not_to be_valid }
+    end
   end
 end

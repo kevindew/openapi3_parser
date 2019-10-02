@@ -36,7 +36,6 @@ module Openapi3Parser
         factory = NodeFactory::OptionalReference.new(NodeFactory::Parameter)
 
         validate_parameters = lambda do |validatable|
-          # @todo this blows up if parameters isn't a hash
           validatable.add_error(
             Validators::DuplicateParameters.call(
               validatable.factory.resolved_input
