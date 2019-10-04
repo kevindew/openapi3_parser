@@ -35,7 +35,8 @@ module Openapi3Parser
       private
 
       def build_node(node_context)
-        # @todo this should raise an error if the reference is invalid
+        TypeChecker.raise_on_invalid_type(context, type: ::Hash)
+        ObjectFactory::Validator.call(self, true)
         data["$ref"].node(node_context)
       end
 

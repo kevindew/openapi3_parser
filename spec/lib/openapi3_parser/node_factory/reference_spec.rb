@@ -13,12 +13,46 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
   let(:instance) { described_class.new(node_factory_context, factory) }
 
   describe "#node" do
-    subject do
+    subject(:node) do
       node_context = node_factory_context_to_node_context(node_factory_context)
       instance.node(node_context)
     end
 
-    it { is_expected.to be_a(Openapi3Parser::Node::Contact) }
+    context "when the reference is valid" do
+      it { is_expected.to be_a(Openapi3Parser::Node::Contact) }
+    end
+
+    context "when the reference is incorrect type" do
+      let(:input) { "" }
+
+      it "raises an error" do
+        expect { node }.to raise_error(Openapi3Parser::Error::InvalidType)
+      end
+    end
+
+    context "when the reference is missing fields" do
+      let(:input) { {} }
+
+      it "raises an error" do
+        expect { node }.to raise_error(Openapi3Parser::Error::MissingFields)
+      end
+    end
+
+    context "when the reference is invalid" do
+      let(:input) { { "$ref" => "invalid reference" } }
+
+      it "raises an error" do
+        expect { node }.to raise_error(Openapi3Parser::Error::InvalidData)
+      end
+    end
+
+    context "when the reference is syntactically correct but unresolvable" do
+      let(:input) { { "$ref" => "#/unresolvable" } }
+
+      it "raises an error" do
+        expect { node }.to raise_error(Openapi3Parser::Error::InvalidData)
+      end
+    end
   end
 
   describe "#valid?" do
