@@ -36,13 +36,17 @@ module Openapi3Parser
         attr_reader :reference, :factory, :resolved_reference
 
         def build_node(_data, node_context)
-          # @todo this should handle resolved_reference being nil
+          if resolved_reference.nil?
+            # this shouldn't happen unless dependant code changes
+            raise Openapi3Parser::Error,
+                  "can't build node without a resolved reference"
+          end
+
           reference_context = Node::Context.resolved_reference(
-            node_context,
-            resolved_reference.factory.context
+            node_context, resolved_reference.factory.context
           )
 
-          resolved_reference&.node(reference_context)
+          resolved_reference.node(reference_context)
         end
 
         def validate(validatable)
