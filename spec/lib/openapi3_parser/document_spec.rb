@@ -97,8 +97,8 @@ RSpec.describe Openapi3Parser::Document do
 
     context "when there is a reference" do
       it "contains a source" do
-        source = an_instance_of(Openapi3Parser::Source)
-        expect(reference_sources).to match_array(source)
+        expect(reference_sources)
+          .to match_array(an_instance_of(Openapi3Parser::Source))
       end
 
       it "has source with expected source input" do
@@ -124,6 +124,41 @@ RSpec.describe Openapi3Parser::Document do
     context "when there are errors" do
       let(:source_data) { {} }
       it { is_expected.not_to be_empty }
+    end
+
+    context "when there are reference errors" do
+      let(:components_data) do
+        {
+          "responses" => {
+            "invalid" => {},
+            "invalid-internal-reference" => { "$ref" => "#/invalid" },
+            "invalid-external-reference" => { "$ref" => "test.json#/invalid" }
+          }
+        }
+      end
+
+      let(:responses_data) do
+        {
+          "invalid" => {}
+        }
+      end
+
+      # we're vulnerable to get duplicates of references in the root file
+      # since they can be validated as part of reference registry and
+      # root document.
+      it "returns each error without duplicates" do
+        errors = {
+          "#/components/responses/invalid" =>
+            ["Missing required fields: description"],
+          "#/components/responses/invalid-internal-reference/%24ref" =>
+            ["#/invalid is not defined"],
+          "#/components/responses/invalid-external-reference/%24ref" =>
+            ["test.json#/invalid does not resolve to a valid object"],
+          "test.json#/invalid" =>
+            ["Missing required fields: description"]
+        }
+        expect(errors.to_h).to eq errors
+      end
     end
   end
 
