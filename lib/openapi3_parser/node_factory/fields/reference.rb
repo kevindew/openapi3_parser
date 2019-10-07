@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "forwardable"
 require "openapi3_parser/node_factory/field"
 
 module Openapi3Parser
