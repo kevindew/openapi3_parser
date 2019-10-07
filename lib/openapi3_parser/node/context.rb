@@ -5,6 +5,15 @@ module Openapi3Parser
     # This class is used to specify the data and source information for a
     # Node, for every node there is a different context to represent it's
     # place within the document.
+    #
+    # @attr_reader  [Any]               input             The raw data that was
+    #                                                     used to build the
+    #                                                     node
+    # @attr_reader  [Source::Location]  document_location The location in the
+    #                                                     root source of this
+    #                                                     node
+    # @attr_reader  [Source::Location]  source_location   The location in a
+    #                                                     source file of this
     class Context
       # Create a context for the root of a document
       #
@@ -63,21 +72,29 @@ module Openapi3Parser
           source_location == other.source_location
       end
 
+      # The OpenAPI document associated with this context
+      #
       # @return [Document]
       def document
         document_location.source.document
       end
 
+      # The source file used to provide the data for this node
+      #
       # @return [Source]
       def source
         source_location.source
       end
 
+      # @return [String]
       def inspect
         %{#{self.class.name}(document_location: #{document_location}, } +
           %{source_location: #{source_location})}
       end
 
+      # A string representing the location of the node
+      #
+      # @return [String]
       def location_summary
         summary = document_location.to_s
 
@@ -88,14 +105,22 @@ module Openapi3Parser
         summary
       end
 
+      # (see #location_summary)
       def to_s
         location_summary
       end
 
+      # Used to return the data at this document location with all references
+      # resolved and optional fields populated with defaults
+      #
+      # @return [Any]
       def resolved_input
         document.resolved_input_at(document_location.pointer)
       end
 
+      # Return the node for this context
+      #
+      # @return [Node::Object, Node::Map, Node::Array]
       def node
         document.node_at(document_location.pointer)
       end
