@@ -33,5 +33,3 @@ module Openapi3Parser
     end
   end
 end
-
-# These are in the footer as a cyclic dependency can stop this module loading
