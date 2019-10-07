@@ -3,18 +3,25 @@
 module Openapi3Parser
   module NodeFactory
     # This class is used to specify the data and source information for a
-    # NodeFactory.
+    # NodeFactory. The same NodeFactory can be used multiple times if the
+    # object is referenced so it is limited in data about it's location
+    # within the document.
+    #
+    # @attr_reader  [Any]                     input
+    # @attr_reader  [Source::Location]        source_location
+    # @attr_reader  [Array<Source::Location>] refernce_locations
+    #
     class Context
       # Create a context for the root of a document
       #
-      # @param  [Object]  input
-      # @param  [Source]  field
+      # @param  [Any]     input
+      # @param  [Source]  source
       # @return [Context]
       def self.root(input, source)
         new(input, source_location: Source::Location.new(source, []))
       end
 
-      # Create a context for a field within the current contexts data
+      # Create a factory context for a field within the current contexts data
       # eg for a context of:
       #   root = Context.root({ "test" => {} }, source)
       # we can get the context of "test" with:
@@ -49,7 +56,7 @@ module Openapi3Parser
 
       attr_reader :input, :source_location, :reference_locations
 
-      # @param  [Object]                  input
+      # @param  [Any]                     input
       # @param  [Source::Location]        source_location
       # @param  [Array<Source::Location>] reference_locations
       def initialize(input,
