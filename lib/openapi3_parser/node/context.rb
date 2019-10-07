@@ -31,8 +31,7 @@ module Openapi3Parser
 
         new(factory_context.input,
             document_location: document_location,
-            source_location: factory_context.source_location,
-            reference_location: parent_context.reference_location)
+            source_location: factory_context.source_location)
       end
 
       # Create a context for a the a field that is the result of a reference
@@ -41,39 +40,27 @@ module Openapi3Parser
       # @param  [NodeFactory::Context]  reference_factory_context
       # @return [Node::Context]
       def self.resolved_reference(current_context, reference_factory_context)
-        reference_locations = reference_factory_context.reference_locations
-
         new(reference_factory_context.input,
             document_location: current_context.document_location,
-            source_location: reference_factory_context.source_location,
-            reference_location: reference_locations.first)
+            source_location: reference_factory_context.source_location)
       end
 
-      attr_reader :input,
-                  :document_location,
-                  :source_location,
-                  :reference_location
+      attr_reader :input, :document_location, :source_location
 
       # @param                           input
       # @param  [Source::Location]       document_location
       # @param  [Source::Location]       source_location
-      # @param  [Source::Location, nil]  reference_location
-      def initialize(input,
-                     document_location:,
-                     source_location:,
-                     reference_location: nil)
+      def initialize(input, document_location:, source_location:)
         @input = input
         @document_location = document_location
         @source_location = source_location
-        @reference_location = reference_location
       end
 
       # @return [Boolean]
       def ==(other)
         input == other.input &&
           document_location == other.document_location &&
-          source_location == other.source_location &&
-          reference_location == other.reference_location
+          source_location == other.source_location
       end
 
       # @return [Document]
@@ -88,8 +75,7 @@ module Openapi3Parser
 
       def inspect
         %{#{self.class.name}(document_location: #{document_location}, } +
-          %{source_location: #{source_location}), reference_location: } +
-          %{#{reference_location})}
+          %{source_location: #{source_location})}
       end
 
       def location_summary

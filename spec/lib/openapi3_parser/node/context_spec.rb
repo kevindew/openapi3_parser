@@ -79,10 +79,5 @@ RSpec.describe Openapi3Parser::Node::Context do
       expect(context.source_location.to_s)
         .to eq "#/data"
     end
-
-    it "knows the location of the reference" do
-      expect(context.reference_location.to_s)
-        .to eq "#/field/%24ref"
-    end
   end
 end
