@@ -1,4 +1,4 @@
-# Unreleased
+# 0.6.0
 
 - Drop support for Ruby 2.3
 - Re-use references for significantly faster initialisation and validation

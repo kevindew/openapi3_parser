@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Openapi3Parser
-  VERSION = "0.5.2"
+  VERSION = "0.6.0"
 end
