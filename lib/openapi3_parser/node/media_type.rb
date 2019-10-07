@@ -16,7 +16,7 @@ module Openapi3Parser
         self["example"]
       end
 
-      # @return [Map<String, Example>]
+      # @return [Map<String, Example>, nil]
       def examples
         self["examples"]
       end
