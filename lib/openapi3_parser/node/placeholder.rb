@@ -11,6 +11,22 @@ module Openapi3Parser
         end
       end
 
+      # Used to iterate through hashes or arrays that may contain
+      # Placeholder objects where these are resolved to being nodes
+      # befor iteration
+      def self.each(node_data, &block)
+        resolved =
+          if node_data.respond_to?(:keys)
+            node_data.each_with_object({}) do |(key, value), memo|
+              memo[key] = resolve(value)
+            end
+          else
+            node_data.map { |item| resolve(item) }
+          end
+
+        resolved.each(&block)
+      end
+
       def initialize(node_factory, field, parent_context)
         @node_factory = node_factory
         @field = field

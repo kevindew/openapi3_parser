@@ -48,8 +48,11 @@ module Openapi3Parser
         self["x-#{value}"]
       end
 
-      def each
-        node_data.each_key { |key| yield(self[key]) }
+      # Iterates through the data of this node, used by Enumerable
+      #
+      # @return [Object]
+      def each(&block)
+        Placeholder.each(node_data, &block)
       end
 
       # Used to access a node relative to this node
