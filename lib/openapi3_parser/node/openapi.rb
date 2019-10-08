@@ -42,7 +42,7 @@ module Openapi3Parser
         self["tags"]
       end
 
-      # @return [ExternalDocumentation]
+      # @return [ExternalDocumentation, nil]
       def external_docs
         self["externalDocs"]
       end
