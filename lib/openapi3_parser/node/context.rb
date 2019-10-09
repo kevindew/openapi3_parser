@@ -65,10 +65,19 @@ module Openapi3Parser
         @source_location = source_location
       end
 
+      # @param  [Context] other
       # @return [Boolean]
       def ==(other)
+        document_location == other.document_location &&
+          same_data_and_source?(other)
+      end
+
+      # Check that contexts are the same without concern for document location
+      #
+      # @param  [Context] other
+      # @return [Boolean]
+      def same_data_and_source?(other)
         input == other.input &&
-          document_location == other.document_location &&
           source_location == other.source_location
       end
 
