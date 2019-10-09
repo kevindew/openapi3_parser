@@ -1,3 +1,8 @@
+# 0.6.1
+
+- Fix bug where Node::Object and Node::Map iterated arrays rather than hashes
+  on #each and other Enumerable methods
+
 # 0.6.0
 
 - Drop support for Ruby 2.3
