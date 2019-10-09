@@ -48,6 +48,14 @@ module Openapi3Parser
         self["x-#{value}"]
       end
 
+      # @param [Any]  other
+      #
+      # @return [Boolean]
+      def ==(other)
+        other.instance_of?(self.class) &&
+          node_context.same_data_and_source?(other.node_context)
+      end
+
       # Iterates through the data of this node, used by Enumerable
       #
       # @return [Object]

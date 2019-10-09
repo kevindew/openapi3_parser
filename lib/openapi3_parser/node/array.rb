@@ -35,6 +35,14 @@ module Openapi3Parser
         Placeholder.each(node_data, &block)
       end
 
+      # @param [Any]  other
+      #
+      # @return [Boolean]
+      def ==(other)
+        other.instance_of?(self.class) &&
+          node_context.same_data_and_source?(other.node_context)
+      end
+
       # Used to access a node relative to this node
       # @param  [Source::Pointer, ::Array, ::String] pointer_like
       # @return anything

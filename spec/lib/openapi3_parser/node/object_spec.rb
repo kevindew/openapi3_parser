@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "support/node_equality"
 require "support/helpers/context"
 
 RSpec.describe Openapi3Parser::Node::Object do
@@ -42,4 +43,6 @@ RSpec.describe Openapi3Parser::Node::Object do
       it { is_expected.to be_instance_of(Openapi3Parser::Node::Openapi) }
     end
   end
+
+  it_behaves_like "node equality", {}
 end
