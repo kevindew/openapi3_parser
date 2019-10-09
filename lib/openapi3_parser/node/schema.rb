@@ -7,6 +7,37 @@ module Openapi3Parser
     # @see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#schemaObject
     # rubocop:disable ClassLength
     class Schema < Node::Object
+      # This is used to provide a name for the schema based on it's position in
+      # an OpenAPI document.
+      #
+      # For example it's common to have an OpenAPI document structured like so:
+      # components:
+      #   schemas:
+      #     Product:
+      #       properties:
+      #         product_id:
+      #           type: string
+      #         description:
+      #           type: string
+      #
+      # and there is then implied meaning in the field name of Product, ie
+      # that schema now represents a product. This data is not easily or
+      # consistently made available as it is part of the path to the data
+      # rather than the data itself. Instead the field that would be more
+      # appropriate would be "title" within a schema.
+      #
+      # As this is a common pattern in OpenAPI docs this provides a method
+      # to look up this contextual name of the schema so it can be referenced
+      # when working with the document, it only considers a field to be
+      # name if it is within a group called schemas (as is the case
+      # in #/components/schemas)
+      #
+      # @return [String, nil]
+      def name
+        segments = node_context.source_location.pointer.segments
+        segments[-1] if segments[-2] == "schemas"
+      end
+
       # @return [String, nil]
       def title
         self["title"]
