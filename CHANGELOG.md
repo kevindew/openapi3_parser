@@ -1,3 +1,16 @@
+# Unreleased
+
+- Add `#values` method to `Node::Object` and `Node#Map` to have a method that
+  pairs with `#keys`
+- Add `Node::Schema#requires?` method to simplify checking whether a property
+  is required by a particular schema.
+- Add `#==` methods to Node objects. This allows checking whether two nodes
+  are from the same source location even if they're referenced in different
+  places.
+- Add `Node::Schema#name` method that looks up the name of a Schema based
+  on it's contextual position in a document. Allows accessing the `Pet` value
+  from `#/components/schemas/Pet`.
+
 # 0.6.1
 
 - Fix bug where Node::Object and Node::Map iterated arrays rather than hashes
