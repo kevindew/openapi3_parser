@@ -113,6 +113,21 @@ module Openapi3Parser
         self["required"]
       end
 
+      # Returns whether a property is a required field or not. Can accept the
+      # property name or a schema
+      #
+      # @param [String, Schema] property
+      # @return [Boolean]
+      def requires?(property)
+        if property.is_a?(Schema)
+          properties.to_h
+                    .select { |k, _| required.to_a.include?(k) }
+                    .any? { |_, schema| schema == property }
+        else
+          required.to_a.include?(property)
+        end
+      end
+
       # @return [Node::Array<Object>, nil]
       def enum
         self["enum"]
