@@ -60,7 +60,7 @@ module Openapi3Parser
     # @!method external_docs
     #   The value of the external_docs field on the OpenAPI document
     #   @see Node::Openapi#external_docs
-    #   @return [Node::ExternalDocumentation]
+    #   @return [Node::ExternalDocumentation, nil]
     # @!method extension
     #   Look up an extension field provided for the root object of the document
     #   @see Node::Object#extension
