@@ -63,6 +63,14 @@ module Openapi3Parser
         Placeholder.each(node_data, &block)
       end
 
+      # Provide an array of values for this object, a partner to the #keys
+      # method
+      #
+      # @return [Array]
+      def values
+        map(&:last)
+      end
+
       # Used to render fields that can be in markdown syntax into HTML
       # @param  [String, nil] value
       # @return [String, nil]

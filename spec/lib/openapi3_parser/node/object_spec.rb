@@ -45,4 +45,13 @@ RSpec.describe Openapi3Parser::Node::Object do
   end
 
   it_behaves_like "node equality", {}
+
+  describe "#values" do
+    it "returns an array of values" do
+      instance = described_class.new({ "a" => "value_a", "b" => "value_b" },
+                                     create_node_context({}))
+
+      expect(instance.values).to eq %w[value_a value_b]
+    end
+  end
 end

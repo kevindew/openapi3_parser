@@ -63,6 +63,14 @@ module Openapi3Parser
         Placeholder.each(node_data, &block)
       end
 
+      # Provide an array of values for this object, a partner to the #keys
+      # method
+      #
+      # @return [Array]
+      def values
+        map(&:last)
+      end
+
       # Used to access a node relative to this node
       # @param  [Source::Pointer, ::Array, ::String] pointer_like
       # @return anything
