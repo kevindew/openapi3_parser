@@ -1,4 +1,4 @@
-# Unreleased
+# 0.7.0
 
 - Add `#values` method to `Node::Object` and `Node#Map` to have a method that
   pairs with `#keys`
