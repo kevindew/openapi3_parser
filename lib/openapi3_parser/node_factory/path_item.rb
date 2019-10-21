@@ -26,6 +26,7 @@ module Openapi3Parser
         ref = data.delete("$ref").node
         return Node::PathItem.new(data, node_context) unless ref
 
+        # @todo check if this context should change
         context = data.empty? ? ref.node_context : node_context
         data = merge_data(ref.node_data, data)
 
