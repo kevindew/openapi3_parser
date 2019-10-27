@@ -9,7 +9,7 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
   it_behaves_like "node object factory", Openapi3Parser::Node::PathItem do
     let(:input) do
       {
-        "$ref" => "#/path_items/example",
+        "summary" => "Example",
         "get" => {
           "description" => "Returns pets based on ID",
           "summary" => "Find pets by ID",
@@ -54,18 +54,8 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
       }
     end
 
-    let(:document_input) do
-      {
-        "path_items" => {
-          "example" => {
-            "summary" => "Example"
-          }
-        }
-      }
-    end
-
     let(:node_factory_context) do
-      create_node_factory_context(input, document_input: document_input)
+      create_node_factory_context(input)
     end
 
     let(:node_context) do
@@ -124,6 +114,11 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
 
     let(:instance) { described_class.new(node_factory_context) }
 
+    let(:node) do
+      node_context = node_factory_context_to_node_context(node_factory_context)
+      instance.node(node_context)
+    end
+
     it "can be accessed via resolved_input" do
       expect(instance.resolved_input).to match(
         hash_including("summary" => "My summary")
@@ -148,12 +143,27 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
           hash_including("summary" => "A different summary")
         )
 
-        node_context = node_factory_context_to_node_context(
-          node_factory_context
-        )
+        expect(node.summary).to eq "A different summary"
+      end
+    end
 
-        expect(instance.node(node_context).summary)
-          .to eq "A different summary"
+    context "when the input is only a reference" do
+      it "deems the source location to be that of the reference" do
+        expect(node.node_context.source_location.to_s)
+          .to eq "#/path_items/example"
+      end
+    end
+
+    context "when the input is not only a reference" do
+      let(:input) do
+        {
+          "$ref" => "#/path_items/example",
+          "summary" => "A different summary"
+        }
+      end
+
+      it "deems the source location to be that of the original node" do
+        expect(node.node_context.source_location.to_s).to eq "#/"
       end
     end
   end

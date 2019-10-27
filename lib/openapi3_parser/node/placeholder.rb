@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
+require "forwardable"
+
 module Openapi3Parser
   module Node
     class Placeholder
+      extend Forwardable
+
       def self.resolve(potential_placeholder)
         if potential_placeholder.is_a?(Placeholder)
           potential_placeholder.node
@@ -27,6 +31,9 @@ module Openapi3Parser
         resolved.each(&block)
       end
 
+      attr_reader :node_factory, :field, :parent_context
+      def_delegators :node_factory, :nil_input?
+
       def initialize(node_factory, field, parent_context)
         @node_factory = node_factory
         @field = field
@@ -41,10 +48,6 @@ module Openapi3Parser
                     node_factory.node(node_context)
                   end
       end
-
-      private
-
-      attr_reader :node_factory, :field, :parent_context
     end
   end
 end
