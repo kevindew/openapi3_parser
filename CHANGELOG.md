@@ -1,3 +1,9 @@
+# Unreleased
+
+- Set referenced data as input and source location for a PathItem with only
+  a $ref value.
+- Fix data being lost in PathItem reference merges.
+
 # 0.7.0
 
 - Add `#values` method to `Node::Object` and `Node#Map` to have a method that
