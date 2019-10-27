@@ -1,5 +1,9 @@
 language: ruby
 sudo: false
+env:
+  global:
+    CC_TEST_REPORTER_ID=8bc2d8e54331569aeb442094c21cb64a58d6efa0670f65ff00d9ae887f63c0b4
+    CC_RUBY_VERSION=ruby-2.4.6
 rvm:
   - 2.4.6
   - 2.5.5
@@ -9,3 +13,9 @@ matrix:
   allow_failures:
     - rvm: ruby-head
   fast_finish: true
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - if [ $(rvm current) = $CC_RUBY_VERSION ]; then ./cc-test-reporter before-build; fi
+after_script:
+    - if [ $(rvm current) = $CC_RUBY_VERSION ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
