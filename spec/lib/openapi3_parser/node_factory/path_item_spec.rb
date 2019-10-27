@@ -109,7 +109,12 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
     end
 
     let(:reference_input) do
-      { "summary" => "My summary" }
+      {
+        "summary" => "My summary",
+        "parameters" => [
+          { "name" => "id", "in" => "query" }
+        ]
+      }
     end
 
     let(:instance) { described_class.new(node_factory_context) }
@@ -121,13 +126,18 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
 
     it "can be accessed via resolved_input" do
       expect(instance.resolved_input).to match(
-        hash_including("summary" => "My summary")
+        hash_including(
+          "summary" => "My summary",
+          "parameters" => [
+            hash_including("name" => "id", "in" => "query")
+          ]
+        )
       )
     end
 
     it "is within the node" do
-      node_context = node_factory_context_to_node_context(node_factory_context)
-      expect(instance.node(node_context).summary).to eq "My summary"
+      expect(node.summary).to eq "My summary"
+      expect(node.parameters[0].name).to eq "id"
     end
 
     context "when both structures contain the same field" do

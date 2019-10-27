@@ -66,7 +66,11 @@ module Openapi3Parser
 
       def merge_data(base, priority)
         base.merge(priority) do |_, old, new|
-          new.nil? ? old : new
+          if new.nil? || new.respond_to?(:nil_input?) && new.nil_input?
+            old
+          else
+            new
+          end
         end
       end
 
