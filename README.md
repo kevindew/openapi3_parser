@@ -33,10 +33,13 @@ being:
 - Documentation for the API to navigate the OpenAPI nodes is available on
   [rubydoc.info][docs].
 
+I've wrote a blog post reflecting on the decisions involved in building this
+parser in [How to write an OpenAPI 3 parser][blog].
 
 [openapi-3]: https://github.com/OAI/OpenAPI-Specification
 [openapi-3-spec]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#specification
 [docs]: http://www.rubydoc.info/github/kevindew/openapi3_parser/Openapi3Parser/Node/Openapi
+[blog]: https://kevindew.me/post/188611423231/how-to-write-an-openapi-3-parser
 
 ## Usage
 
