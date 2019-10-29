@@ -14,7 +14,7 @@ module Openapi3Parser
       extend Forwardable
       include Enumerable
 
-      def_delegators :node_data, :empty?
+      def_delegators :node_data, :empty?, :length, :size
       attr_reader :node_data, :node_context
 
       # @param [::Array] data     data used to populate this node
