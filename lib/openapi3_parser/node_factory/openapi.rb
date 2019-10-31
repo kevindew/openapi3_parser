@@ -32,7 +32,8 @@ module Openapi3Parser
 
       def servers_factory(context)
         NodeFactory::Array.new(context,
-                               value_factory: NodeFactory::Server)
+                               value_factory: NodeFactory::Server,
+                               default: [{ "url" => "/" }])
       end
 
       def security_factory(context)
