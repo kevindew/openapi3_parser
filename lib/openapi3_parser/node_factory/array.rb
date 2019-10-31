@@ -61,7 +61,7 @@ module Openapi3Parser
       def process_data(data)
         data.each_with_index.map do |value, i|
           if value_factory
-            initialize_value_factory(Context.next_field(context, i))
+            initialize_value_factory(Context.next_field(context, i, value))
           else
             value
           end
@@ -111,19 +111,13 @@ module Openapi3Parser
         end
 
         def data(parent_context)
-          return default_value if factory.nil_input?
+          return default_value(parent_context) if factory.nil_input?
 
           TypeChecker.raise_on_invalid_type(factory.context, type: ::Array)
           check_values(raise_on_invalid: true)
           validate(raise_on_invalid: true)
 
-          factory.data.each_with_index.map do |value, i|
-            if value.respond_to?(:node)
-              Node::Placeholder.new(value, i, parent_context)
-            else
-              value
-            end
-          end
+          build_node_data(parent_context)
         end
 
         private_class_method :new
@@ -131,6 +125,13 @@ module Openapi3Parser
         private
 
         attr_reader :factory, :validatable
+
+        def build_node_data(parent_context)
+          factory.data.each_with_index.map do |value, i|
+            next value unless value.respond_to?(:node)
+            Node::Placeholder.new(value, i, parent_context)
+          end
+        end
 
         def collate_errors
           check_values(raise_on_invalid: false)
@@ -141,21 +142,17 @@ module Openapi3Parser
           end
         end
 
-        def default_value
-          if factory.nil_input? && factory.default.nil?
-            nil
-          else
-            factory.data
-          end
+        def default_value(parent_context)
+          return if factory.nil_input? && factory.default.nil?
+          build_node_data(parent_context)
         end
 
         def check_values(raise_on_invalid: false)
           return unless factory.value_input_type
 
-          factory.context.input.each_index do |index|
-            check_field_type(
-              Context.next_field(factory.context, index), raise_on_invalid
-            )
+          factory.context.input.each_with_index do |value, index|
+            check_field_type(Context.next_field(factory.context, index, value),
+                             raise_on_invalid)
           end
         end
 

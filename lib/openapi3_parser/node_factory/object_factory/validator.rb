@@ -108,10 +108,11 @@ module Openapi3Parser
           def check_field(name, field_config)
             return if factory.raw_input[name].nil?
 
-            field_validatable = Validation::Validatable.new(
-              factory,
-              context: Context.next_field(factory.context, name)
-            )
+            context = Context.next_field(factory.context,
+                                         name,
+                                         factory.raw_input[name])
+            field_validatable = Validation::Validatable.new(factory,
+                                                            context: context)
 
             valid_input_type = field_config.check_input_type(field_validatable,
                                                              building_node)

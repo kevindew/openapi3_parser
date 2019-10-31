@@ -175,12 +175,11 @@ module Openapi3Parser
         def check_values(raise_on_invalid: false)
           return unless factory.value_input_type
 
-          factory.context.input.keys.each do |key|
+          factory.context.input.each do |key, value|
             next if factory.allow_extensions && key.to_s =~ EXTENSION_REGEX
 
-            check_field_type(
-              Context.next_field(factory.context, key), raise_on_invalid
-            )
+            check_field_type(Context.next_field(factory.context, key, value),
+                             raise_on_invalid)
           end
         end
 

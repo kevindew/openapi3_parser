@@ -12,6 +12,8 @@ module Openapi3Parser
     # @attr_reader  [Array<Source::Location>] refernce_locations
     #
     class Context
+      UNDEFINED = Class.new
+
       # Create a context for the root of a document
       #
       # @param  [Any]     input
@@ -29,10 +31,15 @@ module Openapi3Parser
       #
       # @param  [Context] parent_context
       # @param  [String]  field
+      # @param  [Any]     input
       # @return [Context]
-      def self.next_field(parent_context, field)
+      def self.next_field(parent_context, field, given_input = UNDEFINED)
         pc = parent_context
-        input = pc.input.respond_to?(:[]) ? pc.input[field] : nil
+        input = if given_input == UNDEFINED
+                  pc.input.respond_to?(:[]) ? pc.input[field] : nil
+                else
+                  given_input
+                end
         source_location = Source::Location.next_field(pc.source_location, field)
         new(input,
             source_location: source_location,

@@ -39,6 +39,11 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
     it "has a pointer fragment of '#/key'" do
       expect(context.source_location.pointer.to_s).to eq "#/key"
     end
+
+    it "can override the input from the context" do
+      context = described_class.next_field(parent_context, field, "data")
+      expect(context.input).to eq "data"
+    end
   end
 
   describe ".resolved_reference" do
