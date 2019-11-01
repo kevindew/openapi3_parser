@@ -9,12 +9,14 @@ RSpec.describe Openapi3Parser::NodeFactory::Array do
   let(:input) { [] }
 
   let(:default) { [] }
+  let(:use_default_on_empty) { false }
   let(:value_input_type) { nil }
   let(:value_factory) { nil }
   let(:validate) { nil }
   let(:instance) do
     described_class.new(node_factory_context,
                         default: default,
+                        use_default_on_empty: use_default_on_empty,
                         value_input_type: value_input_type,
                         value_factory: value_factory,
                         validate: validate)
@@ -64,6 +66,17 @@ RSpec.describe Openapi3Parser::NodeFactory::Array do
       let(:default) { nil }
 
       it { is_expected.to be_nil }
+    end
+
+    context "when input is empty, use default on empty is true and "\
+            "default has values" do
+      let(:input) { [] }
+      let(:default) { [1] }
+      let(:use_default_on_empty) { true }
+
+      it "has the value" do
+        expect(node[0]).to eq 1
+      end
     end
 
     context "when value_factory is set" do

@@ -3,23 +3,27 @@
 module Openapi3Parser
   module NodeFactory
     class Array
-      attr_reader :context, :data, :default, :value_input_type,
-                  :value_factory, :validation
+      attr_reader :context, :data, :default, :use_default_on_empty,
+                  :value_input_type, :value_factory, :validation
 
+      # rubocop:disable Metrics/ParameterLists
       def initialize(
         context,
         default: [],
+        use_default_on_empty: false,
         value_input_type: nil,
         value_factory: nil,
         validate: nil
       )
         @context = context
         @default = default
+        @use_default_on_empty = use_default_on_empty
         @value_input_type = value_input_type
         @value_factory = value_factory
         @validation = validate
         @data = build_data(context.input)
       end
+      # rubocop:enable Metrics/ParameterLists
 
       def raw_input
         context.input
@@ -50,12 +54,18 @@ module Openapi3Parser
         %{#{self.class.name}(#{context.source_location.inspect})}
       end
 
+      def use_default?
+        return true if nil_input? || !raw_input.is_a?(::Array)
+        return false unless use_default_on_empty
+
+        raw_input.empty?
+      end
+
       private
 
       def build_data(raw_input)
-        use_default = nil_input? || !raw_input.is_a?(::Array)
-        return if use_default && default.nil?
-        process_data(use_default ? default : raw_input)
+        return if use_default? && default.nil?
+        process_data(use_default? ? default : raw_input)
       end
 
       def process_data(data)
@@ -111,7 +121,9 @@ module Openapi3Parser
         end
 
         def data(parent_context)
-          return default_value(parent_context) if factory.nil_input?
+          if factory.use_default?
+            return factory.default.nil? ? nil : build_node_data(parent_context)
+          end
 
           TypeChecker.raise_on_invalid_type(factory.context, type: ::Array)
           check_values(raise_on_invalid: true)
@@ -140,11 +152,6 @@ module Openapi3Parser
           factory.data.each do |value|
             validatable.add_errors(value.errors) if value.respond_to?(:errors)
           end
-        end
-
-        def default_value(parent_context)
-          return if factory.nil_input? && factory.default.nil?
-          build_node_data(parent_context)
         end
 
         def check_values(raise_on_invalid: false)
