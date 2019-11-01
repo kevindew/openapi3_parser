@@ -95,11 +95,11 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
       include_examples "defaults to a single root server"
     end
 
-    # context "when servers are an empty array" do
-    #   let(:servers) { [] }
-    #
-    #   include_examples "defaults to a single root server"
-    # end
+    context "when servers are an empty array" do
+      let(:servers) { [] }
+
+      include_examples "defaults to a single root server"
+    end
 
     context "when servers are set" do
       let(:servers) do
