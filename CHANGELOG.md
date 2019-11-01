@@ -1,5 +1,7 @@
 # Unreleased
 
+- Default to a server of "/" when given an empty or null servers input for
+  OpenAPI node.
 - Set referenced data as input and source location for a PathItem with only
   a $ref value.
 - Fix data being lost in PathItem reference merges.
