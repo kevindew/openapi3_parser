@@ -183,4 +183,75 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
       end
     end
   end
+
+  describe "servers" do
+    let(:document_input) do
+      {
+        "openapi" => "3.0.0",
+        "info" => {
+          "title" => "Minimal Openapi definition",
+          "version" => "1.0.0"
+        },
+        "paths" => {
+          "/test" => input
+        },
+        "servers" => [
+          {
+            "url" => "https://dev.example.com/v1",
+            "description" => "Development server"
+          }
+        ]
+      }
+    end
+
+    let(:node_factory_context) do
+      create_node_factory_context(input,
+                                  document_input: document_input,
+                                  pointer_segments: %w[paths /test])
+    end
+
+    let(:instance) { described_class.new(node_factory_context) }
+
+    let(:node) do
+      node_context = node_factory_context_to_node_context(node_factory_context)
+      instance.node(node_context)
+    end
+
+    shared_examples "defaults to servers from root object" do
+      it "uses the servers from the root object" do
+        expect(node["servers"][0].url).to eq "https://dev.example.com/v1"
+        expect(node["servers"][0].description).to eq "Development server"
+      end
+    end
+
+    context "when servers is nil" do
+      let(:input) { { "servers" => nil } }
+
+      include_examples "defaults to servers from root object"
+    end
+
+    context "when servers is an empty array" do
+      let(:input) { { "servers" => [] } }
+
+      include_examples "defaults to servers from root object"
+    end
+
+    context "when servers are provided" do
+      let(:input) do
+        {
+          "servers" => [
+            {
+              "url" => "https://prod.example.com/v1",
+              "description" => "Production server"
+            }
+          ]
+        }
+      end
+
+      it "uses it's defined servers" do
+        expect(node["servers"][0].url).to eq "https://prod.example.com/v1"
+        expect(node["servers"][0].description).to eq "Production server"
+      end
+    end
+  end
 end
