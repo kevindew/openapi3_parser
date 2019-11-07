@@ -50,6 +50,12 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
             },
             "style" => "simple"
           }
+        ],
+        "servers" => [
+          {
+            "url" => "https://development.gigantic-server.com/v1",
+            "description" => "Development server"
+          }
         ]
       }
     end
