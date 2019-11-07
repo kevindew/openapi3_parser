@@ -66,6 +66,14 @@ module Openapi3Parser
         self["servers"]
       end
 
+      # Whether this object uses it's own defined servers instead of falling
+      # back to the root ones.
+      #
+      # @return [Boolean]
+      def alternative_servers?
+        servers != node_context.document.root.servers
+      end
+
       # @return [Node::Array<Parameter>]
       def parameters
         self["parameters"]
