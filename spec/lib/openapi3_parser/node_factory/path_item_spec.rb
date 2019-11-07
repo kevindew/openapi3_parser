@@ -119,7 +119,8 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
         "summary" => "My summary",
         "parameters" => [
           { "name" => "id", "in" => "query" }
-        ]
+        ],
+        "servers" => [{ "url" => "/" }]
       }
     end
 
