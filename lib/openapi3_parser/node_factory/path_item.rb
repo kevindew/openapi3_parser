@@ -24,8 +24,6 @@ module Openapi3Parser
 
       def build_object(data, node_context)
         ref = data.delete("$ref")
-        return Node::PathItem.new(data, node_context) if ref.nil_input?
-
         context = if node_context.input.keys == %w[$ref]
                     referenced_factory = ref.node_factory.referenced_factory
                     Node::Context.resolved_reference(
@@ -36,7 +34,11 @@ module Openapi3Parser
                     node_context
                   end
 
-        data = merge_data(ref.node.node_data, data)
+        reference_data = ref.nil_input? ? {} : ref.node.node_data
+
+        data = merge_data(reference_data, data).tap do |d|
+          d["servers"] = root_server_data(context) if d["servers"].node.empty?
+        end
 
         Node::PathItem.new(data, context)
       end
@@ -88,6 +90,13 @@ module Openapi3Parser
         NodeFactory::Array.new(context,
                                value_factory: factory,
                                validate: validate_parameters)
+      end
+
+      def root_server_data(node_context)
+        root_servers = node_context.document.root.node_data["servers"]
+        Node::Placeholder.new(root_servers.node_factory,
+                              "servers",
+                              node_context)
       end
     end
   end
