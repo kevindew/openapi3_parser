@@ -17,7 +17,7 @@ module Openapi3Parser
 
       # Used to iterate through hashes or arrays that may contain
       # Placeholder objects where these are resolved to being nodes
-      # befor iteration
+      # before iteration
       def self.each(node_data, &block)
         resolved =
           if node_data.respond_to?(:keys)
