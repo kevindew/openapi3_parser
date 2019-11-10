@@ -49,6 +49,10 @@ module Openapi3Parser
         %{#{self.class.name}(segments: #{segments}, fragment: "#{fragment}")}
       end
 
+      def root?
+        segments.empty?
+      end
+
       class MergePointers
         private_class_method :new
 

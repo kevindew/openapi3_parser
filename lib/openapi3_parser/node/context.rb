@@ -133,6 +133,29 @@ module Openapi3Parser
       def node
         document.node_at(document_location.pointer)
       end
+
+      # Look up a node at a particular location in the OpenAPI docuemnt based
+      # on the relative position in the document of this context
+      #
+      # Examples:
+      #
+      # context.relative_node("#schemas")
+      # context.relative_node(%w[..])
+      #
+      # @param [Source::Pointer, String, Array] pointer
+      # @return anything
+      def relative_node(pointer)
+        document.node_at(pointer, document_location.pointer)
+      end
+
+      # Return the node that is the parent node for the node at this context
+      #
+      # @return [Node::Object, Node::Map, Node::Array, nil]
+      def parent_node
+        return if document_location.root?
+
+        relative_node("#..")
+      end
     end
   end
 end
