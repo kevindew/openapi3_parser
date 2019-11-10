@@ -1,5 +1,8 @@
 # Unreleased
 
+- Operation and Path Item objects use servers that have cascaded from parent
+  objects if they do not have their own servers defined.
+- Add `#relative_node` and `#parent_node` methods to `Node::Context`.
 - Default to a server of "/" when given an empty or null servers input for
   OpenAPI node.
 - Set referenced data as input and source location for a PathItem with only
