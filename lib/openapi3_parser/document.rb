@@ -138,7 +138,7 @@ module Openapi3Parser
       look_up_pointer(pointer, relative_to, factory.resolved_input)
     end
 
-    # Look up a node at a particular location in the OpenAPI docuemnt
+    # Look up a node at a particular location in the OpenAPI document
     #
     # Examples:
     #
