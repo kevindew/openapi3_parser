@@ -70,6 +70,14 @@ module Openapi3Parser
       def servers
         self["servers"]
       end
+
+      # Whether this object uses it's own defined servers instead of falling
+      # back to the path items' ones.
+      #
+      # @return [Boolean]
+      def alternative_servers?
+        servers != node_context.parent_node.servers
+      end
     end
   end
 end

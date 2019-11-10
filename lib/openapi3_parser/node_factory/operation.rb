@@ -25,6 +25,10 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
+        if data["servers"].node.empty?
+          data["servers"] = path_item_server_data(context)
+        end
+
         Node::Operation.new(data, context)
       end
 
@@ -71,6 +75,13 @@ module Openapi3Parser
       def servers_factory(context)
         NodeFactory::Array.new(context,
                                value_factory: NodeFactory::Server)
+      end
+
+      def path_item_server_data(node_context)
+        path_item_servers = node_context.parent_node.node_data["servers"]
+        Node::Placeholder.new(path_item_servers.node_factory,
+                              "servers",
+                              node_context)
       end
     end
   end

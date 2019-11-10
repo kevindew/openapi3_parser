@@ -86,6 +86,12 @@ RSpec.describe Openapi3Parser::NodeFactory::Operation do
               "read:pets"
             ]
           }
+        ],
+        "servers" => [
+          {
+            "url" => "https://development.gigantic-server.com/v1",
+            "description" => "Development server"
+          }
         ]
       }
     end
@@ -132,6 +138,84 @@ RSpec.describe Openapi3Parser::NodeFactory::Operation do
       let(:parameters) { [1, "string"] }
 
       it { is_expected.not_to be_valid }
+    end
+  end
+
+  describe "servers" do
+    let(:input) do
+      {
+        "responses" => {},
+        "servers" => servers
+      }
+    end
+
+    let(:document_input) do
+      {
+        "openapi" => "3.0.0",
+        "info" => {
+          "title" => "Minimal Openapi definition",
+          "version" => "1.0.0"
+        },
+        "paths" => {
+          "/test" => {
+            "get" => input,
+            "servers" => [
+              {
+                "url" => "https://dev.example.com/v1",
+                "description" => "Development server"
+              }
+            ]
+          }
+        }
+      }
+    end
+
+    let(:node_factory_context) do
+      create_node_factory_context(input,
+                                  document_input: document_input,
+                                  pointer_segments: %w[paths /test get])
+    end
+
+    let(:instance) { described_class.new(node_factory_context) }
+
+    let(:node) do
+      node_context = node_factory_context_to_node_context(node_factory_context)
+      instance.node(node_context)
+    end
+
+    shared_examples "defaults to servers from path item object" do
+      it "uses the servers from the path item object" do
+        expect(node["servers"][0].url).to eq "https://dev.example.com/v1"
+        expect(node["servers"][0].description).to eq "Development server"
+      end
+    end
+
+    context "when servers is nil" do
+      let(:servers) { nil }
+
+      include_examples "defaults to servers from path item object"
+    end
+
+    context "when servers is an empty array" do
+      let(:servers) { [] }
+
+      include_examples "defaults to servers from path item object"
+    end
+
+    context "when servers are provided" do
+      let(:servers) do
+        [
+          {
+            "url" => "https://prod.example.com/v1",
+            "description" => "Production server"
+          }
+        ]
+      end
+
+      it "uses it's defined servers" do
+        expect(node["servers"][0].url).to eq "https://prod.example.com/v1"
+        expect(node["servers"][0].description).to eq "Production server"
+      end
     end
   end
 end
