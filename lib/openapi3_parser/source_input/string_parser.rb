@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "yaml"
+require "psych"
 require "json"
 
 module Openapi3Parser
@@ -37,7 +37,7 @@ module Openapi3Parser
       end
 
       def parse_yaml
-        YAML.safe_load(input, [Date, Time], [], true)
+        Psych.safe_load(input, permitted_classes: [Date, Time], aliases: true)
       end
     end
   end
