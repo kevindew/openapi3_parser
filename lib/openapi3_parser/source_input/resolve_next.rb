@@ -30,6 +30,7 @@ module Openapi3Parser
 
       def source_input
         return current_source_input if reference.only_fragment?
+
         if reference.absolute?
           SourceInput::Url.new(reference.resource_uri)
         else

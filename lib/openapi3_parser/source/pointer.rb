@@ -12,6 +12,7 @@ module Openapi3Parser
         absolute = fragment[0] == "/"
         segments = fragment.split("/").map do |part|
           next if part == ""
+
           unescaped = CGI.unescape(part.gsub("%20", "+"))
           unescaped.match?(/\A\d+\z/) ? unescaped.to_i : unescaped
         end

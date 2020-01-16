@@ -28,6 +28,7 @@ module Openapi3Parser
 
       def validate_content(validatable)
         return if validatable.input.size == 1
+
         validatable.add_error("Must only have one item")
       end
     end

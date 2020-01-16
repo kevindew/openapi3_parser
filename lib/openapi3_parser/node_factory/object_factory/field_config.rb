@@ -64,6 +64,7 @@ module Openapi3Parser
         def default(factory)
           return given_default.call if given_default.is_a?(Proc)
           return factory.send(given_default) if given_default.is_a?(Symbol)
+
           given_default
         end
 

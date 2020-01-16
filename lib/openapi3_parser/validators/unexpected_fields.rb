@@ -38,6 +38,7 @@ module Openapi3Parser
       def unexpected_fields(input, allowed_fields, allow_extensions)
         extra_keys = input.keys - allowed_fields
         return extra_keys unless allow_extensions
+
         extra_keys.reject { |key| key =~ NodeFactory::EXTENSION_REGEX }
       end
     end

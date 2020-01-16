@@ -44,6 +44,7 @@ module Openapi3Parser
       # @return [Boolean]
       def ==(other)
         return false unless other.instance_of?(self.class)
+
         raw_input == other.raw_input &&
           base_url == other.base_url &&
           working_directory == other.working_directory
@@ -72,6 +73,7 @@ module Openapi3Parser
 
       def parse_contents
         return raw_input if raw_input.respond_to?(:keys)
+
         StringParser.call(
           input_to_string(raw_input),
           raw_input.respond_to?(:path) ? ::File.basename(raw_input.path) : nil
@@ -81,6 +83,7 @@ module Openapi3Parser
       def input_to_string(input)
         return input.read if input.respond_to?(:read)
         return input.to_s if input.respond_to?(:to_s)
+
         input
       end
     end

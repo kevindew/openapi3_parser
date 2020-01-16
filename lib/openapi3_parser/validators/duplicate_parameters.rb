@@ -17,6 +17,7 @@ module Openapi3Parser
       def duplicate_names_by_in(resolved_input)
         potential_items = resolved_input.reject do |item|
           next true unless item.respond_to?(:keys)
+
           item["name"].nil? || item["in"].nil?
         end
 

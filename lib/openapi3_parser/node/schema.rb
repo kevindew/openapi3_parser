@@ -5,7 +5,7 @@ require "openapi3_parser/node/object"
 module Openapi3Parser
   module Node
     # @see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#schemaObject
-    # rubocop:disable ClassLength
+    # rubocop:disable Metrics/ClassLength
     class Schema < Node::Object
       # This is used to provide a name for the schema based on it's position in
       # an OpenAPI document.
@@ -177,6 +177,7 @@ module Openapi3Parser
       def additional_properties_schema
         properties = self["additionalProperties"]
         return if [true, false].include?(properties)
+
         properties
       end
 
@@ -240,6 +241,6 @@ module Openapi3Parser
         self["deprecated"]
       end
     end
-    # rubocop:enable ClassLength
+    # rubocop:enable Metrics/ClassLength
   end
 end

@@ -26,6 +26,7 @@ module Openapi3Parser
 
       def ==(other)
         return false unless other.instance_of?(self.class)
+
         source == other.source && pointer == other.pointer
       end
 

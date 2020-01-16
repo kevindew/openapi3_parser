@@ -65,6 +65,7 @@ module Openapi3Parser
 
       def build_data(raw_input)
         return if use_default? && default.nil?
+
         process_data(use_default? ? default : raw_input)
       end
 
@@ -114,8 +115,10 @@ module Openapi3Parser
 
         def errors
           return validatable.collection if factory.nil_input?
+
           TypeChecker.validate_type(validatable, type: ::Array)
           return validatable.collection if validatable.errors.any?
+
           collate_errors
           validatable.collection
         end
@@ -141,6 +144,7 @@ module Openapi3Parser
         def build_node_data(parent_context)
           factory.data.each_with_index.map do |value, i|
             next value unless value.respond_to?(:node)
+
             Node::Placeholder.new(value, i, parent_context)
           end
         end

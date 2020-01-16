@@ -27,6 +27,7 @@ module Openapi3Parser
 
       def json?
         return false if filename && ::File.extname(filename) == ".yaml"
+
         json_filename = filename && ::File.extname(filename) == ".json"
         json_filename || input.strip[0] == "{"
       end

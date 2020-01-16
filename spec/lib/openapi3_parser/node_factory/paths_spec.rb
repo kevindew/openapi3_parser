@@ -75,7 +75,6 @@ RSpec.describe Openapi3Parser::NodeFactory::Paths do
 
     context "when there are two paths with same hiearchy but different "\
             "templated names" do
-
       let(:input) do
         {
           "/path/{param_a}/test" => path,

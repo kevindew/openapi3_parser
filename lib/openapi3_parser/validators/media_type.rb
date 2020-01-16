@@ -9,7 +9,7 @@ module Openapi3Parser
         / # separating slash
         ([-+.\w]+|\*) # word (with +, - & .) or asterisk
         \Z
-      }x
+      }x.freeze
 
       def self.call(input)
         message = %("#{input}" is not a valid media type)

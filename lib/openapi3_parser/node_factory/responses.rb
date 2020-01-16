@@ -13,7 +13,7 @@ module Openapi3Parser
         [1-5]([0-9][0-9]|XX)
         )
         \Z
-      /x
+      /x.freeze
 
       def initialize(context)
         factory = NodeFactory::OptionalReference.new(NodeFactory::Response)

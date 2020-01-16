@@ -47,11 +47,13 @@ module Openapi3Parser
 
       def default_style
         return "simple" if %w[path header].include?(context.input["in"])
+
         "form"
       end
 
       def validate_in(validatable)
         return if %w[header query cookie path].include?(validatable.input)
+
         validatable.add_error("in can only be header, query, cookie, or path")
       end
     end

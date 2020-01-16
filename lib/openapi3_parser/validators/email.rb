@@ -12,7 +12,7 @@ module Openapi3Parser
         [a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?
         (?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*
         \Z
-      }x
+      }x.freeze
 
       def self.call(input)
         message = %("#{input}" is not a valid email address)

@@ -72,6 +72,7 @@ module Openapi3Parser
 
         def create_resolved_reference
           return unless reference_validator.valid?
+
           context.resolve_reference(reference,
                                     factory,
                                     recursive: context.self_referencing?)

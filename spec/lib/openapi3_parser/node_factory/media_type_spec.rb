@@ -14,7 +14,7 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
           "$ref" => "#/components/schemas/Pet"
         },
         "examples" => {
-          "cat"  => {
+          "cat" => {
             "summary" => "An example of a cat",
             "value" => {
               "name" => "Fluffy",
@@ -26,7 +26,7 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
           },
           "dog" => {
             "summary" => "An example of a dog with a cat's name",
-            "value"  =>  {
+            "value" => {
               "name" => "Puma",
               "petType" => "Dog",
               "color" => "Black",

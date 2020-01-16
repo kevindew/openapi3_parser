@@ -19,9 +19,11 @@ module Openapi3Parser
       def validate_mapping(validatable)
         input = validatable.input
         return if input.empty?
+
         string_keys = input.keys.map(&:class).uniq == [String]
         string_values = input.values.map(&:class).uniq == [String]
         return if string_keys && string_values
+
         validatable.add_error("Expected string keys and string values")
       end
     end

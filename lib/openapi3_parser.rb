@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-Dir.glob(File.join(__dir__, "openapi3_parser", "**", "*.rb")).each do |file|
-  require file
-end
+files = Dir.glob(File.join(__dir__, "openapi3_parser", "**", "*.rb")).sort
+files.each { |file| require file }
 
 module Openapi3Parser
   # For a variety of inputs this will construct an OpenAPI document. For a

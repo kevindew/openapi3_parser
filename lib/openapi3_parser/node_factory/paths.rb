@@ -18,7 +18,7 @@ module Openapi3Parser
           /?
         )*
         \Z
-      }x
+      }x.freeze
 
       def initialize(context)
         factory = NodeFactory::OptionalReference.new(NodeFactory::PathItem)

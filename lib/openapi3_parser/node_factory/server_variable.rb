@@ -19,6 +19,7 @@ module Openapi3Parser
           value_input_type: String,
           validate: lambda do |validatable|
             return if validatable.input.any?
+
             validatable.add_error("Expected atleast one value")
           end
         )

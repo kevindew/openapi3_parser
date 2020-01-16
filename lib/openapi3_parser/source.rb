@@ -93,6 +93,7 @@ module Openapi3Parser
     # @return [Object]
     def data_at_pointer(json_pointer)
       return data if json_pointer.empty?
+
       data.dig(*json_pointer) if data.respond_to?(:dig)
     end
 
@@ -104,6 +105,7 @@ module Openapi3Parser
     # @return [String]
     def relative_to_root
       return "" if root?
+
       source_input.relative_to(document.root_source.source_input)
     end
 

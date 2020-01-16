@@ -81,6 +81,7 @@ module Openapi3Parser
             factory.data.each do |name, field|
               # references can reference themselves and become in a loop
               next if in_recursive_loop?(field)
+
               has_factory_errors = handle_factory_checks(name)
 
               next if has_factory_errors || !field.respond_to?(:errors)

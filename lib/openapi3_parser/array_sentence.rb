@@ -5,6 +5,7 @@ module Openapi3Parser
     refine ::Array do
       def sentence_join
         return join if count < 2
+
         self[0..-2].join(", ") + " and " + self[-1]
       end
     end

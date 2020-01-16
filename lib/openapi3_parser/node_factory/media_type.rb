@@ -48,6 +48,7 @@ module Openapi3Parser
         def call(validatable)
           missing_keys = validatable.input.keys - properties
           return if missing_keys.empty?
+
           validatable.add_error(error_message(missing_keys))
         end
 

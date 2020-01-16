@@ -43,6 +43,7 @@ module Openapi3Parser
         validatable.input.each_key do |key|
           message = Validators::MediaType.call(key)
           next unless message
+
           validatable.add_error(message,
                                 Context.next_field(validatable.context, key))
         end

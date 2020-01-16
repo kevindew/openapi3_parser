@@ -31,6 +31,7 @@ module Openapi3Parser
 
         def node_data(parent_context)
           return build_node_data(parent_context) if empty_and_allowed_to_be?
+
           TypeChecker.raise_on_invalid_type(factory.context, type: ::Hash)
           validate(raise_on_invalid: true)
           build_node_data(parent_context)

@@ -76,6 +76,7 @@ module Openapi3Parser
       # @return [String, nil]
       def render_markdown(value)
         return if value.nil?
+
         Markdown.to_html(value)
       end
 

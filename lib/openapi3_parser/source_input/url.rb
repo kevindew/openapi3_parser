@@ -32,6 +32,7 @@ module Openapi3Parser
       # @return [Boolean]
       def ==(other)
         return false unless other.instance_of?(self.class)
+
         [request_url, resolved_url].include?(other.request_url) ||
           [request_url, resolved_url].include?(other.resolved_url)
       end
@@ -89,6 +90,7 @@ module Openapi3Parser
 
         def call
           return to_uri.to_s if different_hosts?
+
           relative_path
         end
 

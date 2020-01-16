@@ -61,6 +61,7 @@ module Openapi3Parser
       def read_only_or_write_only(validatable)
         input = validatable.input
         return if [input["readOnly"], input["writeOnly"]].uniq != [true]
+
         validatable.add_error("readOnly and writeOnly cannot both be true")
       end
 
@@ -114,11 +115,13 @@ module Openapi3Parser
       def additional_properties_input_type(validatable)
         input = validatable.input
         return if [true, false].include?(input) || input.is_a?(Hash)
+
         validatable.add_error("Expected a Boolean or an Object")
       end
 
       def additional_properties_factory(context)
         return context.input if [true, false].include?(context.input)
+
         referenceable_schema(context)
       end
     end

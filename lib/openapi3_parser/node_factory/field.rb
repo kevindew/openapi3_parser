@@ -70,8 +70,10 @@ module Openapi3Parser
 
         def errors
           return validatable.collection if factory.nil_input?
+
           TypeChecker.validate_type(validatable, type: factory.input_type)
           return validatable.collection if validatable.errors.any?
+
           validate(raise_on_invalid: false)
           validatable.collection
         end

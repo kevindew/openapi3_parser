@@ -4,12 +4,8 @@ Metrics/MethodLength:
   Max: 30
 Metrics/AbcSize:
   Max: 30
-Documentation:
+Style/Documentation:
   Enabled: false
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
-Naming/UncommunicativeMethodParamName:
-  Enabled: false
-Naming/UncommunicativeBlockParamName:
-  Enabled: false

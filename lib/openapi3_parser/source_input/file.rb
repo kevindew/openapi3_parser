@@ -39,6 +39,7 @@ module Openapi3Parser
       # @return [Boolean]
       def ==(other)
         return false unless other.instance_of?(self.class)
+
         path == other.path &&
           working_directory == other.working_directory
       end
@@ -66,6 +67,7 @@ module Openapi3Parser
                      end
 
         return path unless other_path
+
         other_path ? relative_path(other_path, path) : path
       end
 

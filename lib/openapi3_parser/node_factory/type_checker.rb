@@ -27,9 +27,11 @@ module Openapi3Parser
 
       def validate_type(validatable, context)
         return true unless type
+
         context ||= validatable.context
         valid_type?(context.input).tap do |valid|
           next if valid
+
           validatable.add_error("Invalid type. #{field_error_message}",
                                 context)
         end
@@ -37,9 +39,11 @@ module Openapi3Parser
 
       def validate_keys(validatable, context)
         return true unless type
+
         context ||= validatable.context
         valid_keys?(context.input).tap do |valid|
           next if valid
+
           validatable.add_error("Invalid keys. #{keys_error_message}",
                                 context)
         end
@@ -47,6 +51,7 @@ module Openapi3Parser
 
       def raise_on_invalid_type(context)
         return true if !type || valid_type?(context.input)
+
         raise Error::InvalidType,
               "Invalid type for #{context.location_summary}: "\
               "#{field_error_message}"
@@ -54,6 +59,7 @@ module Openapi3Parser
 
       def raise_on_invalid_keys(context)
         return true if !type || valid_keys?(context.input)
+
         raise Error::InvalidType,
               "Invalid keys for #{context.location_summary}: "\
               "#{keys_error_message}"

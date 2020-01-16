@@ -78,6 +78,7 @@ module Openapi3Parser
       def build_data(raw_input)
         use_default = nil_input? || !raw_input.is_a?(::Hash)
         return if use_default && default.nil?
+
         process_data(use_default ? default : raw_input)
       end
 
@@ -85,6 +86,7 @@ module Openapi3Parser
         field_configs.each_with_object(raw_data.dup) do |(field, config), memo|
           memo[field] = nil unless memo[field]
           next unless config.factory?
+
           next_context = Context.next_field(context, field, memo[field])
           memo[field] = config.initialize_factory(next_context, self)
         end
@@ -95,6 +97,7 @@ module Openapi3Parser
 
         data.each_with_object({}) do |(key, value), memo|
           next if value.respond_to?(:nil_input?) && value.nil_input?
+
           memo[key] = if value.respond_to?(:resolved_input)
                         value.resolved_input
                       else

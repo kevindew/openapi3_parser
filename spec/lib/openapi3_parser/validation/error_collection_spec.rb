@@ -224,7 +224,6 @@ RSpec.describe Openapi3Parser::Validation::ErrorCollection do
 
     context "when errors have same source locations but are for different "\
             "factories" do
-
       class NodeFactory1; end
       class NodeFactory2; end
 

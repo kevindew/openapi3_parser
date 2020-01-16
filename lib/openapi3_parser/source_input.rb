@@ -45,6 +45,7 @@ module Openapi3Parser
     def contents
       raise access_error if access_error
       raise parse_error if parse_error
+
       @contents
     end
 
@@ -61,6 +62,7 @@ module Openapi3Parser
 
     def initialize_contents
       return if access_error
+
       @contents = parse_contents
     rescue ::StandardError => e
       @parse_error = Error::UnparsableInput.new(e.message)
