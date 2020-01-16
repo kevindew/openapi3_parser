@@ -54,7 +54,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
   describe "items" do
     subject { described_class.new(node_factory_context) }
     let(:node_factory_context) do
-      create_node_factory_context("type" => type, "items" => items)
+      create_node_factory_context({ "type" => type, "items" => items })
     end
 
     context "when type is not array and items is not provided" do
@@ -83,8 +83,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
   describe "writeOnly and readOnly" do
     subject { described_class.new(node_factory_context) }
     let(:node_factory_context) do
-      create_node_factory_context("readOnly" => read_only,
-                                  "writeOnly" => write_only)
+      create_node_factory_context({ "readOnly" => read_only,
+                                    "writeOnly" => write_only })
     end
 
     context "when both are true" do
@@ -100,7 +100,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
 
   it_behaves_like "default field", field: "nullable", defaults_to: false do
     let(:node_factory_context) do
-      create_node_factory_context("nullable" => nullable)
+      create_node_factory_context({ "nullable" => nullable })
     end
 
     let(:node_context) do
@@ -113,7 +113,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
                   defaults_to: false,
                   var_name: :read_only do
     let(:node_factory_context) do
-      create_node_factory_context("readOnly" => read_only)
+      create_node_factory_context({ "readOnly" => read_only })
     end
 
     let(:node_context) do
@@ -126,7 +126,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
                   defaults_to: false,
                   var_name: :write_only do
     let(:node_factory_context) do
-      create_node_factory_context("writeOnly" => write_only)
+      create_node_factory_context({ "writeOnly" => write_only })
     end
 
     let(:node_context) do
@@ -139,7 +139,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
                   defaults_to: false,
                   var_name: :deprecated do
     let(:node_factory_context) do
-      create_node_factory_context("deprecated" => deprecated)
+      create_node_factory_context({ "deprecated" => deprecated })
     end
 
     let(:node_context) do
@@ -150,7 +150,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
   describe "additionalProperties" do
     subject do
       context = create_node_factory_context(
-        "additionalProperties" => additional_properties
+        { "additionalProperties" => additional_properties }
       )
 
       described_class.new(context)

@@ -32,7 +32,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Encoding do
     end
 
     let(:node_factory_context) do
-      create_node_factory_context("style" => style)
+      create_node_factory_context({ "style" => style })
     end
 
     let(:node_context) do

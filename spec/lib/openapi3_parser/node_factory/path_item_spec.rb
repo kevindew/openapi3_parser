@@ -72,7 +72,7 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
   describe "parameters" do
     subject do
       described_class.new(
-        create_node_factory_context("parameters" => parameters)
+        create_node_factory_context({ "parameters" => parameters })
       )
     end
 

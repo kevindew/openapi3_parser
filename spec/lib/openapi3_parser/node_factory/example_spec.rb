@@ -24,7 +24,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Example do
   describe "externalValue" do
     subject(:factory) { described_class.new(node_factory_context) }
     let(:node_factory_context) do
-      create_node_factory_context("externalValue" => external_value)
+      create_node_factory_context({ "externalValue" => external_value })
     end
 
     context "when externalValue is an actual url" do
@@ -42,8 +42,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Example do
     subject { described_class.new(node_factory_context) }
 
     let(:node_factory_context) do
-      create_node_factory_context("value" => value,
-                                  "externalValue" => external_value)
+      create_node_factory_context({ "value" => value,
+                                    "externalValue" => external_value })
     end
     let(:value) { nil }
     let(:external_value) { nil }

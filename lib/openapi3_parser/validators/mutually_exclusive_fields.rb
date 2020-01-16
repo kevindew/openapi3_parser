@@ -8,8 +8,8 @@ module Openapi3Parser
       using ArraySentence
       private_class_method :new
 
-      def self.call(*args)
-        new.call(*args)
+      def self.call(*args, **kwargs)
+        new.call(*args, **kwargs)
       end
 
       def call(validatable,

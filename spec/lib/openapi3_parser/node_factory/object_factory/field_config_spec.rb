@@ -8,7 +8,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
   def create_contact_validatable(node_factory_context = nil)
     Openapi3Parser::Validation::Validatable.new(
       Openapi3Parser::NodeFactory::Contact.new(
-        create_node_factory_context("name" => "Mike")
+        create_node_factory_context({ "name" => "Mike" })
       ),
       context: node_factory_context
     )
@@ -30,7 +30,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
 
   describe "#initialize_factory" do
     let(:node_factory_context) do
-      create_node_factory_context("name" => "Mike")
+      create_node_factory_context({ "name" => "Mike" })
     end
 
     let(:parent_factory) { nil }

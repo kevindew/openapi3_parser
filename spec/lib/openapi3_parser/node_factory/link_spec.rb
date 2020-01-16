@@ -24,10 +24,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Link do
     subject { described_class.new(node_factory_context) }
 
     let(:node_factory_context) do
-      create_node_factory_context(
-        "operationRef" => operation_ref,
-        "operationId" => operation_id
-      )
+      create_node_factory_context({ "operationRef" => operation_ref,
+                                    "operationId" => operation_id })
     end
 
     let(:operation_ref) { nil }

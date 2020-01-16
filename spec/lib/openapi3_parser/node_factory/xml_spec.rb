@@ -23,10 +23,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Xml do
   describe "namespace" do
     subject(:factory) { described_class.new(node_factory_context) }
     let(:node_factory_context) do
-      create_node_factory_context(
-        "namespace" => namespace,
-        "prefix" => "sample"
-      )
+      create_node_factory_context({ "namespace" => namespace,
+                                    "prefix" => "sample" })
     end
 
     context "when namespace is an actual uri" do

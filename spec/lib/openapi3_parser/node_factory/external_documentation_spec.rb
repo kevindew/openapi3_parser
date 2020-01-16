@@ -23,7 +23,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ExternalDocumentation do
 
   describe "url" do
     subject(:factory) { described_class.new(node_factory_context) }
-    let(:node_factory_context) { create_node_factory_context("url" => url) }
+    let(:node_factory_context) { create_node_factory_context({ "url" => url }) }
 
     context "when url is an actual url" do
       let(:url) { "https://example.com/path" }

@@ -57,7 +57,7 @@ RSpec.describe Openapi3Parser::Source::Location do
 
   describe "#data" do
     subject { instance.data }
-    let(:source) { create_source(field: 1234) }
+    let(:source) { create_source({ field: 1234 }) }
 
     it { is_expected.to eq 1234 }
   end
@@ -66,13 +66,13 @@ RSpec.describe Openapi3Parser::Source::Location do
     subject { instance.pointer_defined? }
 
     context "when there is data at the pointer" do
-      let(:source) { create_source(field: 1234) }
+      let(:source) { create_source({ field: 1234 }) }
 
       it { is_expected.to be true }
     end
 
     context "when there is data at the pointer" do
-      let(:source) { create_source(not_field: 1234) }
+      let(:source) { create_source({ not_field: 1234 }) }
 
       it { is_expected.to be false }
     end

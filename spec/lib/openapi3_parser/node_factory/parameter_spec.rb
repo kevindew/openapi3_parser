@@ -34,9 +34,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
   describe "in" do
     subject(:factory) { described_class.new(node_factory_context) }
     let(:node_factory_context) do
-      create_node_factory_context("name" => "name",
-                                  "in" => in_value,
-                                  "required" => true)
+      create_node_factory_context({ "name" => "name",
+                                    "in" => in_value,
+                                    "required" => true })
     end
 
     context "when in is 'query'" do
@@ -73,9 +73,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
     subject(:factory) { described_class.new(node_factory_context) }
     let(:in_value) { "path" }
     let(:node_factory_context) do
-      create_node_factory_context("name" => "name",
-                                  "in" => in_value,
-                                  "required" => required)
+      create_node_factory_context({ "name" => "name",
+                                    "in" => in_value,
+                                    "required" => required })
     end
 
     context "when in is path and required is true" do
@@ -104,9 +104,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
     end
 
     let(:node_factory_context) do
-      create_node_factory_context("name" => "name",
-                                  "in" => in_value,
-                                  "required" => true)
+      create_node_factory_context({ "name" => "name",
+                                    "in" => in_value,
+                                    "required" => true })
     end
 
     let(:node_context) do
@@ -141,9 +141,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
     end
 
     let(:node_factory_context) do
-      create_node_factory_context("name" => "name",
-                                  "in" => "query",
-                                  "style" => style)
+      create_node_factory_context({ "name" => "name",
+                                    "in" => "query",
+                                    "style" => style })
     end
 
     let(:node_context) do
@@ -169,9 +169,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
     subject(:factory) { described_class.new(node_factory_context) }
 
     let(:node_factory_context) do
-      create_node_factory_context("name" => "name",
-                                  "in" => "query",
-                                  "content" => content)
+      create_node_factory_context({ "name" => "name",
+                                    "in" => "query",
+                                    "content" => content })
     end
 
     let(:node_context) do
@@ -231,12 +231,10 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
 
   it_behaves_like "mutually exclusive example" do
     let(:node_factory_context) do
-      create_node_factory_context(
-        "name" => "name",
-        "in" => "query",
-        "example" => example,
-        "examples" => examples
-      )
+      create_node_factory_context({ "name" => "name",
+                                    "in" => "query",
+                                    "example" => example,
+                                    "examples" => examples })
     end
   end
 end

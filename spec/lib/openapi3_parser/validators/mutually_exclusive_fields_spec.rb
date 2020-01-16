@@ -33,7 +33,7 @@ RSpec.describe Openapi3Parser::Validators::MutuallyExclusiveFields do
       end
 
       let(:node_factory_context) do
-        create_node_factory_context("a" => true, "b" => true)
+        create_node_factory_context({ "a" => true, "b" => true })
       end
 
       it "raises an error" do

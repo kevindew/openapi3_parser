@@ -24,7 +24,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ServerVariable do
   describe "enum" do
     subject(:factory) { described_class.new(node_factory_context) }
     let(:node_factory_context) do
-      create_node_factory_context("enum" => enum, "default" => "test")
+      create_node_factory_context({ "enum" => enum, "default" => "test" })
     end
 
     context "when enum is not empty" do

@@ -1,5 +1,6 @@
 # Unreleased
 
+- Resolve deprecation warnings for Ruby 2.7
 - Resolve deprecation warnings for Psych
 - Operation and Path Item objects use servers that have cascaded from parent
   objects if they do not have their own servers defined.

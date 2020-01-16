@@ -29,10 +29,8 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
 
     describe "allow_extensions option" do
       let(:node_factory_context) do
-        create_node_factory_context(
-          "x-extension" => "my extension",
-          "x-extension-2" => "my other extension"
-        )
+        create_node_factory_context({ "x-extension" => "my extension",
+                                      "x-extension-2" => "my other extension" })
       end
 
       context "when it is true" do
@@ -57,7 +55,7 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
 
     describe "allowed_fields option" do
       let(:node_factory_context) do
-        create_node_factory_context("fieldA" => "My field")
+        create_node_factory_context({ "fieldA" => "My field" })
       end
 
       context "when it includes the fields" do
@@ -80,8 +78,8 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
 
       context "when it includes extesnions and they're allowed" do
         let(:node_factory_context) do
-          create_node_factory_context("fieldA" => "My field",
-                                      "x-test" => "my extension")
+          create_node_factory_context({ "fieldA" => "My field",
+                                        "x-test" => "my extension" })
         end
 
         let(:allowed_fields) { %w[fieldA] }
@@ -94,7 +92,7 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
 
     describe "raise_on_invalid option" do
       let(:node_factory_context) do
-        create_node_factory_context("fieldA" => "My field")
+        create_node_factory_context({ "fieldA" => "My field" })
       end
 
       let(:allowed_fields) { %w[fieldB] }

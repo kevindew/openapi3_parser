@@ -48,7 +48,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Responses do
 
     subject { described_class.new(node_factory_context) }
     let(:node_factory_context) do
-      create_node_factory_context(key_value => response)
+      create_node_factory_context({ key_value => response })
     end
 
     context "when the key_value is a status code range" do

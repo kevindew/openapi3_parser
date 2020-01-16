@@ -71,7 +71,7 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
     end
 
     let(:node_factory_context) do
-      create_node_factory_context("examples" => nil)
+      create_node_factory_context({ "examples" => nil })
     end
 
     let(:node_context) do
@@ -85,20 +85,16 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
 
   it_behaves_like "mutually exclusive example" do
     let(:node_factory_context) do
-      create_node_factory_context(
-        "example" => example,
-        "examples" => examples
-      )
+      create_node_factory_context({ "example" => example,
+                                    "examples" => examples })
     end
   end
 
   describe "encoding" do
     subject { described_class.new(node_factory_context) }
     let(:node_factory_context) do
-      create_node_factory_context(
-        "schema" => schema,
-        "encoding" => encoding
-      )
+      create_node_factory_context({ "schema" => schema,
+                                    "encoding" => encoding })
     end
 
     let(:schema) do

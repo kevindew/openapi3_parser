@@ -9,7 +9,7 @@ module Openapi3Parser
       module Dsl
         def field(name, **options)
           @field_configs ||= {}
-          @field_configs[name] = FieldConfig.new(options)
+          @field_configs[name] = FieldConfig.new(**options)
         end
 
         def field_configs

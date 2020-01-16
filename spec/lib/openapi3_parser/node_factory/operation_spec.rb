@@ -105,10 +105,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Operation do
   describe "parameters" do
     subject do
       described_class.new(
-        create_node_factory_context(
-          "parameters" => parameters,
-          "responses" => {}
-        )
+        create_node_factory_context({ "parameters" => parameters,
+                                      "responses" => {} })
       )
     end
 
