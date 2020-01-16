@@ -9,3 +9,5 @@ Style/Documentation:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
+Style/BracesAroundHashParameters:
+  Enabled: false
