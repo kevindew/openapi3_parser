@@ -7,9 +7,6 @@ module Openapi3Parser
     class Link < NodeFactory::Object
       allow_extensions
 
-      # @todo The link object in OAS is pretty meaty and there's lot of scope
-      # for further work here to make use of its functionality
-
       field "operationRef", input_type: String
       field "operationId", input_type: String
       field "parameters", factory: :parameters_factory
