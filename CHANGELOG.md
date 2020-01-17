@@ -1,4 +1,4 @@
-# Unreleased
+# 0.8.0
 
 - Resolve deprecation warnings for Ruby 2.7
 - Resolve deprecation warnings for Psych

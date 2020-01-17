@@ -121,7 +121,7 @@ You can install this gem into your bundler application by adding this line to
 your Gemfile:
 
 ```
-gem "openapi3_parser", "~> 0.7.0"
+gem "openapi3_parser", "~> 0.8.0"
 ```
 
 and then running `$ bundle install`
