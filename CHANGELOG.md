@@ -1,3 +1,7 @@
+# Unreleased
+
+- Fix incorrectly spelt method name on `Schema` s/disciminator/discriminator/g
+
 # 0.8.0
 
 - Resolve deprecation warnings for Ruby 2.7
