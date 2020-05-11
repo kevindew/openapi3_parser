@@ -1,4 +1,4 @@
-# Unreleased
+# 0.8.1
 
 - Fix incorrectly spelt method name on `Schema` s/disciminator/discriminator/g
 
