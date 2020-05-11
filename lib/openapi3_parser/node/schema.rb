@@ -207,7 +207,7 @@ module Openapi3Parser
       end
 
       # @return [Discriminator, nil]
-      def disciminator
+      def discriminator
         self["discriminator"]
       end
 

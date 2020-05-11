@@ -39,7 +39,7 @@ module Openapi3Parser
       field "default"
 
       field "nullable", input_type: :boolean, default: false
-      field "discriminator", factory: :disciminator_factory
+      field "discriminator", factory: :discriminator_factory
       field "readOnly", input_type: :boolean, default: false
       field "writeOnly", input_type: :boolean, default: false
       field "xml", factory: :xml_factory
@@ -81,7 +81,7 @@ module Openapi3Parser
         NodeFactory::Array.new(context, default: nil)
       end
 
-      def disciminator_factory(context)
+      def discriminator_factory(context)
         NodeFactory::Discriminator.new(context)
       end
 
