@@ -131,4 +131,22 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
       it { is_expected.to be false }
     end
   end
+
+  describe "#errors" do
+    subject { instance.errors }
+    let(:input) { { "$ref" => "#/contact", "extra" => "produces error" } }
+
+    context "when not in a recursive loop" do
+      it { is_expected.not_to be_empty }
+    end
+
+    context "when in a recursive loop" do
+      let(:node_factory_context) do
+        create_node_factory_context(input,
+                                    reference_pointer_fragments: ["#/%24ref"])
+      end
+
+      it { is_expected.to be_empty }
+    end
+  end
 end

@@ -32,6 +32,14 @@ module Openapi3Parser
         referenced_factory.resolves?(control_factory)
       end
 
+      def errors
+        if in_recursive_loop?
+          @errors ||= Validation::ErrorCollection.new
+        else
+          super
+        end
+      end
+
       private
 
       def build_node(node_context)

@@ -5,14 +5,27 @@ module Helpers
     def create_node_factory_context(input,
                                     document_input: {},
                                     document: nil,
-                                    pointer_segments: [])
+                                    pointer_segments: [],
+                                    reference_pointer_fragments: [])
       source_input = Openapi3Parser::SourceInput::Raw.new(document_input)
       document ||= Openapi3Parser::Document.new(source_input)
       location = Openapi3Parser::Source::Location.new(
         document.root_source,
         pointer_segments
       )
-      Openapi3Parser::NodeFactory::Context.new(input, source_location: location)
+
+      reference_locations = reference_pointer_fragments.map do |fragment|
+        Openapi3Parser::Source::Location.new(
+          document.root_source,
+          Openapi3Parser::Source::Pointer.from_fragment(fragment).segments
+        )
+      end
+
+      Openapi3Parser::NodeFactory::Context.new(
+        input,
+        source_location: location,
+        reference_locations: reference_locations
+      )
     end
 
     def node_factory_context_to_node_context(node_factory_context)
