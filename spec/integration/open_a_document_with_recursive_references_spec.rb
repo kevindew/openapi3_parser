@@ -21,8 +21,27 @@ RSpec.describe "Open a document with recursive references" do
               links: {
                 type: "array",
                 items: { "$ref": "#/components/schemas/RecursiveItem" }
+              },
+              directly_recursive: {
+                "$ref": "#/components/schemas/RecursiveItem"
+              },
+              indirectly_recursive: {
+                "$ref": "#/components/schemas/IndirectlyRecursiveItem"
               }
             }
+          },
+          "IndirectlyRecursiveItem": {
+            type: "object",
+            properties: {
+              recursive_item: { "$ref": "#/components/schemas/RecursiveItem" }
+            }
+          },
+          "RecursiveArray": {
+            oneOf: [
+              { "$ref": "#/components/schemas/RecursiveArray" },
+              { "$ref": "#/components/schemas/RecursiveItem" },
+              { "$ref": "#/components/schemas/IndirectlyRecursiveItem" }
+            ]
           }
         }
       }
@@ -35,13 +54,36 @@ RSpec.describe "Open a document with recursive references" do
     expect { document.root }.not_to raise_error
   end
 
-  it "returns the expected node class for the recursive item" do
+  it "returns the expected node class for a recursive object" do
     node = document.components
                    .schemas["RecursiveItem"]
                    .properties["links"]
                    .items
                    .properties["links"]
                    .items
+    expect(node).to be_a(Openapi3Parser::Node::Schema)
+  end
+
+  it "returns the expected node class for a directly recursive property" do
+    node = document.components
+                   .schemas["RecursiveItem"]
+                   .properties["directly_recursive"]
+                   .properties["directly_recursive"]
+    expect(node).to be_a(Openapi3Parser::Node::Schema)
+  end
+
+  it "returns the expected node class for an indirectly recursive property" do
+    node = document.components
+                   .schemas["RecursiveItem"]
+                   .properties["indirectly_recursive"]
+                   .properties["recursive_item"]
+    expect(node).to be_a(Openapi3Parser::Node::Schema)
+  end
+
+  it "returns the expected node class for a recursive item in an array" do
+    node = document.components
+                   .schemas["RecursiveArray"]
+                   .one_of[0]
     expect(node).to be_a(Openapi3Parser::Node::Schema)
   end
 end
