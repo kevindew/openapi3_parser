@@ -1,3 +1,8 @@
+# 0.8.2
+
+- Fix bug falling into recursive loop on Array/Map nodes -
+  https://github.com/kevindew/openapi3_parser/issues/13
+
 # 0.8.1
 
 - Fix incorrectly spelt method name on `Schema` s/disciminator/discriminator/g
