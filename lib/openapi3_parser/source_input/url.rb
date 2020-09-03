@@ -17,7 +17,7 @@ module Openapi3Parser
       # @param [String, URI] request_url
       def initialize(request_url)
         @request_url = request_url.to_s
-        initialize_contents
+        super()
       end
 
       # @see SourceInput#resolve_next

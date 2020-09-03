@@ -21,8 +21,8 @@ module Openapi3Parser
       def self.each(node_data, &block)
         resolved =
           if node_data.respond_to?(:keys)
-            node_data.each_with_object({}) do |(key, value), memo|
-              memo[key] = resolve(value)
+            node_data.transform_values do |value|
+              resolve(value)
             end
           else
             node_data.map { |item| resolve(item) }
@@ -32,6 +32,7 @@ module Openapi3Parser
       end
 
       attr_reader :node_factory, :field, :parent_context
+
       def_delegators :node_factory, :nil_input?
 
       def initialize(node_factory, field, parent_context)

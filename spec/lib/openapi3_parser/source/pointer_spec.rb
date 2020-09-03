@@ -11,12 +11,12 @@ RSpec.describe Openapi3Parser::Source::Pointer do
 
     context "when fragment is not at absolute" do
       let(:fragment) { "#test" }
-      it { is_expected.to eq described_class.new(%w[test], false) }
+      it { is_expected.to eq described_class.new(%w[test], absolute: false) }
     end
 
     context "when fragment misses the hash" do
       let(:fragment) { "/test" }
-      it { is_expected.to eq described_class.new(%w[test], true) }
+      it { is_expected.to eq described_class.new(%w[test], absolute: true) }
     end
 
     context "when fragment contains integers" do
@@ -59,7 +59,7 @@ RSpec.describe Openapi3Parser::Source::Pointer do
 
     context "when new_pointer is not absolute" do
       let(:base_pointer) { described_class.new(%w[test]) }
-      let(:new_pointer) { described_class.new(%w[new], false) }
+      let(:new_pointer) { described_class.new(%w[new], absolute: false) }
       it { is_expected.to eq described_class.new(%w[test new]) }
     end
 
@@ -83,7 +83,7 @@ RSpec.describe Openapi3Parser::Source::Pointer do
   end
 
   describe "#fragment" do
-    subject { described_class.new(segments, absolute).fragment }
+    subject { described_class.new(segments, absolute: absolute).fragment }
     let(:absolute) { true }
 
     context "when segments are empty" do

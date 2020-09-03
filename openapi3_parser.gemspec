@@ -24,16 +24,16 @@ Gem::Specification.new do |spec|
     f.match(%r{^spec/})
   end
 
-  spec.required_ruby_version = ">= 2.4.0"
+  spec.required_ruby_version = ">= 2.5.0"
 
   spec.add_dependency "commonmarker", "~> 0.17"
   spec.add_dependency "psych", "~> 3.1"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "byebug", "~> 11.0"
-  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", "~> 3.9"
-  spec.add_development_dependency "rubocop", "~> 0.79.0"
-  spec.add_development_dependency "simplecov", "~> 0.17"
+  spec.add_development_dependency "rubocop", "~> 0.90.0"
+  spec.add_development_dependency "simplecov", "~> 0.19"
   spec.add_development_dependency "webmock", "~> 3.8"
 end

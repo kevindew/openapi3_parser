@@ -20,6 +20,14 @@ module Openapi3Parser
   class SourceInput
     attr_reader :access_error, :parse_error
 
+    def initialize
+      return if access_error
+
+      @contents = parse_contents
+    rescue ::StandardError => e
+      @parse_error = Error::UnparsableInput.new(e.message)
+    end
+
     # Indicates that the data within this input is suitable (i.e. can parse
     # underlying JSON or YAML) for trying to use as part of a Document
     def available?
@@ -56,16 +64,6 @@ module Openapi3Parser
     # @return [String]
     def relative_to(_source_input)
       ""
-    end
-
-    private
-
-    def initialize_contents
-      return if access_error
-
-      @contents = parse_contents
-    rescue ::StandardError => e
-      @parse_error = Error::UnparsableInput.new(e.message)
     end
   end
 end

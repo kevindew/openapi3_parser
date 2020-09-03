@@ -3,12 +3,11 @@ sudo: false
 env:
   global:
     CC_TEST_REPORTER_ID=8bc2d8e54331569aeb442094c21cb64a58d6efa0670f65ff00d9ae887f63c0b4
-    CC_RUBY_VERSION=ruby-2.4.6
+    CC_RUBY_VERSION=ruby-2.5.8
 rvm:
-  - 2.4.6
-  - 2.5.5
-  - 2.6.4
-  - 2.7.0
+  - 2.5.8
+  - 2.6.6
+  - 2.7.1
   - ruby-head
 matrix:
   allow_failures:

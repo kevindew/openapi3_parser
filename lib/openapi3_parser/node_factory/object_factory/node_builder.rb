@@ -22,9 +22,7 @@ module Openapi3Parser
 
           TypeChecker.validate_type(validatable, type: ::Hash)
 
-          if validatable.errors.empty?
-            validatable.add_errors(validate(raise_on_invalid: false))
-          end
+          validatable.add_errors(validate(raise_on_invalid: false)) if validatable.errors.empty?
 
           validatable.collection
         end

@@ -6,7 +6,7 @@ module Openapi3Parser
       def sentence_join
         return join if count < 2
 
-        self[0..-2].join(", ") + " and " + self[-1]
+        "#{self[0..-2].join(', ')} and #{self[-1]}"
       end
     end
   end

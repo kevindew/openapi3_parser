@@ -66,6 +66,7 @@ module Openapi3Parser
         class CheckInvalidFields
           extend Forwardable
           attr_reader :validator
+
           def_delegators :validator, :factory, :building_node, :validatable
           private_class_method :new
 
@@ -95,9 +96,7 @@ module Openapi3Parser
           private
 
           def handle_factory_checks(name)
-            field_errors = if factory.field_configs[name]
-                             check_field(name, factory.field_configs[name])
-                           end
+            field_errors = (check_field(name, factory.field_configs[name]) if factory.field_configs[name])
 
             (field_errors || []).any?
           end
@@ -118,9 +117,7 @@ module Openapi3Parser
             valid_input_type = field_config.check_input_type(field_validatable,
                                                              building_node)
 
-            if valid_input_type
-              field_config.validate_field(field_validatable, building_node)
-            end
+            field_config.validate_field(field_validatable, building_node) if valid_input_type
 
             validatable.add_errors(field_validatable.errors)
             field_validatable.errors

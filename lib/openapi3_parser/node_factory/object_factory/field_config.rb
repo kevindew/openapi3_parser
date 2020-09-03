@@ -23,9 +23,10 @@ module Openapi3Parser
         end
 
         def initialize_factory(context, parent_factory)
-          if given_factory.is_a?(Class)
+          case given_factory
+          when Class
             given_factory.new(context)
-          elsif given_factory.is_a?(Symbol)
+          when Symbol
             parent_factory.send(given_factory, context)
           else
             given_factory.call(context)
