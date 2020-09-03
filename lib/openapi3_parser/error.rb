@@ -17,7 +17,8 @@ module Openapi3Parser
     # Some components are mutable during the construction of a document and
     # then frozen afterwards.
     class ImmutableObject < Error; end
-    # Raised when a type that is not a whitelist of valid types is used
+    # Raised when a node is provided data as a type that is outside the allowed
+    # list
     class InvalidType < Error; end
     # Raised when we have to abort creating an object due to invalid data
     class InvalidData < Error; end
