@@ -1,3 +1,5 @@
+AllCops:
+  NewCops: enable
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 Metrics/MethodLength:
@@ -9,5 +11,3 @@ Style/Documentation:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
-Style/BracesAroundHashParameters:
-  Enabled: false

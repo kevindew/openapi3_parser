@@ -107,9 +107,7 @@ module Openapi3Parser
       def location_summary
         summary = document_location.to_s
 
-        if document_location != source_location
-          summary += " (#{source_location})"
-        end
+        summary += " (#{source_location})" if document_location != source_location
 
         summary
       end

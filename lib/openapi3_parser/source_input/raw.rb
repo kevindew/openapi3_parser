@@ -26,7 +26,7 @@ module Openapi3Parser
         @base_url = base_url
         working_directory ||= resolve_working_directory
         @working_directory = ::File.absolute_path(working_directory)
-        initialize_contents
+        super()
       end
 
       # @see SourceInput#resolve_next

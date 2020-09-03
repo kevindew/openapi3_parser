@@ -41,7 +41,7 @@ module Openapi3Parser
 
         def validate(*items, &block)
           @validations ||= []
-          @validations = @validations.concat(items)
+          @validations.concat(items)
           @validations << block if block
         end
 

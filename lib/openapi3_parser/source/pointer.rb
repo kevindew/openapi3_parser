@@ -16,7 +16,7 @@ module Openapi3Parser
           unescaped = CGI.unescape(part.gsub("%20", "+"))
           unescaped.match?(/\A\d+\z/) ? unescaped.to_i : unescaped
         end
-        new(segments.compact, absolute)
+        new(segments.compact, absolute: absolute)
       end
 
       def self.merge_pointers(base_pointer, new_pointer)
@@ -27,7 +27,7 @@ module Openapi3Parser
 
       # @param [::Array] segments
       # @param [Boolean] absolute
-      def initialize(segments, absolute = true)
+      def initialize(segments, absolute: true)
         @segments = segments.freeze
         @absolute = absolute
       end
@@ -39,7 +39,7 @@ module Openapi3Parser
       def fragment
         fragment = segments.map { |s| CGI.escape(s.to_s).gsub("+", "%20") }
                            .join("/")
-        "#" + (absolute ? fragment.prepend("/") : fragment)
+        "##{(absolute ? fragment.prepend('/') : fragment)}"
       end
 
       def to_s
@@ -80,7 +80,7 @@ module Openapi3Parser
         def create_pointer(pointer_like)
           case pointer_like
           when Pointer then pointer_like
-          when ::Array then Pointer.new(pointer_like, false)
+          when ::Array then Pointer.new(pointer_like, absolute: false)
           when ::String then Pointer.from_fragment(pointer_like)
           when nil then nil
           else raise Openapi3Parser::Error, "Unexpected type for pointer"

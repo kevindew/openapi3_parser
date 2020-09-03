@@ -25,9 +25,7 @@ module Openapi3Parser
       private
 
       def build_object(data, context)
-        if data["servers"].node.empty?
-          data["servers"] = path_item_server_data(context)
-        end
+        data["servers"] = path_item_server_data(context) if data["servers"].node.empty?
 
         Node::Operation.new(data, context)
       end

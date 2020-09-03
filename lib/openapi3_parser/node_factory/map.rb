@@ -90,12 +90,12 @@ module Openapi3Parser
       def build_resolved_input
         return unless data
 
-        data.each_with_object({}) do |(key, value), memo|
-          memo[key] = if value.respond_to?(:resolved_input)
-                        value.resolved_input
-                      else
-                        value
-                      end
+        data.transform_values do |value|
+          if value.respond_to?(:resolved_input)
+            value.resolved_input
+          else
+            value
+          end
         end
       end
 
