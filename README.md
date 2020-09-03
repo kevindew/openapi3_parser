@@ -1,6 +1,6 @@
 # OpenAPI 3 Parser
 
-[![Build Status](https://travis-ci.org/kevindew/openapi3_parser.svg?branch=master)](https://travis-ci.org/kevindew/openapi3_parser)
+[![Build Status](https://travis-ci.org/kevindew/openapi3_parser.svg?branch=main)](https://travis-ci.org/kevindew/openapi3_parser)
 
 This a Ruby based parser/validator for [OpenAPI 3][openapi-3]. It is used to
 convert an OpenAPI file (can be a local file, a URL, a string or even a Ruby
@@ -47,7 +47,7 @@ parser in [How to write an OpenAPI 3 parser][blog].
 
 ```ruby
 # by URL
-Openapi3Parser.load_url("https://raw.githubusercontent.com/kevindew/openapi3_parser/master/spec/support/examples/petstore-expanded.yaml")
+Openapi3Parser.load_url("https://raw.githubusercontent.com/kevindew/openapi3_parser/main/spec/support/examples/petstore-expanded.yaml")
 
 # by path to file
 Openapi3Parser.load_file("spec/support/examples/uber.yaml")
@@ -76,7 +76,7 @@ document.errors
 ### Traversing
 
 ```ruby
-document = Openapi3Parser.load_url("https://raw.githubusercontent.com/kevindew/openapi3_parser/master/spec/support/examples/petstore-expanded.yaml")
+document = Openapi3Parser.load_url("https://raw.githubusercontent.com/kevindew/openapi3_parser/main/spec/support/examples/petstore-expanded.yaml")
 
 # by objects
 
