@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
     f.match(%r{^spec/})
   end
 
-  spec.required_ruby_version = ">= 2.4.0"
+  spec.required_ruby_version = ">= 2.5.0"
 
   spec.add_dependency "commonmarker", "~> 0.17"
   spec.add_dependency "psych", "~> 3.1"

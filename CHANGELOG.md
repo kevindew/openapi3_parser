@@ -1,3 +1,7 @@
+# Unreleased
+
+- Drop support for Ruby 2.4
+
 # 0.8.2
 
 - Fix bug falling into recursive loop on Array/Map nodes -
