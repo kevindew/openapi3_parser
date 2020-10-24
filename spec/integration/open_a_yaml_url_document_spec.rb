@@ -3,6 +3,8 @@
 require "openapi3_parser"
 
 RSpec.describe "Open a YAML Document via URL" do
+  subject(:document) { Openapi3Parser.load_url(url) }
+
   before do
     path = File.join(
       __dir__, "..", "support", "examples", "petstore-expanded.yaml"
@@ -12,7 +14,6 @@ RSpec.describe "Open a YAML Document via URL" do
   end
 
   let(:url) { "http://example.com/openapi.yml" }
-  subject(:document) { Openapi3Parser.load_url(url) }
 
   it { is_expected.to be_valid }
 

@@ -26,7 +26,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Array do
 
   describe "non array input" do
     subject { instance }
+
     let(:input) { "a string" }
+
     it "doesn't raise an error" do
       expect { instance }.not_to raise_error
     end
@@ -35,10 +37,11 @@ RSpec.describe Openapi3Parser::NodeFactory::Array do
   end
 
   describe "#node" do
+    subject(:node) { instance.node(node_context) }
+
     let(:node_context) do
       node_factory_context_to_node_context(node_factory_context)
     end
-    subject(:node) { instance.node(node_context) }
 
     it { is_expected.to be_a(Openapi3Parser::Node::Array) }
 
@@ -80,13 +83,14 @@ RSpec.describe Openapi3Parser::NodeFactory::Array do
     end
 
     context "when value_factory is set" do
+      subject(:item) { instance.node(node_context).first }
+
       let(:value_factory) { Openapi3Parser::NodeFactory::Contact }
       let(:input) do
         [
           { "name" => "Kenneth" }
         ]
       end
-      subject(:item) { instance.node(node_context).first }
 
       it "returns items created by the value factory" do
         expect(item).to be_a(Openapi3Parser::Node::Contact)

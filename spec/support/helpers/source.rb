@@ -14,11 +14,11 @@ module Helpers
         source_input = Openapi3Parser::SourceInput::Raw.new(source_input)
       end
 
-      if !document
-        Openapi3Parser::Document.new(source_input).root_source
-      else
+      if document
         registry = Openapi3Parser::Document::ReferenceRegistry.new
         Openapi3Parser::Source.new(source_input, document, registry)
+      else
+        Openapi3Parser::Document.new(source_input).root_source
       end
     end
 

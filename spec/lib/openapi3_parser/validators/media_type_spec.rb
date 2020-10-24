@@ -6,6 +6,7 @@ RSpec.describe Openapi3Parser::Validators::MediaType do
 
     context "when input is not a media type" do
       let(:media_type) { "not an media type" }
+
       it { is_expected.to eq %("#{media_type}" is not a valid media type) }
     end
 

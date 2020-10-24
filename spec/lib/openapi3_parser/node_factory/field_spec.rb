@@ -22,16 +22,17 @@ RSpec.describe Openapi3Parser::NodeFactory::Field do
   end
 
   describe "#node" do
+    subject { instance.node(node_context) }
+
     let(:node_context) do
       node_factory_context_to_node_context(node_factory_context)
     end
-
-    subject { instance.node(node_context) }
 
     it { is_expected.to eq(input) }
 
     context "when input is nil" do
       let(:input) { nil }
+
       it { is_expected.to be_nil }
     end
 

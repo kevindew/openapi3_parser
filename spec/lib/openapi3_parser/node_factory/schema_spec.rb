@@ -53,6 +53,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
 
   describe "items" do
     subject { described_class.new(node_factory_context) }
+
     let(:node_factory_context) do
       create_node_factory_context({ "type" => type, "items" => items })
     end
@@ -60,14 +61,16 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
     context "when type is not array and items is not provided" do
       let(:type) { "string" }
       let(:items) { nil }
+
       it { is_expected.to be_valid }
     end
 
     context "when type is array and items is not provided" do
       let(:type) { "array" }
       let(:items) { nil }
+
       it do
-        is_expected
+        expect(subject)
           .to have_validation_error("#/")
           .with_message("items must be defined for a type of array")
       end
@@ -76,12 +79,14 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
     context "when type is array and items areprovided" do
       let(:type) { "array" }
       let(:items) { { "type" => "string" } }
+
       it { is_expected.to be_valid }
     end
   end
 
   describe "writeOnly and readOnly" do
     subject { described_class.new(node_factory_context) }
+
     let(:node_factory_context) do
       create_node_factory_context({ "readOnly" => read_only,
                                     "writeOnly" => write_only })
@@ -90,8 +95,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
     context "when both are true" do
       let(:read_only) { true }
       let(:write_only) { true }
+
       it do
-        is_expected
+        expect(subject)
           .to have_validation_error("#/")
           .with_message("readOnly and writeOnly cannot both be true")
       end
@@ -158,23 +164,27 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
 
     context "when it is set to true" do
       let(:additional_properties) { true }
+
       it { is_expected.to be_valid }
     end
 
     context "when it is set to false" do
       let(:additional_properties) { false }
+
       it { is_expected.to be_valid }
     end
 
     context "when it is an object" do
       let(:additional_properties) { { "type" => "object" } }
+
       it { is_expected.to be_valid }
     end
 
     context "when it is something different" do
       let(:additional_properties) { %w[item_1 item_2] }
+
       it do
-        is_expected
+        expect(subject)
           .to have_validation_error("#/additionalProperties")
           .with_message("Expected a Boolean or an Object")
       end

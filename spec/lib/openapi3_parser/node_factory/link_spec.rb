@@ -33,7 +33,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Link do
 
     context "when operationRef or operationId is provided" do
       it do
-        is_expected
+        expect(subject)
           .to have_validation_error("#/")
           .with_message(
             "One of operationRef and operationId is required"
@@ -43,19 +43,22 @@ RSpec.describe Openapi3Parser::NodeFactory::Link do
 
     context "when operationRef is provided" do
       let(:operation_ref) { "#/test" }
+
       it { is_expected.to be_valid }
     end
 
     context "when operationId is provided" do
       let(:operation_id) { "getOperation" }
+
       it { is_expected.to be_valid }
     end
 
     context "when both are provided" do
       let(:operation_ref) { "#/test" }
       let(:operation_id) { "getOperation" }
+
       it do
-        is_expected
+        expect(subject)
           .to have_validation_error("#/")
           .with_message(
             "operationRef and operationId are mutually exclusive fields"

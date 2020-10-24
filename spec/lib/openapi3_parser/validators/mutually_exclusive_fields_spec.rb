@@ -6,6 +6,14 @@ RSpec.describe Openapi3Parser::Validators::MutuallyExclusiveFields do
   include Helpers::Context
 
   describe ".call" do
+    subject(:call) do
+      described_class.call(
+        validatable,
+        mutually_exclusive_fields: mutually_exclusive_fields,
+        raise_on_invalid: raise_on_invalid
+      )
+    end
+
     let(:node_factory_context) { create_node_factory_context({}) }
     let(:validatable) do
       Openapi3Parser::Validation::Validatable.new(
@@ -14,14 +22,6 @@ RSpec.describe Openapi3Parser::Validators::MutuallyExclusiveFields do
     end
     let(:mutually_exclusive_fields) { [] }
     let(:raise_on_invalid) { true }
-
-    subject(:call) do
-      described_class.call(
-        validatable,
-        mutually_exclusive_fields: mutually_exclusive_fields,
-        raise_on_invalid: raise_on_invalid
-      )
-    end
 
     context "when the instance is valid" do
       it { is_expected.to be_nil }

@@ -78,12 +78,12 @@ module Openapi3Parser
 
         def errors
           @errors ||= begin
-                        default = { required: [], exclusive: [] }
-                        mutually_exclusive_fields
-                          .each_with_object(default) do |exclusive, errors|
-                            add_error(errors, exclusive)
-                          end
-                      end
+            default = { required: [], exclusive: [] }
+            mutually_exclusive_fields
+              .each_with_object(default) do |exclusive, errors|
+                add_error(errors, exclusive)
+              end
+          end
         end
 
         private

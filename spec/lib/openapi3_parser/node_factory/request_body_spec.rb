@@ -29,6 +29,7 @@ RSpec.describe Openapi3Parser::NodeFactory::RequestBody do
 
   describe "content" do
     subject { described_class.new(node_factory_context) }
+
     let(:node_factory_context) do
       create_node_factory_context({ "content" => content })
     end
@@ -37,7 +38,7 @@ RSpec.describe Openapi3Parser::NodeFactory::RequestBody do
       let(:content) { {} }
 
       it do
-        is_expected
+        expect(subject)
           .to have_validation_error("#/content")
           .with_message("Expected to have at least 1 item")
       end
@@ -71,7 +72,7 @@ RSpec.describe Openapi3Parser::NodeFactory::RequestBody do
       end
 
       it do
-        is_expected
+        expect(subject)
           .to have_validation_error("#/content/bad-media-type")
           .with_message(%("bad-media-type" is not a valid media type))
       end
@@ -91,11 +92,13 @@ RSpec.describe Openapi3Parser::NodeFactory::RequestBody do
 
     context "when required is set" do
       let(:required) { true }
+
       it { is_expected.to be true }
     end
 
     context "when required is not set" do
       let(:required) { nil }
+
       it { is_expected.to be false }
     end
   end

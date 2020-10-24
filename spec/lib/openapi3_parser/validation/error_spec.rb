@@ -9,6 +9,7 @@ RSpec.describe Openapi3Parser::Validation::Error do
     subject do
       described_class.new(message, node_factory_context, factory_class).for_type
     end
+
     let(:message) { "" }
     let(:node_factory_context) { create_node_factory_context({}) }
 

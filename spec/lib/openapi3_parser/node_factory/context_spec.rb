@@ -24,6 +24,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
 
   describe ".next_field" do
     subject(:context) { described_class.next_field(parent_context, field) }
+
     let(:input) { { "key" => "value" } }
 
     let(:parent_context) do

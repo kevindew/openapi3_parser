@@ -41,6 +41,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Encoding do
 
     context "when style is 'form'" do
       let(:style) { "form" }
+
       it "has a value of true" do
         expect(node["explode"]).to be true
       end
@@ -48,6 +49,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Encoding do
 
     context "when style is 'simple'" do
       let(:style) { "simple" }
+
       it "has a value of false" do
         expect(node["explode"]).to be false
       end

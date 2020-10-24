@@ -10,11 +10,13 @@ RSpec.describe Openapi3Parser::SourceInput::Raw do
 
     context "when input is valid" do
       let(:input) { valid_input }
+
       it { is_expected.to be true }
     end
 
     context "when input is unparsable" do
       let(:input) { unparsable_input }
+
       it { is_expected.to be false }
     end
   end
@@ -24,11 +26,13 @@ RSpec.describe Openapi3Parser::SourceInput::Raw do
 
     context "when input is valid" do
       let(:input) { valid_input }
+
       it { is_expected.to be_nil }
     end
 
     context "when input is unparsable" do
       let(:input) { unparsable_input }
+
       it { is_expected.to be_a_kind_of(unparsable_input_error) }
     end
   end
@@ -38,11 +42,13 @@ RSpec.describe Openapi3Parser::SourceInput::Raw do
 
     context "when input is valid" do
       let(:input) { valid_input }
+
       it { is_expected.to match(valid_input) }
     end
 
     context "when input is unparsable" do
       let(:input) { unparsable_input }
+
       it "raises a UnparsableInput error" do
         expect { subject }.to raise_error(unparsable_input_error)
       end
@@ -50,8 +56,10 @@ RSpec.describe Openapi3Parser::SourceInput::Raw do
   end
 
   describe ".resolve_next" do
-    before { stub_request(:get, %r{^https://example.com/}) }
     subject { described_class.new(valid_input).resolve_next(reference) }
+
+    before { stub_request(:get, %r{^https://example.com/}) }
+
     let(:url) { "https://example.com/openapi" }
 
     let(:reference) { Openapi3Parser::Source::Reference.new(url) }
@@ -65,16 +73,19 @@ RSpec.describe Openapi3Parser::SourceInput::Raw do
 
     context "when input is the same" do
       let(:other) { described_class.new(valid_input) }
+
       it { is_expected.to be true }
     end
 
     context "when input is different" do
       let(:other) { described_class.new(unparsable_input) }
+
       it { is_expected.to be false }
     end
 
     context "when class is different" do
       let(:other) { Openapi3Parser::SourceInput::File.new("test.yml") }
+
       it { is_expected.to be false }
     end
   end

@@ -57,6 +57,7 @@ RSpec.describe Openapi3Parser::Source::Location do
 
   describe "#data" do
     subject { instance.data }
+
     let(:source) { create_source({ field: 1234 }) }
 
     it { is_expected.to eq 1234 }
@@ -80,6 +81,7 @@ RSpec.describe Openapi3Parser::Source::Location do
 
   describe "#source_available?" do
     subject { instance.source_available? }
+
     let(:url) { "http://example.com/test" }
     let(:source) do
       create_source(Openapi3Parser::SourceInput::Url.new(url),

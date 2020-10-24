@@ -6,6 +6,12 @@ RSpec.describe Openapi3Parser::Validators::RequiredFields do
   include Helpers::Context
 
   describe ".call" do
+    subject(:call) do
+      described_class.call(validatable,
+                           required_fields: required_fields,
+                           raise_on_invalid: raise_on_invalid)
+    end
+
     let(:node_factory_context) { create_node_factory_context({}) }
     let(:validatable) do
       Openapi3Parser::Validation::Validatable.new(
@@ -14,12 +20,6 @@ RSpec.describe Openapi3Parser::Validators::RequiredFields do
     end
     let(:required_fields) { [] }
     let(:raise_on_invalid) { false }
-
-    subject(:call) do
-      described_class.call(validatable,
-                           required_fields: required_fields,
-                           raise_on_invalid: raise_on_invalid)
-    end
 
     context "when the instance is valid" do
       it { is_expected.to be_nil }

@@ -6,13 +6,14 @@ require "openapi3_parser"
 # (which are valid types in YAML) - these should be avoided however as these
 # are expected to be strings.
 RSpec.describe "Open a YAML Document with dates" do
+  subject(:document) { Openapi3Parser.load_url(url) }
+
   before do
     stub_request(:get, "example.com/openapi.yml")
       .to_return(body: body)
   end
 
   let(:url) { "http://example.com/openapi.yml" }
-  subject(:document) { Openapi3Parser.load_url(url) }
   let(:body) do
     <<~HEREDOC
       ---

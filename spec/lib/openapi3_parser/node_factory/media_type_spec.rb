@@ -92,6 +92,7 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
 
   describe "encoding" do
     subject { described_class.new(node_factory_context) }
+
     let(:node_factory_context) do
       create_node_factory_context({ "schema" => schema,
                                     "encoding" => encoding })
@@ -126,7 +127,7 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
       end
 
       it do
-        is_expected
+        expect(subject)
           .to have_validation_error("#/encoding")
           .with_message(
             "Keys are not defined as schema properties: key_1, key_2"

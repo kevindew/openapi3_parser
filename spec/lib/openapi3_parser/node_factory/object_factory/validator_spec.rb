@@ -6,13 +6,13 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
   include Helpers::Context
 
   describe ".call" do
+    subject(:collection) { described_class.call(factory, building_node) }
+
     let(:factory_class) { Class.new(Openapi3Parser::NodeFactory::Object) }
     let(:node_factory_context) { create_node_factory_context(input) }
     let(:factory) { factory_class.new(node_factory_context) }
     let(:input) { {} }
     let(:building_node) { false }
-
-    subject(:collection) { described_class.call(factory, building_node) }
 
     it { is_expected.to be_a(Openapi3Parser::Validation::ErrorCollection) }
 
@@ -29,6 +29,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
 
       context "and we are building the node" do
         let(:building_node) { true }
+
         it "raises an error" do
           expect { collection }
             .to raise_error(Openapi3Parser::Error::MissingFields)
@@ -37,6 +38,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
 
       context "and we are not building the node" do
         let(:building_node) { false }
+
         it { is_expected.not_to be_empty }
       end
     end
@@ -46,6 +48,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
 
       context "and we are building the node" do
         let(:building_node) { true }
+
         it "raises an error" do
           expect { collection }
             .to raise_error(Openapi3Parser::Error::UnexpectedFields)
@@ -54,6 +57,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
 
       context "and we are not building the node" do
         let(:building_node) { false }
+
         it { is_expected.not_to be_empty }
       end
     end
@@ -70,6 +74,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
 
       context "and we are building the node" do
         let(:building_node) { true }
+
         it "raises an error" do
           expect { collection }
             .to raise_error(Openapi3Parser::Error::UnexpectedFields)
@@ -78,6 +83,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
 
       context "and we are not building the node" do
         let(:building_node) { false }
+
         it { is_expected.not_to be_empty }
       end
     end
@@ -93,6 +99,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
 
       context "and we are building the node" do
         let(:building_node) { true }
+
         it "raises an error" do
           expect { collection }
             .to raise_error(Openapi3Parser::Error::InvalidData,
@@ -112,6 +119,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
                                                 context,
                                                 factory_class)
         end
+
         it { is_expected.to include(error) }
       end
     end
@@ -127,6 +135,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
 
       context "and we are building the node" do
         let(:building_node) { true }
+
         it "raises an error" do
           expect { collection }
             .to raise_error(Openapi3Parser::Error::InvalidData,
@@ -141,6 +150,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::Validator do
                                                 node_factory_context,
                                                 factory_class)
         end
+
         it { is_expected.to include(error) }
       end
     end

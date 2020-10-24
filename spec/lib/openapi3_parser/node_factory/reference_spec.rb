@@ -57,24 +57,28 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
 
   describe "#valid?" do
     subject { instance.valid? }
+
     context "when input is valid" do
       it { is_expected.to be true }
     end
 
     context "when input is invalid" do
       let(:input) { {} }
+
       it { is_expected.to be false }
     end
   end
 
   describe "#errors" do
     subject { instance.errors }
+
     context "when input is valid" do
       it { is_expected.to be_empty }
     end
 
     context "when it is missing a $ref" do
       let(:input) { {} }
+
       it "has a validation error" do
         expect(instance)
           .to have_validation_error("#/",
@@ -134,6 +138,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
 
   describe "#errors" do
     subject { instance.errors }
+
     let(:input) { { "$ref" => "#/contact", "extra" => "produces error" } }
 
     context "when not in a recursive loop" do

@@ -3,8 +3,9 @@
 require "openapi3_parser"
 
 RSpec.describe "Open a YAML Document" do
-  let(:path) { File.join(__dir__, "..", "support", "examples", "uber.yaml") }
   subject(:document) { Openapi3Parser.load_file(path) }
+
+  let(:path) { File.join(__dir__, "..", "support", "examples", "uber.yaml") }
 
   it { is_expected.to be_valid }
 

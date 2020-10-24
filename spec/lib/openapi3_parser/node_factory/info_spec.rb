@@ -28,6 +28,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Info do
 
   describe "terms of service" do
     subject(:factory) { described_class.new(node_factory_context) }
+
     let(:input) do
       minimal_info_definition.merge("termsOfService" => terms_of_service)
     end
@@ -35,11 +36,13 @@ RSpec.describe Openapi3Parser::NodeFactory::Info do
 
     context "when terms of service is a url" do
       let(:terms_of_service) { "https://example.com/path" }
+
       it { is_expected.to be_valid }
     end
 
     context "when terms of service is not a url" do
       let(:terms_of_service) { "not a url" }
+
       it { is_expected.not_to be_valid }
     end
   end

@@ -7,7 +7,7 @@ module Openapi3Parser
       # https://html.spec.whatwg.org/#e-mail-state-(type=email)
       REGEX = %r{
         \A
-        [a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+
+        [a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+
         @
         [a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?
         (?:.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*

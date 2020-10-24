@@ -119,6 +119,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Components do
     subject do
       described_class.new(create_node_factory_context(input))
     end
+
     let(:input) do
       {
         "responses" => {
@@ -129,11 +130,13 @@ RSpec.describe Openapi3Parser::NodeFactory::Components do
 
     context "when key is invalid" do
       let(:key) { "Invalid Key" }
+
       it { is_expected.to have_validation_error("#/responses") }
     end
 
     context "when key is valid" do
       let(:key) { "valid.key" }
+
       it { is_expected.to be_valid }
     end
   end

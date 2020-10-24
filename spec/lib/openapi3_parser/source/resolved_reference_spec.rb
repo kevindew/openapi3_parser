@@ -65,7 +65,7 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
       let(:factory_input) { { unexpected: "blah" } }
 
       it do
-        is_expected
+        expect(subject)
           .to include("#/field does not resolve to a valid object")
       end
     end

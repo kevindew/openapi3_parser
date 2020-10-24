@@ -36,6 +36,7 @@ RSpec.describe "Open a document with cross document references" do
   end
 
   it { is_expected.to be_valid }
+
   it "can access the summary" do
     expect(document.components.examples["test"].summary).to eq "A foo example"
   end

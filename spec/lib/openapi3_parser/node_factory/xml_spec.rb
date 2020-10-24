@@ -22,6 +22,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Xml do
 
   describe "namespace" do
     subject(:factory) { described_class.new(node_factory_context) }
+
     let(:node_factory_context) do
       create_node_factory_context({ "namespace" => namespace,
                                     "prefix" => "sample" })
@@ -29,13 +30,15 @@ RSpec.describe Openapi3Parser::NodeFactory::Xml do
 
     context "when namespace is an actual uri" do
       let(:namespace) { "https://example.com/path" }
+
       it { is_expected.to be_valid }
     end
 
     context "when namespace is not a uri" do
       let(:namespace) { "not a url" }
+
       it do
-        is_expected
+        expect(subject)
           .to have_validation_error("#/namespace")
           .with_message(%("#{namespace}" is not a valid URI))
       end

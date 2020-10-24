@@ -18,6 +18,7 @@ RSpec.describe Openapi3Parser::NodeFactory::License do
 
   describe "url" do
     subject(:factory) { described_class.new(node_factory_context) }
+
     let(:node_factory_context) do
       create_node_factory_context(
         minimal_license_definition.merge("url" => url)
@@ -26,11 +27,13 @@ RSpec.describe Openapi3Parser::NodeFactory::License do
 
     context "when url is an actual url" do
       let(:url) { "https://example.com/path" }
+
       it { is_expected.to be_valid }
     end
 
     context "when url is not a url" do
       let(:url) { "not a url" }
+
       it { is_expected.not_to be_valid }
     end
   end

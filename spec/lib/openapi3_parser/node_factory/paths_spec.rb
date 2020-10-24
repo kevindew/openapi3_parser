@@ -38,6 +38,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Paths do
 
   describe "path keys" do
     subject { described_class.new(create_node_factory_context(input)) }
+
     let(:path) do
       {
         "get" => {

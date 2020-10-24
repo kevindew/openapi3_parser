@@ -45,6 +45,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Response do
 
   describe "content" do
     subject { described_class.new(node_factory_context) }
+
     let(:node_factory_context) do
       create_node_factory_context({ "description" => "Description",
                                     "content" => content })
@@ -74,7 +75,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Response do
       end
 
       it do
-        is_expected
+        expect(subject)
           .to have_validation_error("#/content/bad-media-type")
           .with_message(%("bad-media-type" is not a valid media type))
       end
@@ -83,6 +84,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Response do
 
   describe "links" do
     subject { described_class.new(node_factory_context) }
+
     let(:node_factory_context) do
       create_node_factory_context(
         {
@@ -94,11 +96,13 @@ RSpec.describe Openapi3Parser::NodeFactory::Response do
 
     context "when key is invalid" do
       let(:key) { "Invalid Key" }
+
       it { is_expected.not_to be_valid }
     end
 
     context "when key is valid" do
       let(:key) { "valid.key" }
+
       it { is_expected.to be_valid }
     end
   end

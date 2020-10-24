@@ -39,7 +39,7 @@ RSpec.describe Openapi3Parser::Document do
     context "when an allowed version is included" do
       let(:openapi_version) { "3.0.1" }
 
-      it "it does not have warnings" do
+      it "does not have warnings" do
         expect(instance.warnings).to be_empty
       end
     end
@@ -65,6 +65,7 @@ RSpec.describe Openapi3Parser::Document do
 
   describe "#root" do
     subject { described_class.new(source_input).root }
+
     it { is_expected.to be_an_instance_of(Openapi3Parser::Node::Openapi) }
   end
 
@@ -76,11 +77,13 @@ RSpec.describe Openapi3Parser::Document do
 
     context "when the source input is known" do
       let(:other) { source_input }
+
       it { is_expected.to be_an_instance_of(Openapi3Parser::Source) }
     end
 
     context "when the source input is not known" do
       let(:other) { Openapi3Parser::SourceInput::Raw.new({}) }
+
       it { is_expected.to be_nil }
     end
   end
@@ -92,6 +95,7 @@ RSpec.describe Openapi3Parser::Document do
 
     context "when there are no references" do
       let(:components_data) { {} }
+
       it { is_expected.to be_empty }
     end
 
@@ -123,6 +127,7 @@ RSpec.describe Openapi3Parser::Document do
 
     context "when there are errors" do
       let(:source_data) { {} }
+
       it { is_expected.not_to be_empty }
     end
 
@@ -186,6 +191,7 @@ RSpec.describe Openapi3Parser::Document do
 
   describe "#node_at" do
     subject { described_class.new(source_input).node_at(pointer, relative_to) }
+
     let(:relative_to) { nil }
 
     context "when a fragment is provided" do
@@ -224,6 +230,7 @@ RSpec.describe Openapi3Parser::Document do
     subject do
       described_class.new(source_input).resolved_input_at(pointer, relative_to)
     end
+
     let(:relative_to) { nil }
 
     context "when a fragment is provided" do

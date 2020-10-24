@@ -27,7 +27,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
 
   describe "non hash input" do
     subject { instance }
+
     let(:input) { "a string" }
+
     it "doesn't raise an error" do
       expect { instance }.not_to raise_error
     end
@@ -36,10 +38,11 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
   end
 
   describe "#node" do
+    subject { instance.node(node_context) }
+
     let(:node_context) do
       node_factory_context_to_node_context(node_factory_context)
     end
-    subject { instance.node(node_context) }
 
     it { is_expected.to be_a(Openapi3Parser::Node::Map) }
 
@@ -112,13 +115,14 @@ RSpec.describe Openapi3Parser::NodeFactory::Map do
     end
 
     context "when value_factory is set" do
+      subject(:item) { instance.node(node_context)["item"] }
+
       let(:value_factory) { Openapi3Parser::NodeFactory::Contact }
       let(:input) do
         {
           "item" => { "name" => "Kenneth" }
         }
       end
-      subject(:item) { instance.node(node_context)["item"] }
 
       it "returns items created by the value factory" do
         expect(item).to be_a(Openapi3Parser::Node::Contact)

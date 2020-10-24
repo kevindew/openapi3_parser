@@ -8,6 +8,12 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
   include Helpers::Source
 
   describe "#register" do
+    subject(:register) do
+      instance.register(unbuilt_factory,
+                        source_location,
+                        reference_factory_context)
+    end
+
     let(:unbuilt_factory) { Openapi3Parser::NodeFactory::Contact }
 
     let(:source_location) do
@@ -22,12 +28,6 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
 
     let(:instance) { described_class.new }
 
-    subject(:register) do
-      instance.register(unbuilt_factory,
-                        source_location,
-                        reference_factory_context)
-    end
-
     context "when the source and factory are not registered" do
       it "returns a built factory" do
         expect(register).to be_a(Openapi3Parser::NodeFactory::Contact)
@@ -35,13 +35,13 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
 
       it "registers the source" do
         expect { register }
-          .to change { instance.sources }
+          .to change(instance, :sources)
           .to [source_location.source]
       end
 
       it "registers the factory" do
         expect { register }
-          .to change { instance.factories }
+          .to change(instance, :factories)
           .to [an_instance_of(Openapi3Parser::NodeFactory::Contact)]
       end
     end
@@ -55,7 +55,7 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
 
       it "doesn't update the sources" do
         expect { register }
-          .not_to(change { instance.sources })
+          .not_to(change(instance, :sources))
       end
     end
 
@@ -70,7 +70,7 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
 
       it "doesn't update the factories" do
         expect { register }
-          .not_to(change { instance.factories })
+          .not_to(change(instance, :factories))
       end
     end
 
@@ -85,13 +85,15 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
 
       it "registers the factory" do
         expect { register }
-          .to change { instance.factories }
+          .to change(instance, :factories)
           .to include(an_instance_of(Openapi3Parser::NodeFactory::Contact))
       end
     end
   end
 
   describe "#factory" do
+    subject(:factory) { instance.factory(object_type, source_location) }
+
     let(:object_type) { "Openapi3Parser::NodeFactory::Contact" }
 
     let(:source_location) do
@@ -100,8 +102,6 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
     end
 
     let(:instance) { described_class.new }
-
-    subject(:factory) { instance.factory(object_type, source_location) }
 
     context "when a factory is not registered" do
       it { is_expected.to be_nil }
@@ -149,6 +149,7 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
 
   describe "#freeze" do
     let(:instance) { described_class.new }
+
     before { instance.freeze }
 
     it "freezes the object" do

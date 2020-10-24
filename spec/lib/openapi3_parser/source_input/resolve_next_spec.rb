@@ -8,6 +8,7 @@ RSpec.describe Openapi3Parser::SourceInput::ResolveNext do
                            base_url: base_url,
                            working_directory: working_directory)
     end
+
     before do
       allow(File).to receive(:read).and_return("")
       stub_request(:get, %r{^https://example.com/})
@@ -26,16 +27,19 @@ RSpec.describe Openapi3Parser::SourceInput::ResolveNext do
 
     context "when reference is a fragment" do
       let(:literal_reference) { "#/test" }
+
       it { is_expected.to be current_source_input }
     end
 
     context "when reference is a relative file" do
       let(:literal_reference) { "test.yaml#/test" }
+
       context "and base_url and working_directory aren't set" do
         let(:file_source_input) do
           path = File.expand_path("test.yaml", Dir.pwd)
           Openapi3Parser::SourceInput::File.new(path)
         end
+
         it { is_expected.to eq file_source_input }
       end
 
@@ -44,6 +48,7 @@ RSpec.describe Openapi3Parser::SourceInput::ResolveNext do
         let(:url_source_input) do
           Openapi3Parser::SourceInput::Url.new("https://example.com/test.yaml")
         end
+
         it { is_expected.to eq url_source_input }
       end
 
@@ -52,6 +57,7 @@ RSpec.describe Openapi3Parser::SourceInput::ResolveNext do
         let(:file_source_input) do
           Openapi3Parser::SourceInput::File.new("/test/path/test.yaml")
         end
+
         it { is_expected.to eq file_source_input }
       end
     end
@@ -61,6 +67,7 @@ RSpec.describe Openapi3Parser::SourceInput::ResolveNext do
       let(:url_source_input) do
         Openapi3Parser::SourceInput::Url.new("https://example.com/test.yaml")
       end
+
       it { is_expected.to eq url_source_input }
     end
 
@@ -69,6 +76,7 @@ RSpec.describe Openapi3Parser::SourceInput::ResolveNext do
       let(:file_source_input) do
         Openapi3Parser::SourceInput::File.new("/path/test.yaml")
       end
+
       it { is_expected.to eq file_source_input }
 
       context "and a base_url is set" do
@@ -78,6 +86,7 @@ RSpec.describe Openapi3Parser::SourceInput::ResolveNext do
             "https://example.com/path/test.yaml"
           )
         end
+
         it { is_expected.to eq url_source_input }
       end
     end

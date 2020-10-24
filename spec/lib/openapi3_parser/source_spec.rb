@@ -151,6 +151,7 @@ RSpec.describe Openapi3Parser::Source do
 
   describe "#relative_to_root" do
     subject { instance.relative_to_root }
+
     let(:document) do
       Openapi3Parser::Document.new(
         create_raw_source_input(data: source_data,

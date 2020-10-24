@@ -11,6 +11,7 @@ RSpec.describe Openapi3Parser::Validators::DuplicateParameters do
           { "name" => "id", "in" => "query" }
         ]
       end
+
       it { is_expected.to be_nil }
     end
 
@@ -21,6 +22,7 @@ RSpec.describe Openapi3Parser::Validators::DuplicateParameters do
           { "name" => "id", "in" => "path" }
         ]
       end
+
       it { is_expected.to eq "Duplicate parameters: id in path" }
     end
 
@@ -35,7 +37,7 @@ RSpec.describe Openapi3Parser::Validators::DuplicateParameters do
       end
 
       it do
-        is_expected.to eq "Duplicate parameters: id in path, address in query"
+        expect(subject).to eq "Duplicate parameters: id in path, address in query"
       end
     end
 

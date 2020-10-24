@@ -6,6 +6,13 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
   include Helpers::Context
 
   describe ".call" do
+    subject(:call) do
+      described_class.call(validatable,
+                           allow_extensions: allow_extensions,
+                           allowed_fields: allowed_fields,
+                           raise_on_invalid: raise_on_invalid)
+    end
+
     let(:node_factory_context) { create_node_factory_context({}) }
     let(:validatable) do
       Openapi3Parser::Validation::Validatable.new(
@@ -15,13 +22,6 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
     let(:allow_extensions) { true }
     let(:allowed_fields) { [] }
     let(:raise_on_invalid) { true }
-
-    subject(:call) do
-      described_class.call(validatable,
-                           allow_extensions: allow_extensions,
-                           allowed_fields: allowed_fields,
-                           raise_on_invalid: raise_on_invalid)
-    end
 
     context "when the instance is valid" do
       it { is_expected.to be_nil }
@@ -35,6 +35,7 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
 
       context "when it is true" do
         let(:allow_extensions) { true }
+
         it "doesn't raise error on extensions" do
           expect { call }.not_to raise_error
         end
@@ -43,6 +44,7 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
       context "when it is false and allowed_fields are set" do
         let(:allowed_fields) { %w[this that] }
         let(:allow_extensions) { false }
+
         it "raises an error on extensions" do
           expect { call }
             .to raise_error(
@@ -60,6 +62,7 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
 
       context "when it includes the fields" do
         let(:allowed_fields) { %w[fieldA fieldB] }
+
         it "doesn't raise error" do
           expect { call }.not_to raise_error
         end
@@ -67,6 +70,7 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
 
       context "when it doesn't include the fields" do
         let(:allowed_fields) { %w[fieldB fieldC] }
+
         it "raises an error on extensions" do
           expect { call }
             .to raise_error(
@@ -84,6 +88,7 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
 
         let(:allowed_fields) { %w[fieldA] }
         let(:allowed_extensions) { true }
+
         it "raises an error on extensions" do
           expect { call }.not_to raise_error
         end

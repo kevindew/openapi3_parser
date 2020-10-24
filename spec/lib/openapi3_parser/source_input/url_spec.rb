@@ -28,11 +28,13 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
 
     context "when file can't be opened" do
       before { stub_404_request }
+
       it { is_expected.to be false }
     end
 
     context "when file can't be parsed" do
       before { stub_200_request(unparsable_input) }
+
       it { is_expected.to be false }
     end
   end
@@ -46,6 +48,7 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
 
     context "when input can't be opened" do
       before { stub_404_request }
+
       it { is_expected.to be_a_kind_of(inaccessible_input_error) }
     end
   end
@@ -59,6 +62,7 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
 
     context "when input is unparsable" do
       before { stub_200_request(unparsable_input) }
+
       it { is_expected.to be_a_kind_of(unparsable_input_error) }
     end
   end
@@ -68,12 +72,15 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
 
     context "when input is valid" do
       before { stub_200_request(valid_input) }
+
       let(:valid_input) { "key: value" }
+
       it { is_expected.to match("key" => "value") }
     end
 
     context "when input can't be opened" do
       before { stub_404_request }
+
       it "raises a InaccessibleInput error" do
         expect { subject }.to raise_error(inaccessible_input_error)
       end
@@ -81,6 +88,7 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
 
     context "when input is unparsable" do
       before { stub_200_request(unparsable_input) }
+
       it "raises a UnparsableInput error" do
         expect { subject }.to raise_error(unparsable_input_error)
       end
@@ -105,22 +113,26 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
 
     context "when url is the same" do
       let(:other) { described_class.new(url) }
+
       it { is_expected.to be true }
     end
 
     context "when url is different" do
       let(:other) { described_class.new("https://example.com/different") }
+
       it { is_expected.to be false }
     end
 
     context "when class is different" do
       let(:other) { Openapi3Parser::SourceInput::Raw.new({}) }
+
       it { is_expected.to be false }
     end
   end
 
   describe ".relative_to" do
     subject { described_class.new(url).relative_to(other) }
+
     let(:url) { "https://example.com/path/to/file.yaml" }
     let(:other_url) { "https://example.com/path/to/file.yaml" }
     let(:other) { described_class.new(other_url) }
@@ -129,17 +141,20 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
 
     context "when url is up a directory" do
       let(:url) { "https://example.com/path/to/other/file.yaml" }
+
       it { is_expected.to eq "other/file.yaml" }
     end
 
     context "when url is down a directory" do
       let(:url) { "https://example.com/path/to-file.yaml" }
+
       it { is_expected.to eq "../to-file.yaml" }
     end
 
     context "when url has different query strings" do
       let(:url) { "https://example.com/file.yaml?key=1" }
       let(:other_url) { "https://example.com/file.yaml?key=2" }
+
       it { is_expected.to eq "file.yaml?key=1" }
     end
 
@@ -147,6 +162,7 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
       let(:other) do
         Openapi3Parser::SourceInput::Raw.new({}, base_url: other_url)
       end
+
       it { is_expected.to eq "file.yaml" }
     end
 
@@ -155,11 +171,13 @@ RSpec.describe Openapi3Parser::SourceInput::Url do
         Openapi3Parser::SourceInput::Raw.new({},
                                              base_url: "https://google.com")
       end
+
       it { is_expected.to eq url }
     end
 
     context "when other is a file input" do
       let(:other) { Openapi3Parser::SourceInput::File.new("/path/to/file") }
+
       it { is_expected.to eq url }
     end
   end

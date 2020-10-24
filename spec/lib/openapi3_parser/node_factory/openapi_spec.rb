@@ -26,13 +26,15 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
 
   context "when input is nil" do
     subject(:factory) { described_class.new(node_factory_context) }
+
     let(:input) { nil }
     let(:node_factory_context) { create_node_factory_context(input) }
     let(:node_context) do
       node_factory_context_to_node_context(node_factory_context)
     end
 
-    it { is_expected.to_not be_valid }
+    it { is_expected.not_to be_valid }
+
     it "raises error accessing node" do
       expect { subject.node(node_context) }
         .to raise_error(Openapi3Parser::Error)
@@ -41,6 +43,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
 
   describe "tags" do
     subject(:factory) { described_class.new(node_factory_context) }
+
     let(:input) { minimal_openapi_definition.merge("tags" => tags) }
     let(:node_factory_context) { create_node_factory_context(input) }
 
@@ -50,6 +53,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
           { "name" => "a" }
         ]
       end
+
       it { is_expected.to be_valid }
     end
 
@@ -60,6 +64,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
           { "name" => "a" }
         ]
       end
+
       it { is_expected.not_to be_valid }
 
       it "has a duplicate tags names error" do

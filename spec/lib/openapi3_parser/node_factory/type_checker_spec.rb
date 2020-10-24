@@ -8,21 +8,23 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
   let(:factory) { double("factory", context: node_factory_context) }
 
   describe ".validate_type" do
-    let(:validatable) { Openapi3Parser::Validation::Validatable.new(factory) }
-
     subject(:validate_type) do
       described_class.validate_type(validatable, type: type)
     end
 
+    let(:validatable) { Openapi3Parser::Validation::Validatable.new(factory) }
+
     context "when the type is valid" do
       let(:type) { Hash }
       let(:input) { {} }
+
       it { is_expected.to be true }
     end
 
     context "when the input type is invalid" do
       let(:type) { Integer }
       let(:input) { "Blah" }
+
       it { is_expected.to be false }
 
       it "adds an error to validatable" do
@@ -46,6 +48,7 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
     context "when the type is valid" do
       let(:type) { Hash }
       let(:input) { {} }
+
       it { is_expected.to be true }
     end
 
@@ -62,21 +65,23 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
   end
 
   describe ".validate_keys" do
-    let(:validatable) { Openapi3Parser::Validation::Validatable.new(factory) }
-
     subject(:validate_keys) do
       described_class.validate_keys(validatable, type: type)
     end
 
+    let(:validatable) { Openapi3Parser::Validation::Validatable.new(factory) }
+
     context "when the type is valid" do
       let(:type) { Integer }
       let(:input) { { 1 => "a" } }
+
       it { is_expected.to be true }
     end
 
     context "when the input type is invalid" do
       let(:type) { Integer }
       let(:input) { { "string" => "erm" } }
+
       it { is_expected.to be false }
 
       it "adds an error to validatable" do
@@ -100,6 +105,7 @@ RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
     context "when the type is valid" do
       let(:type) { Integer }
       let(:input) { { 1 => "a" } }
+
       it { is_expected.to be true }
     end
 

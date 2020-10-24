@@ -6,26 +6,30 @@ RSpec.shared_examples "mutually exclusive example" do
   context "when neither example or examples is provided" do
     let(:example) { nil }
     let(:examples) { nil }
+
     it { is_expected.to be_valid }
   end
 
   context "when an example is provided" do
     let(:example) { "anything" }
     let(:examples) { nil }
+
     it { is_expected.to be_valid }
   end
 
   context "when examples are provided" do
     let(:example) { nil }
     let(:examples) { {} }
+
     it { is_expected.to be_valid }
   end
 
   context "when both are provided" do
     let(:example) { "anything" }
     let(:examples) { {} }
+
     it do
-      is_expected
+      expect(subject)
         .to have_validation_error("#/")
         .with_message("example and examples are mutually exclusive fields")
     end

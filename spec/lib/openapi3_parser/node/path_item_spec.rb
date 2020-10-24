@@ -6,6 +6,8 @@ RSpec.describe Openapi3Parser::Node::PathItem do
   include Helpers::Context
 
   describe "#alternative_servers?" do
+    subject { instance.alternative_servers? }
+
     let(:instance) do
       factory_context = create_node_factory_context(
         input,
@@ -23,8 +25,6 @@ RSpec.describe Openapi3Parser::Node::PathItem do
         .new(factory_context)
         .node(node_factory_context_to_node_context(factory_context))
     end
-
-    subject { instance.alternative_servers? }
 
     context "when object has alternative servers defined" do
       let(:input) do

@@ -37,12 +37,12 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
   end
 
   describe "#node" do
-    let(:node_context) do
-      node_factory_context_to_node_context(factory_context)
-    end
-
     subject(:node) do
       described_class.new(factory_context, factory_class).node(node_context)
+    end
+
+    let(:node_context) do
+      node_factory_context_to_node_context(factory_context)
     end
 
     context "when reference is valid" do

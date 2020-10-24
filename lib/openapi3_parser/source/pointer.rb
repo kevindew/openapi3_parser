@@ -39,7 +39,7 @@ module Openapi3Parser
       def fragment
         fragment = segments.map { |s| CGI.escape(s.to_s).gsub("+", "%20") }
                            .join("/")
-        "##{(absolute ? fragment.prepend('/') : fragment)}"
+        "##{absolute ? fragment.prepend('/') : fragment}"
       end
 
       def to_s

@@ -43,11 +43,11 @@ module Openapi3Parser
 
       def node
         @node ||= begin
-                    node_context = Context.next_field(parent_context,
-                                                      field,
-                                                      node_factory.context)
-                    node_factory.node(node_context)
-                  end
+          node_context = Context.next_field(parent_context,
+                                            field,
+                                            node_factory.context)
+          node_factory.node(node_context)
+        end
       end
     end
   end

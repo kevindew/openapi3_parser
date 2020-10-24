@@ -21,7 +21,7 @@ RSpec.describe "Open an invalid document" do
     }
   end
 
-  it { is_expected.to_not be_valid }
+  it { is_expected.not_to be_valid }
 
   it "raises an exception accessing the erroneous node" do
     expect { document.openapi }.not_to raise_error

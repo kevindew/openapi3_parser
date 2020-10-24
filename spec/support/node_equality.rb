@@ -6,9 +6,9 @@ RSpec.shared_examples "node equality" do |input|
   include Helpers::Context
 
   describe "#==" do
-    let(:context) { create_node_context({}) }
-
     subject { described_class.new(input, context) }
+
+    let(:context) { create_node_context({}) }
 
     context "when context and input are the same" do
       let(:other) { described_class.new(input, context) }

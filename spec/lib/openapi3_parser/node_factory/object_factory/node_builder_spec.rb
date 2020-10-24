@@ -6,6 +6,8 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
   include Helpers::Context
 
   describe ".errors" do
+    subject { described_class.errors(factory) }
+
     let(:input) { nil }
     let(:factory) do
       Openapi3Parser::NodeFactory::Contact.new(
@@ -13,12 +15,11 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
       )
     end
 
-    subject { described_class.errors(factory) }
-
     it { is_expected.to be_a(Openapi3Parser::Validation::ErrorCollection) }
 
     context "when given a nil input and factory allows a default" do
       let(:input) { nil }
+
       before do
         allow(factory).to receive(:can_use_default?).and_return(true)
       end
@@ -28,6 +29,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
 
     context "when given a nil input and factory doesn't allow a default" do
       let(:input) { nil }
+
       before do
         allow(factory).to receive(:can_use_default?).and_return(false)
       end
@@ -49,6 +51,8 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
   end
 
   describe ".node_data" do
+    subject(:node_data) { described_class.node_data(factory, node_context) }
+
     let(:input) { nil }
     let(:node_factory_context) { create_node_factory_context(input) }
 
@@ -60,10 +64,9 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
       Openapi3Parser::NodeFactory::Contact.new(node_factory_context)
     end
 
-    subject(:node_data) { described_class.node_data(factory, node_context) }
-
     context "when given a nil input and factory allows that" do
       let(:input) { nil }
+
       before do
         allow(factory).to receive(:can_use_default?).and_return(true)
       end
@@ -73,6 +76,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
 
     context "when given a nil input and factory doesn't allow a default" do
       let(:input) { nil }
+
       before do
         allow(factory).to receive(:can_use_default?).and_return(false)
       end

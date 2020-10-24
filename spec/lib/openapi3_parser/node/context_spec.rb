@@ -82,6 +82,12 @@ RSpec.describe Openapi3Parser::Node::Context do
   end
 
   describe "#==" do
+    subject do
+      described_class.new({},
+                          document_location: document_location,
+                          source_location: source_location)
+    end
+
     let(:document_location) do
       create_source_location({}, pointer_segments: %w[field_a])
     end
@@ -90,12 +96,6 @@ RSpec.describe Openapi3Parser::Node::Context do
       create_source_location({},
                              document: document_location.source.document,
                              pointer_segments: %w[ref_a])
-    end
-
-    subject do
-      described_class.new({},
-                          document_location: document_location,
-                          source_location: source_location)
     end
 
     context "when document_locations, input and source locations match" do
@@ -126,6 +126,8 @@ RSpec.describe Openapi3Parser::Node::Context do
   end
 
   describe "#same_data_and_source?" do
+    subject { instance.same_data_and_source?(other) }
+
     let(:source_location) do
       create_source_location({}, pointer_segments: %w[ref_a])
     end
@@ -147,8 +149,6 @@ RSpec.describe Openapi3Parser::Node::Context do
                           document_location: document_location,
                           source_location: source_location)
     end
-
-    subject { instance.same_data_and_source?(other) }
 
     context "when input and source locations match" do
       let(:other) do
@@ -172,6 +172,8 @@ RSpec.describe Openapi3Parser::Node::Context do
   end
 
   describe "#relative_node" do
+    subject { instance.relative_node(pointer) }
+
     let(:instance) do
       info = { "title" => "Minimal Openapi definition", "version" => "1.0.0" }
       create_node_context(info,
@@ -181,20 +183,22 @@ RSpec.describe Openapi3Parser::Node::Context do
                           pointer_segments: %w[info])
     end
 
-    subject { instance.relative_node(pointer) }
-
     context "when looking up a pointer that exists" do
       let(:pointer) { "#version" }
+
       it { is_expected.to eq "1.0.0" }
     end
 
     context "when looking up a pointer that doesn't exist" do
       let(:pointer) { "#non-existant" }
+
       it { is_expected.to be_nil }
     end
   end
 
   describe "#parent_node" do
+    subject { instance.parent_node }
+
     let(:instance) do
       info = { "title" => "Minimal Openapi definition", "version" => "1.0.0" }
       create_node_context(info,
@@ -204,15 +208,15 @@ RSpec.describe Openapi3Parser::Node::Context do
                           pointer_segments: pointer_segments)
     end
 
-    subject { instance.parent_node }
-
     context "when there is a parent" do
       let(:pointer_segments) { %w[info] }
+
       it { is_expected.to be_an_instance_of(Openapi3Parser::Node::Openapi) }
     end
 
     context "when we're at the root so there is no parent node" do
       let(:pointer_segments) { [] }
+
       it { is_expected.to be_nil }
     end
   end
