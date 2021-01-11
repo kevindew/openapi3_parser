@@ -9,8 +9,22 @@ Metrics/MethodLength:
   Max: 30
 Metrics/AbcSize:
   Max: 30
+RSpec/ExampleLength:
+  Max: 30
 Style/Documentation:
   Enabled: false
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
+    - '*.gemspec'
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/integration/**/*.rb'
+# I'd rather have multiple expectations than lots of duplicate tests
+RSpec/MultipleExpectations:
+  Enabled: false
+# The default arbitrary number (5) is a little painful
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+RSpec/MessageSpies:
+  Enabled: false
