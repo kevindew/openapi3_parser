@@ -1,37 +1,32 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples "mutually exclusive example" do
-  subject { described_class.new(node_factory_context) }
+  let(:input) { {} }
 
-  context "when neither example or examples is provided" do
-    let(:example) { nil }
-    let(:examples) { nil }
-
-    it { is_expected.to be_valid }
+  it "is valid when neither example or examples are provided" do
+    instance = described_class.new(create_node_factory_context(input))
+    expect(instance).to be_valid
   end
 
-  context "when an example is provided" do
-    let(:example) { "anything" }
-    let(:examples) { nil }
+  it "is valid when one of them is provided" do
+    factory_context = create_node_factory_context(
+      input.merge({ "example" => "anything" })
+    )
+    expect(described_class.new(factory_context)).to be_valid
 
-    it { is_expected.to be_valid }
+    factory_context = create_node_factory_context(
+      input.merge({ "examples" => {} })
+    )
+    expect(described_class.new(factory_context)).to be_valid
   end
 
-  context "when examples are provided" do
-    let(:example) { nil }
-    let(:examples) { {} }
-
-    it { is_expected.to be_valid }
-  end
-
-  context "when both are provided" do
-    let(:example) { "anything" }
-    let(:examples) { {} }
-
-    it do
-      expect(subject)
-        .to have_validation_error("#/")
-        .with_message("example and examples are mutually exclusive fields")
-    end
+  it "is invalid when both of them are provided" do
+    factory_context = create_node_factory_context({ "example" => "anything",
+                                                    "examples" => {} })
+    instance = described_class.new(factory_context)
+    expect(instance).not_to be_valid
+    expect(instance)
+      .to have_validation_error("#/")
+      .with_message("example and examples are mutually exclusive fields")
   end
 end
