@@ -48,13 +48,6 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
   end
 
   describe ".resolved_reference" do
-    subject(:context) do
-      described_class.resolved_reference(
-        reference_context,
-        source_location: source_location
-      )
-    end
-
     let(:input) { "data" }
     let(:source_location) { create_source_location(input) }
 

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require "openapi3_parser"
-
 RSpec.describe "Open a document with recursive references" do
-  subject(:document) { Openapi3Parser.load(input) }
+  let(:document) { Openapi3Parser.load(input) }
 
   let(:input) do
     {
@@ -48,7 +46,9 @@ RSpec.describe "Open a document with recursive references" do
     }
   end
 
-  it { is_expected.to be_valid }
+  it "is a valid document" do
+    expect(document).to be_valid
+  end
 
   it "doesn't raise an error accessing the root" do
     expect { document.root }.not_to raise_error

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe "Open a document with defaults" do
-  subject(:document) { Openapi3Parser.load(input) }
+  let(:document) { Openapi3Parser.load(input) }
 
   let(:input) do
     {
@@ -36,7 +36,9 @@ RSpec.describe "Open a document with defaults" do
     }
   end
 
-  it { is_expected.to be_valid }
+  it "is a valid document" do
+    expect(document).to be_valid
+  end
 
   it "has nil values for objects without defaults" do
     expect(document.info.contact).to be_nil

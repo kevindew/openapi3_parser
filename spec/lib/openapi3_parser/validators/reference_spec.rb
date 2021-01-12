@@ -2,51 +2,33 @@
 
 RSpec.describe Openapi3Parser::Validators::Reference do
   describe "#errors" do
-    subject { described_class.new(input).errors }
-
-    let(:input) { "#/test" }
-
-    it { is_expected.to be_an_instance_of(Array) }
-
-    context "when it's valid" do
-      it { is_expected.to be_empty }
+    it "returns an empty array when input is valid" do
+      expect(described_class.new("#/test").errors).to match_array([])
     end
 
-    context "when it's not a string" do
-      let(:input) { 12 }
-      let(:errors) { ["Expected a string"] }
-
-      it { is_expected.to match_array(errors) }
+    it "has an error when input is not a string" do
+      expect(described_class.new(12).errors)
+        .to match_array(["Expected a string"])
     end
 
-    context "when it's an invalid URI" do
-      let(:input) { "test test test" }
-      let(:errors) { ["Could not parse as a URI"] }
-
-      it { is_expected.to match_array(errors) }
+    it "has an error when input is an invalid URI" do
+      expect(described_class.new("not a uri").errors)
+        .to match_array(["Could not parse as a URI"])
     end
 
-    context "when it's an invalid JSON pointer" do
-      let(:input) { "./test#any-old-fragment" }
-      let(:errors) { ["Invalid JSON pointer, expected a root slash"] }
-
-      it { is_expected.to match_array(errors) }
+    it "has an error when input is an invalid JSON pointer" do
+      expect(described_class.new("./test#any-old-fragment").errors)
+        .to match_array(["Invalid JSON pointer, expected a root slash"])
     end
   end
 
   describe "#valid?" do
-    subject { described_class.new(input).valid? }
-
-    let(:input) { "#/test" }
-
-    context "when it's valid" do
-      it { is_expected.to be true }
+    it "returns true for valid input" do
+      expect(described_class.new("#/test")).to be_valid
     end
 
-    context "when it's invalid" do
-      let(:input) { "test test" }
-
-      it { is_expected.to be false }
+    it "returns false for invalid input" do
+      expect(described_class.new(12)).not_to be_valid
     end
   end
 end

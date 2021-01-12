@@ -1,121 +1,80 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
-  include Helpers::Context
-
   describe ".call" do
-    subject(:call) do
-      described_class.call(validatable,
-                           allow_extensions: allow_extensions,
-                           allowed_fields: allowed_fields,
-                           raise_on_invalid: raise_on_invalid)
-    end
-
-    let(:node_factory_context) { create_node_factory_context({}) }
-    let(:validatable) do
-      Openapi3Parser::Validation::Validatable.new(
-        Openapi3Parser::NodeFactory::Map.new(node_factory_context)
-      )
-    end
-    let(:allow_extensions) { true }
-    let(:allowed_fields) { [] }
-    let(:raise_on_invalid) { true }
-
-    context "when the instance is valid" do
-      it { is_expected.to be_nil }
-    end
-
-    describe "allow_extensions option" do
-      let(:node_factory_context) do
-        create_node_factory_context({ "x-extension" => "my extension",
-                                      "x-extension-2" => "my other extension" })
-      end
-
-      context "when it is true" do
-        let(:allow_extensions) { true }
-
-        it "doesn't raise error on extensions" do
-          expect { call }.not_to raise_error
-        end
-      end
-
-      context "when it is false and allowed_fields are set" do
-        let(:allowed_fields) { %w[this that] }
-        let(:allow_extensions) { false }
-
-        it "raises an error on extensions" do
-          expect { call }
-            .to raise_error(
-              Openapi3Parser::Error::UnexpectedFields,
-              "Unexpected fields for #/: x-extension and x-extension-2"
-            )
-        end
-      end
+    it "doesn't raise an error for valid input" do
+      validatable = create_validatable({})
+      expect { described_class.call(validatable, allowed_fields: []) }
+        .not_to raise_error
     end
 
     describe "allowed_fields option" do
-      let(:node_factory_context) do
-        create_node_factory_context({ "fieldA" => "My field" })
+      let(:validatable) do
+        create_validatable({ "fieldA" => "My field" })
       end
 
-      context "when it includes the fields" do
-        let(:allowed_fields) { %w[fieldA fieldB] }
-
-        it "doesn't raise error" do
-          expect { call }.not_to raise_error
-        end
+      it "doesn't raise an error for an allowed field" do
+        expect { described_class.call(validatable, allowed_fields: ["fieldA"]) }
+          .not_to raise_error
       end
 
-      context "when it doesn't include the fields" do
-        let(:allowed_fields) { %w[fieldB fieldC] }
+      it "raises an error when a field isn't allowed" do
+        expect { described_class.call(validatable, allowed_fields: ["fieldC"]) }
+          .to raise_error(
+            Openapi3Parser::Error::UnexpectedFields,
+            "Unexpected fields for #/: fieldA"
+          )
+      end
+    end
 
-        it "raises an error on extensions" do
-          expect { call }
-            .to raise_error(
-              Openapi3Parser::Error::UnexpectedFields,
-              "Unexpected fields for #/: fieldA"
-            )
-        end
+    describe "allow_extensions option" do
+      let(:validatable) do
+        create_validatable({ "x-extension" => "my extension",
+                             "x-extension-2" => "my other extension" })
       end
 
-      context "when it includes extesnions and they're allowed" do
-        let(:node_factory_context) do
-          create_node_factory_context({ "fieldA" => "My field",
-                                        "x-test" => "my extension" })
-        end
+      it "defaults to allowing extensions" do
+        expect { described_class.call(validatable, allowed_fields: []) }
+          .not_to raise_error
+      end
 
-        let(:allowed_fields) { %w[fieldA] }
-        let(:allowed_extensions) { true }
-
-        it "raises an error on extensions" do
-          expect { call }.not_to raise_error
-        end
+      it "raises an error when allow_extensions is false" do
+        expect { described_class.call(validatable, allowed_fields: [], allow_extensions: false) }
+          .to raise_error(
+            Openapi3Parser::Error::UnexpectedFields,
+            "Unexpected fields for #/: x-extension and x-extension-2"
+          )
       end
     end
 
     describe "raise_on_invalid option" do
-      let(:node_factory_context) do
-        create_node_factory_context({ "fieldA" => "My field" })
+      let(:validatable) do
+        create_validatable({ "fieldA" => "My field" })
       end
 
-      let(:allowed_fields) { %w[fieldB] }
+      it "sets errors on the validatable when invalid and raise_on_invalid is false" do
+        described_class.call(validatable,
+                             allowed_fields: ["fieldC"],
+                             raise_on_invalid: false)
 
-      context "when it is false" do
-        let(:raise_on_invalid) { false }
+        expect(validatable.errors.length).to eq 1
+        expect(validatable.errors.first.message).to eq "Unexpected fields: fieldA"
+      end
 
-        it "doesn't raise errors" do
-          expect { call }.not_to raise_error
-        end
+      it "doesn't set errors on the validatable when valid" do
+        described_class.call(validatable,
+                             allowed_fields: ["fieldA"],
+                             raise_on_invalid: false)
 
-        it "adds errors to validatable" do
-          expect { call }
-            .to change { validatable.errors.count }
-            .from(0)
-            .to(1)
-        end
+        expect(validatable.errors).to be_empty
       end
     end
+  end
+
+  def create_validatable(input)
+    node_factory_context = create_node_factory_context(input)
+    Openapi3Parser::Validation::Validatable.new(
+      Openapi3Parser::NodeFactory::Map.new(node_factory_context)
+    )
   end
 end

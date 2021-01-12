@@ -2,133 +2,98 @@
 
 RSpec.describe Openapi3Parser::Source::Pointer do
   describe ".from_fragment" do
-    subject { described_class.from_fragment(fragment) }
-
-    context "when fragment is at absolute" do
-      let(:fragment) { "#/test" }
-
-      it { is_expected.to eq described_class.new(%w[test]) }
+    it "creates a pointer object based on the fragment" do
+      expect(described_class.from_fragment("#/test"))
+        .to eq described_class.new(%w[test])
     end
 
-    context "when fragment is not at absolute" do
-      let(:fragment) { "#test" }
-
-      it { is_expected.to eq described_class.new(%w[test], absolute: false) }
+    it "creates a relative pointer when the fragment isn't an absolute path" do
+      expect(described_class.from_fragment("#test"))
+        .to eq described_class.new(%w[test], absolute: false)
     end
 
-    context "when fragment misses the hash" do
-      let(:fragment) { "/test" }
-
-      it { is_expected.to eq described_class.new(%w[test], absolute: true) }
+    it "copes if a pointer is missing the hash character" do
+      expect(described_class.from_fragment("/test"))
+        .to eq described_class.new(%w[test])
     end
 
-    context "when fragment contains integers" do
-      let(:fragment) { "#/test/1/hi" }
-
-      it { is_expected.to eq described_class.new(["test", 1, "hi"]) }
+    it "converts numeric segments to integers" do
+      expect(described_class.from_fragment("#/test/1/hi"))
+        .to eq described_class.new(["test", 1, "hi"])
     end
 
-    context "when fragment contains escaped characters" do
-      let(:fragment) { "#/test%20this/and%2Fthat" }
-
-      it { is_expected.to eq described_class.new(["test this", "and/that"]) }
+    it "resolves any URI escaping" do
+      expect(described_class.from_fragment("#/test%20this/and%2Fthat"))
+        .to eq described_class.new(["test this", "and/that"])
     end
   end
 
   describe ".merge_pointers" do
-    subject { described_class.merge_pointers(base_pointer, new_pointer) }
+    it "adapts a pointer based on a new one that is relative" do
+      merged_pointer = described_class.merge_pointers(
+        described_class.new(%w[test]),
+        described_class.new(%w[new], absolute: false)
+      )
 
-    context "when both pointers are nil" do
-      let(:base_pointer) { nil }
-      let(:new_pointer) { nil }
-
-      it { is_expected.to be_nil }
+      expect(merged_pointer).to eq described_class.new(%w[test new])
     end
 
-    context "when base_pointer is nil" do
-      let(:base_pointer) { nil }
-      let(:new_pointer) { described_class.new(%w[test]) }
+    it "replaces a pointer if the new one is absolute" do
+      new_pointer = described_class.new(%w[new])
+      merged_pointer = described_class.merge_pointers(
+        described_class.new(%w[test]),
+        new_pointer
+      )
 
-      it { is_expected.to eq new_pointer }
+      expect(merged_pointer).to eq new_pointer
     end
 
-    context "when new_pointer is nil" do
-      let(:base_pointer) { described_class.new(%w[test]) }
-      let(:new_pointer) { nil }
-
-      it { is_expected.to eq base_pointer }
+    it "can accept array pointers" do
+      merged_pointer = described_class.merge_pointers(%w[test path], %w[further along])
+      expect(merged_pointer).to eq described_class.new(%w[test path further along])
     end
 
-    context "when new_pointer is absolute" do
-      let(:base_pointer) { described_class.new(%w[test]) }
-      let(:new_pointer) { described_class.new(%w[new]) }
-
-      it { is_expected.to eq new_pointer }
+    it "can accept string fragments as pointers" do
+      merged_pointer = described_class.merge_pointers("#path/to/item", "#../../new")
+      expect(merged_pointer).to eq described_class.new(%w[path new])
     end
 
-    context "when new_pointer is not absolute" do
-      let(:base_pointer) { described_class.new(%w[test]) }
-      let(:new_pointer) { described_class.new(%w[new], absolute: false) }
+    it "copes when passed nil pointers" do
+      pointer = described_class.new(%w[a])
 
-      it { is_expected.to eq described_class.new(%w[test new]) }
-    end
-
-    context "when pointers are arrays" do
-      let(:base_pointer) { %w[test path] }
-      let(:new_pointer) { %w[further along] }
-
-      it { is_expected.to eq described_class.new(%w[test path further along]) }
-    end
-
-    context "when pointers are fragments" do
-      let(:base_pointer) { "#path" }
-      let(:new_pointer) { "#to" }
-
-      it { is_expected.to eq described_class.new(%w[path to]) }
-    end
-
-    context "when pointers are fragments with relative mapping" do
-      let(:base_pointer) { "#path/to/item" }
-      let(:new_pointer) { "#../../me" }
-
-      it { is_expected.to eq described_class.new(%w[path me]) }
+      expect(described_class.merge_pointers(pointer, nil)).to eq pointer
+      expect(described_class.merge_pointers(nil, pointer)).to eq pointer
+      expect(described_class.merge_pointers(nil, nil)).to be_nil
     end
   end
 
   describe "#fragment" do
-    subject { described_class.new(segments, absolute: absolute).fragment }
-
-    let(:absolute) { true }
-
-    context "when segments are empty" do
-      let(:segments) { [] }
-
-      it { is_expected.to eq "#/" }
+    it "returns the pointer as a fragment" do
+      instance = described_class.new(%w[openapi info title])
+      expect(instance.fragment).to eq "#/openapi/info/title"
     end
 
-    context "when segments are populated" do
-      let(:segments) { %w[openapi info title] }
-
-      it { is_expected.to eq "#/openapi/info/title" }
+    it "can return a relative fragment" do
+      instance = described_class.new(%w[info title], absolute: false)
+      expect(instance.fragment).to eq "#info/title"
     end
 
-    context "when segments contain characters not suitable for URLS" do
-      let(:segments) { ["with/slash", "with space"] }
-
-      it { is_expected.to eq "#/with%2Fslash/with%20space" }
+    it "URI encodes characters that not suitable for URLs" do
+      instance = described_class.new(["with/slash", "with space"])
+      expect(instance.fragment).to eq "#/with%2Fslash/with%20space"
     end
 
-    context "when segments contain numbers" do
-      let(:segments) { [0, 0.123] }
-
-      it { is_expected.to eq "#/0/0.123" }
+    it "copes with segments that are numbers" do
+      instance = described_class.new([0, 0.123])
+      expect(instance.fragment).to eq "#/0/0.123"
     end
 
-    context "when absolute is false" do
-      let(:absolute) { false }
-      let(:segments) { %w[openapi info title] }
+    it "returns an empty fragment when segments are empty" do
+      absolute = described_class.new([])
+      expect(absolute.fragment).to eq "#/"
 
-      it { is_expected.to eq "#openapi/info/title" }
+      relative = described_class.new([], absolute: false)
+      expect(relative.fragment).to eq "#"
     end
   end
 end

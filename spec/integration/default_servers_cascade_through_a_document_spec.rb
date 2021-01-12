@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe "Default servers through a document" do
-  subject(:document) { Openapi3Parser.load(input) }
+  let(:document) { Openapi3Parser.load(input) }
 
   let(:input) do
     {

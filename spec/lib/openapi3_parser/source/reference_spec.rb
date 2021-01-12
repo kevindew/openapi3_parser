@@ -2,94 +2,64 @@
 
 RSpec.describe Openapi3Parser::Source::Reference do
   describe ".only_fragment?" do
-    subject { described_class.new(reference).only_fragment? }
-
-    context "when reference is only a fragment" do
-      let(:reference) { "#/test" }
-
-      it { is_expected.to be true }
+    it "returns true when reference is only a fragment" do
+      expect(described_class.new("#/test").only_fragment?).to be true
     end
 
-    context "when reference includes a filename" do
-      let(:reference) { "test.yaml" }
-
-      it { is_expected.to be false }
+    it "returns false when reference includes a filename" do
+      expect(described_class.new("test.yaml").only_fragment?).to be false
     end
   end
 
   describe ".fragment" do
-    subject { described_class.new(reference).fragment }
-
-    context "when reference has a fragment" do
-      let(:reference) { "test.yaml#/test" }
-
-      it { is_expected.to eq "/test" }
+    it "returns the fragment for a reference with a fragment" do
+      expect(described_class.new("test.yaml#/test").fragment).to eq "/test"
     end
 
-    context "when reference hasn't got a reference" do
-      let(:reference) { "test.yaml" }
-
-      it { is_expected.to be_nil }
+    it "returns nil for a reference without a fragment" do
+      expect(described_class.new("test.yaml").fragment).to be_nil
     end
   end
 
   describe ".resource_uri" do
-    subject { described_class.new(reference).resource_uri }
-
-    context "when reference has a fragment" do
-      let(:reference) { "test.yaml#/test" }
-
-      it { is_expected.to eq URI.parse("test.yaml") }
+    it "returns a URI object for the non fragment portion of the reference" do
+      expect(described_class.new("test.yaml#/test").resource_uri)
+        .to eq URI.parse("test.yaml")
     end
 
-    context "when reference is only a fragment" do
-      let(:reference) { "#/test" }
-
-      it { is_expected.to eq URI.parse("") }
+    it "returns an empty URI object when the reference is only a fragment" do
+      expect(described_class.new("#/test").resource_uri)
+        .to eq URI.parse("")
     end
   end
 
   describe ".absolute?" do
-    subject { described_class.new(reference).absolute? }
-
-    context "when reference is an absolute URL" do
-      let(:reference) { "http://example.com/" }
-
-      it { is_expected.to be true }
+    it "returns true when reference is an absolute URL" do
+      expect(described_class.new("https://example.org").absolute?).to be true
     end
 
-    context "when reference is to a relative file" do
-      let(:reference) { "test.yaml" }
-
-      it { is_expected.to be false }
+    it "returns false when reference is a relative URL" do
+      expect(described_class.new("test.yaml").absolute?).to be false
     end
 
-    context "when reference is to a file in root of file system" do
-      let(:reference) { "/path/to/file" }
-
-      it { is_expected.to be false }
+    it "returns false when reference is to a root file in a file system" do
+      expect(described_class.new("/path/to/file.yaml").absolute?).to be false
     end
   end
 
   describe ".json_pointer" do
-    subject { described_class.new(reference).json_pointer }
-
-    context "when reference is not a fragment" do
-      let(:reference) { "test.yaml" }
-
-      it { is_expected.to be_empty }
+    it "returns an array of reference segments" do
+      expect(described_class.new("test.yaml#/path/to/field").json_pointer)
+        .to eq %w[path to field]
     end
 
-    context "when reference has a fragment" do
-      let(:reference) { "test.yaml#/basic" }
-
-      it { is_expected.to match(%w[basic]) }
+    it "decodes URL encoded segments" do
+      instance = described_class.new("test.yaml#/two%20words/comma%2C%20seperated")
+      expect(instance.json_pointer).to eq ["two words", "comma, seperated"]
     end
 
-    context "when reference is URL encoded" do
-      let(:reference) { "test.yaml#/two%20words/comma%2C%20seperated" }
-
-      it { is_expected.to match(["two words", "comma, seperated"]) }
+    it "returns an empty array for a reference without a fragment" do
+      expect(described_class.new("test.yaml").json_pointer).to eq []
     end
   end
 end

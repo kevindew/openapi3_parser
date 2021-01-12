@@ -56,7 +56,7 @@ module Openapi3Parser
         grouped.each_with_object({}) do |(_, items), memo|
           items.each do |item|
             key = item.location_summary(with_type: items.count > 1)
-            memo[key] = (memo[key] || []) + item.errors.map(&:to_s)
+            memo[key] = memo.fetch(key, []) + item.errors.map(&:to_s)
           end
         end
       end

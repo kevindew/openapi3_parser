@@ -1,94 +1,53 @@
 # frozen_string_literal: true
 
 RSpec.describe Openapi3Parser::SourceInput::ResolveNext do
+  before do
+    allow(File).to receive(:read).and_return("")
+    stub_request(:get, /example/)
+  end
+
   describe "#call" do
-    subject do
-      described_class.call(reference,
-                           current_source_input,
-                           base_url: base_url,
-                           working_directory: working_directory)
+    it "can return a file source input based on the working directory" do
+      source_input = described_class.call(
+        Openapi3Parser::Source::Reference.new("other.yaml#/test"),
+        Openapi3Parser::SourceInput::Raw.new({}),
+        working_directory: "/file"
+      )
+
+      expect(source_input)
+        .to eq Openapi3Parser::SourceInput::File.new("/file/other.yaml")
     end
 
-    before do
-      allow(File).to receive(:read).and_return("")
-      stub_request(:get, %r{^https://example.com/})
+    it "can return a URL source input based on the base URL" do
+      source_input = described_class.call(
+        Openapi3Parser::Source::Reference.new("other.yaml#/test"),
+        Openapi3Parser::SourceInput::Raw.new({}),
+        base_url: "https://example.org/path/to/file.yaml"
+      )
+
+      expect(source_input)
+        .to eq Openapi3Parser::SourceInput::Url.new("https://example.org/path/to/other.yaml")
     end
 
-    let(:reference) do
-      Openapi3Parser::Source::Reference.new(literal_reference)
-    end
-    let(:current_source_input) do
-      Openapi3Parser::SourceInput::Raw.new({},
-                                           base_url: base_url,
-                                           working_directory: working_directory)
-    end
-    let(:base_url) { nil }
-    let(:working_directory) { nil }
+    it "returns an unchanged URL for an absolute reference" do
+      source_input = described_class.call(
+        Openapi3Parser::Source::Reference.new("https://example.org/file.yaml"),
+        Openapi3Parser::SourceInput::Raw.new({}),
+        base_url: "https://example.org/path/to/file.yaml"
+      )
 
-    context "when reference is a fragment" do
-      let(:literal_reference) { "#/test" }
-
-      it { is_expected.to be current_source_input }
+      expect(source_input)
+        .to eq Openapi3Parser::SourceInput::Url.new("https://example.org/file.yaml")
     end
 
-    context "when reference is a relative file" do
-      let(:literal_reference) { "test.yaml#/test" }
+    it "returns the current source input when the reference is just a fragment" do
+      current_source_input = Openapi3Parser::SourceInput::Raw.new({})
+      source_input = described_class.call(
+        Openapi3Parser::Source::Reference.new("#/test"),
+        current_source_input
+      )
 
-      context "and base_url and working_directory aren't set" do
-        let(:file_source_input) do
-          path = File.expand_path("test.yaml", Dir.pwd)
-          Openapi3Parser::SourceInput::File.new(path)
-        end
-
-        it { is_expected.to eq file_source_input }
-      end
-
-      context "and base_url is set" do
-        let(:base_url) { "https://example.com/" }
-        let(:url_source_input) do
-          Openapi3Parser::SourceInput::Url.new("https://example.com/test.yaml")
-        end
-
-        it { is_expected.to eq url_source_input }
-      end
-
-      context "and working_directory is set" do
-        let(:working_directory) { "/test/path" }
-        let(:file_source_input) do
-          Openapi3Parser::SourceInput::File.new("/test/path/test.yaml")
-        end
-
-        it { is_expected.to eq file_source_input }
-      end
-    end
-
-    context "when reference is an absolute URL" do
-      let(:literal_reference) { "https://example.com/test.yaml#/test" }
-      let(:url_source_input) do
-        Openapi3Parser::SourceInput::Url.new("https://example.com/test.yaml")
-      end
-
-      it { is_expected.to eq url_source_input }
-    end
-
-    context "when reference is a path prefixed with a slash" do
-      let(:literal_reference) { "/path/test.yaml#/test" }
-      let(:file_source_input) do
-        Openapi3Parser::SourceInput::File.new("/path/test.yaml")
-      end
-
-      it { is_expected.to eq file_source_input }
-
-      context "and a base_url is set" do
-        let(:base_url) { "https://example.com/different/path" }
-        let(:url_source_input) do
-          Openapi3Parser::SourceInput::Url.new(
-            "https://example.com/path/test.yaml"
-          )
-        end
-
-        it { is_expected.to eq url_source_input }
-      end
+      expect(source_input).to eq current_source_input
     end
   end
 end

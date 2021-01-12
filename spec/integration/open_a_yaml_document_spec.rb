@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-require "openapi3_parser"
-
 RSpec.describe "Open a YAML Document" do
-  subject(:document) { Openapi3Parser.load_file(path) }
-
+  let(:document) { Openapi3Parser.load_file(path) }
   let(:path) { File.join(__dir__, "..", "support", "examples", "uber.yaml") }
 
-  it { is_expected.to be_valid }
+  it "is a valid document" do
+    expect(document).to be_valid
+  end
 
   it "can access the version" do
     expect(document.openapi).to eq "3.0.0"

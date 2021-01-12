@@ -1,45 +1,38 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::Node::PathItem do
-  include Helpers::Context
-
   describe "#alternative_servers?" do
-    subject { instance.alternative_servers? }
+    it "returns true when this node has it's own servers" do
+      node = create_node([{ "url" => "https://example.com" }])
 
-    let(:instance) do
-      factory_context = create_node_factory_context(
-        input,
-        document_input: {
-          "openapi" => "3.0.0",
-          "info" => {
-            "title" => "Minimal Openapi definition",
-            "version" => "1.0.0"
-          },
-          "paths" => {}
-        }
-      )
-
-      Openapi3Parser::NodeFactory::PathItem
-        .new(factory_context)
-        .node(node_factory_context_to_node_context(factory_context))
+      expect(node.alternative_servers?).to be true
     end
 
-    context "when object has alternative servers defined" do
-      let(:input) do
-        {
-          "servers" => [{ "url" => "https://example.com" }]
-        }
-      end
+    it "returns false when this node hasn't got it's own servers" do
+      node = create_node(nil)
 
-      it { is_expected.to be true }
+      expect(node.alternative_servers?).to be false
     end
+  end
 
-    context "when object uses the root servers" do
-      let(:input) { {} }
+  def create_node(servers)
+    input = { "servers" => servers }
 
-      it { is_expected.to be false }
-    end
+    factory_context = create_node_factory_context(
+      input,
+      document_input: {
+        "openapi" => "3.0.0",
+        "info" => {
+          "title" => "Minimal Openapi definition",
+          "version" => "1.0.0"
+        },
+        "paths" => { "/test" => { "get" => input } }
+      },
+      pointer_segments: %w[paths /test get]
+    )
+
+    Openapi3Parser::NodeFactory::PathItem
+      .new(factory_context)
+      .node(node_factory_context_to_node_context(factory_context))
   end
 end

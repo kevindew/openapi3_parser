@@ -1,14 +1,8 @@
 # frozen_string_literal: true
 
-require "support/node_equality"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::Node::Object do
-  include Helpers::Context
-
   describe "#node_at" do
-    subject { described_class.new(data, context).node_at(pointer) }
-
+    let(:instance) { described_class.new(data, context) }
     let(:data) { {} }
     let(:context) do
       create_node_context(
@@ -25,22 +19,18 @@ RSpec.describe Openapi3Parser::Node::Object do
       )
     end
 
-    context "when a absolute path is specified" do
-      let(:pointer) { "#/paths" }
-
-      it { is_expected.to be_instance_of(Openapi3Parser::Node::Paths) }
+    it "can find a node via an absolute path" do
+      expect(instance.node_at("#/paths"))
+        .to be_instance_of(Openapi3Parser::Node::Paths)
     end
 
-    context "when a relative path is specified" do
-      let(:pointer) { "#version" }
-
-      it { is_expected.to eq "1.0.0" }
+    it "can find a node via a relative path" do
+      expect(instance.node_at("#version")).to eq "1.0.0"
     end
 
-    context "when a .. path is specified" do
-      let(:pointer) { "#.." }
-
-      it { is_expected.to be_instance_of(Openapi3Parser::Node::Openapi) }
+    it "can use '..' to access the parent node" do
+      expect(instance.node_at("#.."))
+        .to be_instance_of(Openapi3Parser::Node::Openapi)
     end
   end
 

@@ -4,14 +4,9 @@ module Openapi3Parser
   module Validators
     class Url
       def self.call(input)
-        message = %("#{input}" is not a valid URL)
-        uri = URI.parse(input)
-
-        message if !uri.relative? &&
-                   !uri.is_a?(URI::HTTP) &&
-                   !uri.is_a?(URI::HTTPS)
+        URI.parse(input) && nil
       rescue URI::InvalidURIError
-        message
+        %("#{input}" is not a valid URL)
       end
     end
   end

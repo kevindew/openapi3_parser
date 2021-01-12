@@ -2,49 +2,32 @@
 
 RSpec.describe Openapi3Parser::Validators::DuplicateParameters do
   describe ".call" do
-    subject { described_class.call(parameters) }
+    it "returns nil when there aren't any duplicate parameters" do
+      parameters = [
+        { "name" => "id", "in" => "path" },
+        { "name" => "id", "in" => "query" }
+      ]
 
-    context "when input has no duplicates" do
-      let(:parameters) do
-        [
-          { "name" => "id", "in" => "path" },
-          { "name" => "id", "in" => "query" }
-        ]
-      end
-
-      it { is_expected.to be_nil }
+      expect(described_class.call(parameters)).to be_nil
     end
 
-    context "when input has duplicates" do
-      let(:parameters) do
-        [
-          { "name" => "id", "in" => "path" },
-          { "name" => "id", "in" => "path" }
-        ]
-      end
-
-      it { is_expected.to eq "Duplicate parameters: id in path" }
+    it "copes with parameters that are in an unexpected type" do
+      parameters = [1, "string", [1, 2, 3], {}]
+      expect(described_class.call(parameters)).to be_nil
     end
 
-    context "when there are multiple duplicates" do
-      let(:parameters) do
-        [
-          { "name" => "id", "in" => "path" },
-          { "name" => "id", "in" => "path" },
-          { "name" => "address", "in" => "query" },
-          { "name" => "address", "in" => "query" }
-        ]
-      end
+    it "returns an error for dupliate parameters" do
+      parameters = [
+        { "name" => "id", "in" => "path" },
+        { "name" => "id", "in" => "path" },
+        { "name" => "field", "in" => "path" },
+        { "name" => "field", "in" => "path" },
+        { "name" => "address", "in" => "query" },
+        { "name" => "address", "in" => "query" }
+      ]
 
-      it do
-        expect(subject).to eq "Duplicate parameters: id in path, address in query"
-      end
-    end
-
-    context "when parameters are in the wrong type" do
-      let(:parameters) { [1, "string", [1, 2, 3], {}] }
-
-      it { is_expected.to be_nil }
+      expect(described_class.call(parameters))
+        .to eq "Duplicate parameters: id in path, field in path, address in query"
     end
   end
 end

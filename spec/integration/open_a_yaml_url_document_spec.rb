@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require "openapi3_parser"
-
 RSpec.describe "Open a YAML Document via URL" do
-  subject(:document) { Openapi3Parser.load_url(url) }
+  let(:document) { Openapi3Parser.load_url(url) }
+  let(:url) { "http://example.com/openapi.yml" }
 
   before do
     path = File.join(
@@ -13,9 +12,9 @@ RSpec.describe "Open a YAML Document via URL" do
       .to_return(body: File.open(path).read)
   end
 
-  let(:url) { "http://example.com/openapi.yml" }
-
-  it { is_expected.to be_valid }
+  it "is a valid document" do
+    expect(document).to be_valid
+  end
 
   it "can access the version" do
     expect(document.openapi).to eq "3.0.0"

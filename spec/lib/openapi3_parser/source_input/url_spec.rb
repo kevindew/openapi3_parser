@@ -3,182 +3,151 @@
 RSpec.describe Openapi3Parser::SourceInput::Url do
   let(:valid_input) { "test: this" }
   let(:unparsable_input) { "*invalid: yaml" }
-  let(:inaccessible_input_error) { Openapi3Parser::Error::InaccessibleInput }
-  let(:unparsable_input_error) { Openapi3Parser::Error::UnparsableInput }
   let(:url) { "https://example.com/openapi.yaml" }
 
-  def stub_200_request(body)
-    stub_request(:get, %r{^https://example.com})
-      .to_return(body: body, status: 200)
+  before do
+    stub_request(:get, %r{^https://example.com}).to_return(body: valid_input)
   end
 
-  def stub_404_request
-    stub_request(:get, %r{^https://example.com})
-      .to_return(status: 404)
-  end
-
-  before { stub_200_request(valid_input) }
-
-  describe ".available?" do
-    subject { described_class.new(url).available? }
-
-    context "when input is valid" do
-      it { is_expected.to be true }
+  describe "#available?" do
+    it "returns true when the URL returns successfully and has valid contents" do
+      expect(described_class.new(url).available?).to be true
     end
 
-    context "when file can't be opened" do
-      before { stub_404_request }
-
-      it { is_expected.to be false }
+    it "returns false when the URL returns successfully and has unparsable contents" do
+      stub_request(:get, url).to_return(body: unparsable_input)
+      expect(described_class.new(url).available?).to be false
     end
 
-    context "when file can't be parsed" do
-      before { stub_200_request(unparsable_input) }
-
-      it { is_expected.to be false }
+    it "returns false when the URL is not available" do
+      stub_request(:get, url).to_return(status: 404)
+      expect(described_class.new(url).available?).to be false
     end
   end
 
-  describe ".access_error" do
-    subject { described_class.new(url).access_error }
-
-    context "when input is valid" do
-      it { is_expected.to be_nil }
+  describe "#access_error" do
+    it "returns nil for a URL returns successfully" do
+      expect(described_class.new(url).access_error).to be_nil
     end
 
-    context "when input can't be opened" do
-      before { stub_404_request }
-
-      it { is_expected.to be_a_kind_of(inaccessible_input_error) }
+    it "returns an inaccessible input error when URL isn't available" do
+      stub_request(:get, url).to_return(status: 404)
+      expect(described_class.new(url).access_error)
+        .to be_a(Openapi3Parser::Error::InaccessibleInput)
     end
   end
 
-  describe ".parse_error" do
-    subject { described_class.new(url).parse_error }
-
-    context "when input is valid" do
-      it { is_expected.to be_nil }
+  describe "#parse_error" do
+    it "returns nil for a URL that returns valid input" do
+      expect(described_class.new(url).parse_error).to be_nil
     end
 
-    context "when input is unparsable" do
-      before { stub_200_request(unparsable_input) }
-
-      it { is_expected.to be_a_kind_of(unparsable_input_error) }
+    it "returns an unparsable input error when URL has unparsable contents" do
+      stub_request(:get, url).to_return(body: unparsable_input)
+      expect(described_class.new(url).parse_error)
+        .to be_a(Openapi3Parser::Error::UnparsableInput)
     end
   end
 
-  describe ".contents" do
-    subject { described_class.new(url).contents }
-
-    context "when input is valid" do
-      before { stub_200_request(valid_input) }
-
-      let(:valid_input) { "key: value" }
-
-      it { is_expected.to match("key" => "value") }
+  describe "#contents" do
+    it "returns the responses contents after parsing" do
+      stub_request(:get, url).to_return(body: "field: value")
+      expect(described_class.new(url).contents).to eq({ "field" => "value" })
     end
 
-    context "when input can't be opened" do
-      before { stub_404_request }
-
-      it "raises a InaccessibleInput error" do
-        expect { subject }.to raise_error(inaccessible_input_error)
-      end
+    it "raises an error when the response contents are unparsable" do
+      stub_request(:get, url).to_return(body: unparsable_input)
+      expect { described_class.new(url).contents }
+        .to raise_error(Openapi3Parser::Error::UnparsableInput)
     end
 
-    context "when input is unparsable" do
-      before { stub_200_request(unparsable_input) }
-
-      it "raises a UnparsableInput error" do
-        expect { subject }.to raise_error(unparsable_input_error)
-      end
+    it "raises an error when the URL isn't accessible" do
+      stub_request(:get, url).to_return(status: 404)
+      expect { described_class.new(url).contents }
+        .to raise_error(Openapi3Parser::Error::InaccessibleInput)
     end
   end
 
-  describe ".resolve_next" do
-    subject { described_class.new(url).resolve_next(reference) }
+  describe "#resolve_next" do
+    it "returns a new source input URL that is relative to the original URL" do
+      url = "https://example.com/path/to/openapi.yaml"
+      reference_url = "../new-file.yaml#/object"
+      reference = Openapi3Parser::Source::Reference.new(reference_url)
+      expected_url = "https://example.com/path/new-file.yaml"
 
-    let(:url) { "https://example.com/path/to/file.yaml" }
-    let(:relative_url) { "../new-file.yaml#/object" }
-    let(:reference) { Openapi3Parser::Source::Reference.new(relative_url) }
-    let(:source_input) do
-      described_class.new("https://example.com/path/new-file.yaml")
-    end
-
-    it { is_expected.to eq source_input }
-  end
-
-  describe ".==" do
-    subject { described_class.new(url).==(other) }
-
-    context "when url is the same" do
-      let(:other) { described_class.new(url) }
-
-      it { is_expected.to be true }
-    end
-
-    context "when url is different" do
-      let(:other) { described_class.new("https://example.com/different") }
-
-      it { is_expected.to be false }
-    end
-
-    context "when class is different" do
-      let(:other) { Openapi3Parser::SourceInput::Raw.new({}) }
-
-      it { is_expected.to be false }
+      source_input = described_class.new(url).resolve_next(reference)
+      expect(source_input).to eq described_class.new(expected_url)
     end
   end
 
-  describe ".relative_to" do
-    subject { described_class.new(url).relative_to(other) }
-
-    let(:url) { "https://example.com/path/to/file.yaml" }
-    let(:other_url) { "https://example.com/path/to/file.yaml" }
-    let(:other) { described_class.new(other_url) }
-
-    it { is_expected.to eq "file.yaml" }
-
-    context "when url is up a directory" do
-      let(:url) { "https://example.com/path/to/other/file.yaml" }
-
-      it { is_expected.to eq "other/file.yaml" }
+  describe "#==" do
+    it "returns true for the same class and same url" do
+      other = described_class.new(url)
+      expect(described_class.new(url)).to eq other
     end
 
-    context "when url is down a directory" do
-      let(:url) { "https://example.com/path/to-file.yaml" }
-
-      it { is_expected.to eq "../to-file.yaml" }
+    it "returns false for the same class and different url" do
+      other_url = "https://example.com/different"
+      other = described_class.new(other_url)
+      expect(described_class.new(url)).not_to eq other
     end
 
-    context "when url has different query strings" do
-      let(:url) { "https://example.com/file.yaml?key=1" }
-      let(:other_url) { "https://example.com/file.yaml?key=2" }
+    it "returns false for a different class" do
+      other = Openapi3Parser::SourceInput::Raw.new({})
+      expect(described_class.new(url)).not_to eq other
+    end
+  end
 
-      it { is_expected.to eq "file.yaml?key=1" }
+  describe "#relative_to" do
+    it "returns a string representing the relative path difference" do
+      instance = described_class.new("https://example.com/path/to/file.yaml")
+      other = described_class.new("https://example.com/file.yaml")
+      expect(instance.relative_to(other)).to eq "path/to/file.yaml"
     end
 
-    context "when other is a raw input with a base_url" do
-      let(:other) do
-        Openapi3Parser::SourceInput::Raw.new({}, base_url: other_url)
+    it "represents a lower directory with .." do
+      instance = described_class.new("https://example.com/file.yaml")
+      other = described_class.new("https://example.com/path/to/file.yaml")
+      expect(instance.relative_to(other)).to eq "../../file.yaml"
+    end
+
+    it "maintains query strings" do
+      instance = described_class.new("https://example.com/file.yaml?test=1")
+      other = described_class.new("https://example.com/file.yaml?test=2")
+      expect(instance.relative_to(other)).to eq "file.yaml?test=1"
+    end
+
+    it "returns the full URL when there isn't a relation in common" do
+      url = "https://other-example.com/file.yaml"
+      stub_request(:get, /other-example/)
+
+      instance = described_class.new(url)
+      other = described_class.new("https://example.com/file.yaml")
+
+      expect(instance.relative_to(other)).to eq url
+    end
+
+    it "returns the full URL when compared to a file input" do
+      instance = described_class.new(url)
+      other = Openapi3Parser::SourceInput::File.new("/path/to/file")
+      expect(instance.relative_to(other)).to eq url
+    end
+
+    context "when compared to a raw input" do
+      it "compares relative to the base URL if one exists" do
+        instance = described_class.new("https://example.com/path/file.yaml")
+        other = Openapi3Parser::SourceInput::Raw.new(
+          {},
+          base_url: "https://example.com/file.yaml"
+        )
+        expect(instance.relative_to(other)).to eq "path/file.yaml"
       end
 
-      it { is_expected.to eq "file.yaml" }
-    end
-
-    context "when other is a raw input in a different working directory" do
-      let(:other) do
-        Openapi3Parser::SourceInput::Raw.new({},
-                                             base_url: "https://google.com")
+      it "returns the original URL if there isn't a base URL" do
+        instance = described_class.new(url)
+        other = Openapi3Parser::SourceInput::Raw.new({})
+        expect(instance.relative_to(other)).to eq url
       end
-
-      it { is_expected.to eq url }
-    end
-
-    context "when other is a file input" do
-      let(:other) { Openapi3Parser::SourceInput::File.new("/path/to/file") }
-
-      it { is_expected.to eq url }
     end
   end
 end

@@ -1,89 +1,60 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::Node::Schema do
-  include Helpers::Context
-
   describe "#name" do
-    subject { described_class.new({}, node_context).name }
-
-    context "when the schema source location is a group of schemas" do
-      let(:node_context) do
-        create_node_context({}, pointer_segments: %w[components schemas Pet])
-      end
-
-      it { is_expected.to eq "Pet" }
+    it "returns the key of the context when the item is defined within components/schemas" do
+      node_context = create_node_context(
+        {},
+        pointer_segments: %w[components schemas Pet]
+      )
+      instance = described_class.new({}, node_context)
+      expect(instance.name).to eq "Pet"
     end
 
-    context "when the schema source location is not a group of schemas" do
-      let(:node_context) do
-        create_node_context(
-          {},
-          pointer_segments: %w[content application/json schema]
-        )
-      end
-
-      it { is_expected.to be_nil }
+    it "returns nil when a schema is defined outside of components/schemas" do
+      node_context = create_node_context(
+        {},
+        pointer_segments: %w[content application/json schema]
+      )
+      instance = described_class.new({}, node_context)
+      expect(instance.name).to be_nil
     end
   end
 
   describe "#requires?" do
-    let(:instance) do
-      factory_context = create_node_factory_context(input)
+    let(:node) do
+      input = {
+        "type" => "object",
+        "required" => %w[field_a],
+        "properties" => {
+          "field_a" => { "type" => "string" },
+          "field_b" => { "type" => "string" }
+        }
+      }
 
+      factory_context = create_node_factory_context(input)
       Openapi3Parser::NodeFactory::Schema
         .new(factory_context)
         .node(node_factory_context_to_node_context(factory_context))
     end
 
-    context "when required is not set" do
-      let(:input) do
-        {
-          "type" => "object",
-          "properties" => {
-            "field" => { "type" => "string" }
-          }
-        }
+    context "when enquiring with a field name" do
+      it "returns true when a field name is required" do
+        expect(node.requires?("field_a")).to be true
       end
 
-      it "returns false" do
-        expect(instance.requires?("field")).to be false
+      it "returns false when a field name is not required" do
+        expect(node.requires?("field_b")).to be false
       end
     end
 
-    context "when required is set" do
-      let(:input) do
-        {
-          "type" => "object",
-          "required" => %w[field_a],
-          "properties" => {
-            "field_a" => { "type" => "string" },
-            "field_b" => { "type" => "string" }
-          }
-        }
+    context "when enquiring with a schema object" do
+      it "returns true when the schema is required" do
+        expect(node.requires?(node.properties["field_a"])).to be true
       end
 
-      it "is true for a required property name" do
-        expect(instance.requires?("field_a")).to be true
-      end
-
-      it "is false for a non required property name" do
-        expect(instance.requires?("field_b")).to be false
-      end
-
-      it "is false for a missing property" do
-        expect(instance.requires?("field_c")).to be false
-      end
-
-      it "is true for a required property schema" do
-        schema = instance.properties["field_a"]
-        expect(instance.requires?(schema)).to be true
-      end
-
-      it "is false for a non required property schema" do
-        schema = instance.properties["field_b"]
-        expect(instance.requires?(schema)).to be false
+      it "returns false when the schema is not required" do
+        expect(node.requires?(node.properties["field_b"])).to be false
       end
     end
   end

@@ -1,18 +1,10 @@
 # frozen_string_literal: true
 
-require "openapi3_parser"
-
 # This is to test that YAML doesn't blow up when we encounter a Date or Time
 # (which are valid types in YAML) - these should be avoided however as these
 # are expected to be strings.
 RSpec.describe "Open a YAML Document with dates" do
-  subject(:document) { Openapi3Parser.load_url(url) }
-
-  before do
-    stub_request(:get, "example.com/openapi.yml")
-      .to_return(body: body)
-  end
-
+  let(:document) { Openapi3Parser.load_url(url) }
   let(:url) { "http://example.com/openapi.yml" }
   let(:body) do
     <<~HEREDOC
@@ -26,5 +18,12 @@ RSpec.describe "Open a YAML Document with dates" do
     HEREDOC
   end
 
-  it { is_expected.not_to be_valid }
+  before do
+    stub_request(:get, "example.com/openapi.yml")
+      .to_return(body: body)
+  end
+
+  it "is not a valid document" do
+    expect(document).not_to be_valid
+  end
 end

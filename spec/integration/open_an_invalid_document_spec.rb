@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require "openapi3_parser"
-
 RSpec.describe "Open an invalid document" do
-  subject(:document) { Openapi3Parser.load(input) }
+  let(:document) { Openapi3Parser.load(input) }
 
   let(:input) do
     {
@@ -21,7 +19,9 @@ RSpec.describe "Open an invalid document" do
     }
   end
 
-  it { is_expected.not_to be_valid }
+  it "isn't a valid document" do
+    expect(document).not_to be_valid
+  end
 
   it "raises an exception accessing the erroneous node" do
     expect { document.openapi }.not_to raise_error

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require "openapi3_parser"
-
 RSpec.describe "Open a document with cross document references" do
-  subject(:document) { Openapi3Parser.load(input) }
+  let(:document) { Openapi3Parser.load(input) }
 
   let(:input) do
     {
@@ -35,7 +33,9 @@ RSpec.describe "Open a document with cross document references" do
       .to_return(body: remote_input.to_json)
   end
 
-  it { is_expected.to be_valid }
+  it "is a valid document" do
+    expect(document).to be_valid
+  end
 
   it "can access the summary" do
     expect(document.components.examples["test"].summary).to eq "A foo example"

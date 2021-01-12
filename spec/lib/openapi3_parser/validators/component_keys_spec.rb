@@ -2,18 +2,14 @@
 
 RSpec.describe Openapi3Parser::Validators::ComponentKeys do
   describe ".call" do
-    subject { described_class.call(key => {}) }
-
-    context "when input is an invalid component key" do
-      let(:key) { "Invalid Key" }
-
-      it { is_expected.to eq "Contains invalid keys: Invalid Key" }
+    it "returns nil for a hash with a valid component key" do
+      expect(described_class.call({ "valid.key" => {} }))
+        .to be_nil
     end
 
-    context "when input is a valid component key" do
-      let(:key) { "valid.key" }
-
-      it { is_expected.to be_nil }
+    it "returns an error for a hash with an invalid component key" do
+      expect(described_class.call({ "Invalid Key" => {} }))
+        .to eq "Contains invalid keys: Invalid Key"
     end
   end
 end

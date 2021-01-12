@@ -6,58 +6,50 @@ RSpec.shared_examples "node equality" do |input|
   include Helpers::Context
 
   describe "#==" do
-    subject { described_class.new(input, context) }
-
     let(:context) { create_node_context({}) }
 
-    context "when context and input are the same" do
-      let(:other) { described_class.new(input, context) }
-
-      it { is_expected.to eq(other) }
+    it "is equal when context and input are the same" do
+      instance = described_class.new(input, context)
+      other = described_class.new(input, context)
+      expect(instance).to eq(other)
     end
 
-    context "when class, input and source locations match and document "\
-      "location doesn't" do
-      let(:other) do
-        other_context = Openapi3Parser::Node::Context.new(
-          {},
-          document_location: Openapi3Parser::Source::Location.new(
-            context.document_location.source,
-            %w[different]
-          ),
-          source_location: context.source_location
+    it "is equal when class, input and source locations match but document location doesn't" do
+      instance = described_class.new(input, context)
+      other_context = Openapi3Parser::Node::Context.new(
+        {},
+        document_location: Openapi3Parser::Source::Location.new(
+          context.document_location.source,
+          %w[different]
+        ),
+        source_location: context.source_location
+      )
+      other = described_class.new(input, other_context)
+      expect(instance).to eq(other)
+    end
+
+    it "isn't equal when the class differs" do
+      instance = described_class.new(input, context)
+      other = Openapi3Parser::Node::Contact.new({}, context)
+      expect(instance).not_to eq(other)
+    end
+
+    it "isn't equal when source is different" do
+      instance = described_class.new(input, context)
+      other_context = Openapi3Parser::Node::Context.new(
+        {},
+        document_location: Openapi3Parser::Source::Location.new(
+          context.document_location.source,
+          %w[different]
+        ),
+        source_location: Openapi3Parser::Source::Location.new(
+          context.document_location.source,
+          %w[different]
         )
+      )
 
-        described_class.new(input, other_context)
-      end
-
-      it { is_expected.to eq(other) }
-    end
-
-    context "when class differs" do
-      let(:other) { Openapi3Parser::Node::Contact.new({}, context) }
-
-      it { is_expected.not_to eq(other) }
-    end
-
-    context "when source is different" do
-      let(:other) do
-        other_context = Openapi3Parser::Node::Context.new(
-          {},
-          document_location: Openapi3Parser::Source::Location.new(
-            context.document_location.source,
-            %w[different]
-          ),
-          source_location: Openapi3Parser::Source::Location.new(
-            context.document_location.source,
-            %w[different]
-          )
-        )
-
-        described_class.new(input, other_context)
-      end
-
-      it { is_expected.not_to eq(other) }
+      other = described_class.new(input, other_context)
+      expect(instance).not_to eq(other)
     end
   end
 end

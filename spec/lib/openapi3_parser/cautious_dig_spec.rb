@@ -2,34 +2,24 @@
 
 RSpec.describe Openapi3Parser::CautiousDig do
   describe ".call" do
-    subject { described_class.call(collection, *segments) }
-
-    context "when the segment doesn't exist" do
-      let(:collection) { { "test" => "value" } }
-      let(:segments) { %w[not_test] }
-
-      it { is_expected.to be_nil }
+    it "retuns the value when passed an existent segment" do
+      expect(described_class.call({ "test" => ["value"] }, "test", 0))
+        .to be("value")
     end
 
-    context "when a segment does exist" do
-      let(:collection) { { "test" => ["value"] } }
-      let(:segments) { ["test", 0] }
-
-      it { is_expected.to be "value" }
+    it "retuns nil when passed a non-existent segment" do
+      expect(described_class.call({ "test" => ["value"] }, "not_test", 0))
+        .to be_nil
     end
 
-    context "when hash keys aren't strings but segments are" do
-      let(:collection) { { symbol: "value" } }
-      let(:segments) { %w[symbol] }
-
-      it { is_expected.to be "value" }
+    it "resolves symbol hash keys when passed a string" do
+      expect(described_class.call({ symbol: "value" }, "symbol"))
+        .to be("value")
     end
 
-    context "when array key is passed as a string" do
-      let(:collection) { %w[zero one two] }
-      let(:segments) { %w[1] }
-
-      it { is_expected.to be "one" }
+    it "resolves an array key when passed as a string" do
+      expect(described_class.call(%w[zero one two], "1"))
+        .to be("one")
     end
   end
 end

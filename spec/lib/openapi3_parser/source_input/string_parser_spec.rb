@@ -2,54 +2,38 @@
 
 RSpec.describe Openapi3Parser::SourceInput::StringParser do
   describe "#call" do
-    subject { described_class.call(input, filename) }
-
-    let(:filename) { nil }
-
-    context "when passed a valid YAML string" do
-      let(:input) { "key: value\n" }
-
-      it { is_expected.to match("key" => "value") }
+    it "can parse a YAML string" do
+      expect(described_class.call("key: value\n"))
+        .to match("key" => "value")
     end
 
-    context "when passed an invalid YAML string" do
-      let(:input) { "*test: test\n" }
-
-      it "raises a Psych error" do
-        expect { subject }.to raise_error(Psych::Exception)
-      end
+    it "can parse a JSON string" do
+      expect(described_class.call(%({ "key": "value" })))
+        .to match("key" => "value")
     end
 
-    context "when passed a valid JSON string" do
-      let(:input) { %({ "key": "value" }) }
-
-      it { is_expected.to match("key" => "value") }
+    it "raises an error when the input is invalid YAML" do
+      input = "*test: test\n"
+      expect { described_class.call(input) }
+        .to raise_error(Psych::Exception)
     end
 
-    context "when passed an invalid JSON string" do
-      let(:input) { %({ "key" "value" }) }
-
-      it "raises a JSON error" do
-        expect { subject }.to raise_error(JSON::JSONError)
-      end
+    it "raises an error when the input is invalid JSON" do
+      input = %({ "key" "value" })
+      expect { described_class.call(input) }
+        .to raise_error(JSON::JSONError)
     end
 
-    context "when passed a YAML string with a JSON filename" do
-      let(:input) { "key: value\n" }
-      let(:filename) { "test.json" }
-
-      it "raises a JSON error" do
-        expect { subject }.to raise_error(JSON::JSONError)
-      end
+    it "treats a file as YAML if the filename ends in .yaml" do
+      json_input = %({ "key" "value" })
+      expect { described_class.call(json_input, "file.yaml") }
+        .to raise_error(Psych::Exception)
     end
 
-    context "when passed a JSON string with a YAML filename" do
-      let(:input) { %({ "key" "value" }) }
-      let(:filename) { "test.yaml" }
-
-      it "raises a Psych error" do
-        expect { subject }.to raise_error(Psych::Exception)
-      end
+    it "treats a file as JSON if the filename ends in .json" do
+      yaml_input = "key: value\n"
+      expect { described_class.call(yaml_input, "file.json") }
+        .to raise_error(JSON::JSONError)
     end
   end
 end

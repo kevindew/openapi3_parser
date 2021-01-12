@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require "openapi3_parser"
-
 RSpec.describe "Open a document with unresolvable recursive references" do
-  subject(:document) { Openapi3Parser.load(input) }
+  let(:document) { Openapi3Parser.load(input) }
 
   let(:input) do
     {
@@ -41,7 +39,9 @@ RSpec.describe "Open a document with unresolvable recursive references" do
       .to_return(body: {}.to_json, status: 404)
   end
 
-  it { is_expected.not_to be_valid }
+  it "isn't a valid document" do
+    expect(document).not_to be_valid
+  end
 
   it "has a validation error for a wrong type reference" do
     pointer = "#/components/schemas/wrong-type-reference/%24ref"

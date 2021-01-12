@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe "Iterate through a document" do
-  subject(:document) { Openapi3Parser.load(input) }
+  let(:document) { Openapi3Parser.load(input) }
 
   let(:input) do
     {
@@ -53,7 +53,9 @@ RSpec.describe "Iterate through a document" do
     }
   end
 
-  it { is_expected.to be_valid }
+  it "is a valid document" do
+    expect(document).to be_valid
+  end
 
   it "can iterate the root object" do
     keys = []

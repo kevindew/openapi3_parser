@@ -1,47 +1,41 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::Node::Operation do
-  include Helpers::Context
-
   describe "#alternative_servers?" do
-    subject { instance.alternative_servers? }
+    it "returns true when this node has it's own servers" do
+      node = create_node([{ "url" => "https://example.com" }])
 
-    let(:instance) do
-      input = {
-        "responses" => {},
-        "servers" => servers
-      }
+      expect(node.alternative_servers?).to be true
+    end
 
-      factory_context = create_node_factory_context(
-        input,
-        document_input: {
-          "openapi" => "3.0.0",
-          "info" => {
-            "title" => "Minimal Openapi definition",
-            "version" => "1.0.0"
-          },
-          "paths" => { "/test" => { "get" => input } }
+    it "returns false when this node hasn't got it's own servers" do
+      node = create_node(nil)
+
+      expect(node.alternative_servers?).to be false
+    end
+  end
+
+  def create_node(servers)
+    input = {
+      "responses" => {},
+      "servers" => servers
+    }
+
+    factory_context = create_node_factory_context(
+      input,
+      document_input: {
+        "openapi" => "3.0.0",
+        "info" => {
+          "title" => "Minimal Openapi definition",
+          "version" => "1.0.0"
         },
-        pointer_segments: %w[paths /test get]
-      )
+        "paths" => { "/test" => { "get" => input } }
+      },
+      pointer_segments: %w[paths /test get]
+    )
 
-      Openapi3Parser::NodeFactory::Operation
-        .new(factory_context)
-        .node(node_factory_context_to_node_context(factory_context))
-    end
-
-    context "when object has alternative servers defined" do
-      let(:servers) { [{ "url" => "https://example.com" }] }
-
-      it { is_expected.to be true }
-    end
-
-    context "when object uses cascading servers" do
-      let(:servers) { nil }
-
-      it { is_expected.to be false }
-    end
+    Openapi3Parser::NodeFactory::Operation
+      .new(factory_context)
+      .node(node_factory_context_to_node_context(factory_context))
   end
 end
