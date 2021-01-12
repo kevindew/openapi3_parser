@@ -1,179 +1,89 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::TypeChecker do
-  include Helpers::Context
-  let(:node_factory_context) { create_node_factory_context(input) }
-  let(:factory) { double("factory", context: node_factory_context) }
-
   describe ".validate_type" do
-    subject(:validate_type) do
-      described_class.validate_type(validatable, type: type)
+    it "returns true when a type is valid" do
+      expect(described_class.validate_type(create_validatable({}), type: Hash))
+        .to be true
     end
 
-    let(:validatable) { Openapi3Parser::Validation::Validatable.new(factory) }
-
-    context "when the type is valid" do
-      let(:type) { Hash }
-      let(:input) { {} }
-
-      it { is_expected.to be true }
-    end
-
-    context "when the input type is invalid" do
-      let(:type) { Integer }
-      let(:input) { "Blah" }
-
-      it { is_expected.to be false }
-
-      it "adds an error to validatable" do
-        validate_type
-        expect(validatable.errors).to include(
-          Openapi3Parser::Validation::Error.new(
-            "Invalid type. Expected Integer",
-            node_factory_context,
-            factory.class
-          )
-        )
-      end
+    it "returns false and adds an error to the validatable when type is invalid" do
+      validatable = create_validatable("blah")
+      expect(described_class.validate_type(validatable, type: Hash))
+        .to be false
+      expect(validatable.errors.map(&:to_s))
+        .to include "Invalid type. Expected Object"
     end
   end
 
   describe ".raise_on_invalid_type" do
-    subject(:raise_on_invalid_type) do
-      described_class.raise_on_invalid_type(node_factory_context, type: type)
+    it "returns true when a type is valid" do
+      factory_context = create_node_factory_context({})
+      expect(described_class.raise_on_invalid_type(factory_context, type: Hash))
+        .to be true
     end
 
-    context "when the type is valid" do
-      let(:type) { Hash }
-      let(:input) { {} }
-
-      it { is_expected.to be true }
-    end
-
-    context "when the input type is invalid" do
-      let(:type) { Integer }
-      let(:input) { "Blah" }
-
-      it "raises an error" do
-        error_class = Openapi3Parser::Error::InvalidType
-        expect { raise_on_invalid_type }
-          .to raise_error(error_class, "Invalid type for #/: Expected Integer")
-      end
+    it "raises an error for an invalid type" do
+      factory_context = create_node_factory_context("blah")
+      expect { described_class.raise_on_invalid_type(factory_context, type: Hash) }
+        .to raise_error(Openapi3Parser::Error::InvalidType,
+                        "Invalid type for #/: Expected Object")
     end
   end
 
   describe ".validate_keys" do
-    subject(:validate_keys) do
-      described_class.validate_keys(validatable, type: type)
+    it "returns true when a type is valid" do
+      validatable = create_validatable({ 1 => "a" })
+      expect(described_class.validate_keys(validatable, type: Integer))
+        .to be true
     end
 
-    let(:validatable) { Openapi3Parser::Validation::Validatable.new(factory) }
+    it "returns false and adds an error to the validatable when type is invalid" do
+      validatable = create_validatable({ 1 => "a" })
+      expect(described_class.validate_keys(validatable, type: String))
+        .to be false
 
-    context "when the type is valid" do
-      let(:type) { Integer }
-      let(:input) { { 1 => "a" } }
-
-      it { is_expected.to be true }
-    end
-
-    context "when the input type is invalid" do
-      let(:type) { Integer }
-      let(:input) { { "string" => "erm" } }
-
-      it { is_expected.to be false }
-
-      it "adds an error to validatable" do
-        validate_keys
-        expect(validatable.errors).to include(
-          Openapi3Parser::Validation::Error.new(
-            "Invalid keys. Expected keys to be of type Integer",
-            node_factory_context,
-            factory.class
-          )
-        )
-      end
+      expect(validatable.errors.map(&:to_s))
+        .to include "Invalid keys. Expected keys to be of type String"
     end
   end
 
   describe ".raise_on_invalid_keys" do
-    subject(:raise_on_invalid_keys) do
-      described_class.raise_on_invalid_keys(node_factory_context, type: type)
+    it "returns true when a type is valid" do
+      factory_context = create_node_factory_context({ 1 => "a" })
+      expect(described_class.raise_on_invalid_keys(factory_context, type: Integer))
+        .to be true
     end
 
-    context "when the type is valid" do
-      let(:type) { Integer }
-      let(:input) { { 1 => "a" } }
-
-      it { is_expected.to be true }
-    end
-
-    context "when the input type is invalid" do
-      let(:type) { Integer }
-      let(:input) { { "string" => "erm" } }
-
-      it "raises an error" do
-        error_class = Openapi3Parser::Error::InvalidType
-        error_message = "Invalid keys for #/: Expected keys to be of type "\
-                        "Integer"
-        expect { raise_on_invalid_keys }
-          .to raise_error(error_class, error_message)
-      end
+    it "raises an error for an invalid type" do
+      factory_context = create_node_factory_context({ 1 => "a" })
+      expect { described_class.raise_on_invalid_keys(factory_context, type: String) }
+        .to raise_error(Openapi3Parser::Error::InvalidType,
+                        "Invalid keys for #/: Expected keys to be of type String")
     end
   end
 
-  describe "when type is a boolean symbol" do
-    let(:type) { :boolean }
+  it "can validate booleans with a boolean symbol" do
+    expect(described_class.validate_type(create_validatable(true), type: :boolean))
+      .to be true
 
-    context "when input is true" do
-      let(:input) { true }
+    expect(described_class.validate_type(create_validatable(false), type: :boolean))
+      .to be true
 
-      it "validates without error" do
-        expect do
-          described_class.raise_on_invalid_type(node_factory_context,
-                                                type: type)
-        end.not_to raise_error
-      end
-    end
-
-    context "when input is false" do
-      let(:input) { false }
-
-      it "validates without error" do
-        expect do
-          described_class.raise_on_invalid_type(node_factory_context,
-                                                type: type)
-        end.not_to raise_error
-      end
-    end
-
-    context "when input is something different" do
-      let(:input) { "different" }
-
-      it "doesn't validate" do
-        error_class = Openapi3Parser::Error::InvalidType
-        error_message = "Invalid type for #/: Expected Boolean"
-
-        expect do
-          described_class.raise_on_invalid_type(node_factory_context,
-                                                type: type)
-        end.to raise_error(error_class, error_message)
-      end
-    end
+    expect(described_class.validate_type(create_validatable("string"), type: :boolean))
+      .to be false
   end
 
-  describe "when type is a non class" do
-    let(:type) { "odd" }
-    let(:input) { "anything" }
+  it "raises an error when type is not an expected type" do
+    expect { described_class.validate_type(create_validatable, type: "string") }
+      .to raise_error(Openapi3Parser::Error::UnvalidatableType,
+                      "Expected string to be a Class not a String")
+  end
 
-    it "raises an error" do
-      error_class = Openapi3Parser::Error::UnvalidatableType
-      error_message = "Expected odd to be a Class not a String"
-
-      expect do
-        described_class.raise_on_invalid_type(node_factory_context, type: type)
-      end.to raise_error(error_class, error_message)
-    end
+  def create_validatable(input = "")
+    factory_context = create_node_factory_context(input)
+    factory = instance_double(Openapi3Parser::NodeFactory::Field,
+                              context: factory_context)
+    Openapi3Parser::Validation::Validatable.new(factory)
   end
 end

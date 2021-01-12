@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
-  include Helpers::Context
-
   def create_contact_validatable(node_factory_context = nil)
     Openapi3Parser::Validation::Validatable.new(
       Openapi3Parser::NodeFactory::Contact.new(
@@ -15,217 +11,191 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
   end
 
   describe "#factory?" do
-    subject { described_class.new(factory: factory).factory? }
-
-    context "when initialised with a factory" do
-      let(:factory) { :factory }
-
-      it { is_expected.to be true }
+    it "returns true when the class is initialised with a factory" do
+      instance = described_class.new(factory: Openapi3Parser::NodeFactory::Contact)
+      expect(instance.factory?).to be(true)
     end
 
-    context "when initialised without a factory" do
-      let(:factory) { nil }
-
-      it { is_expected.to be false }
+    it "returns false when the class is not initialised without a factory" do
+      instance = described_class.new
+      expect(instance.factory?).to be(false)
     end
   end
 
   describe "#initialize_factory" do
-    subject do
-      described_class
-        .new(factory: factory)
-        .initialize_factory(node_factory_context, parent_factory)
+    it "returns a factory instance when initialised with a factory class" do
+      instance = described_class.new(factory: Openapi3Parser::NodeFactory::Contact)
+      context = create_node_factory_context({ "name" => "Mike" })
+      expect(instance.initialize_factory(context))
+        .to be_a(Openapi3Parser::NodeFactory::Contact)
     end
 
-    let(:node_factory_context) do
-      create_node_factory_context({ "name" => "Mike" })
+    it "can call a method on the parent factory when initialised with a symbol" do
+      instance = described_class.new(factory: :give_me_a_factory)
+      context = create_node_factory_context({})
+      parent_factory = Class.new
+      factory = instance_double("Openapi3Parser::NodeFactory::Contact")
+      allow(parent_factory)
+        .to receive(:give_me_a_factory)
+        .with(context)
+        .and_return(factory)
+
+      expect(instance.initialize_factory(context, parent_factory))
+        .to be(factory)
     end
 
-    let(:parent_factory) { nil }
+    it "can be given a callable as a factory" do
+      factory = instance_double("Openapi3Parser::NodeFactory::Contact")
+      callable = ->(_context) { factory }
+      instance = described_class.new(factory: callable)
+      context = create_node_factory_context({})
+      allow(callable).to receive(:call).with(context).and_return(factory)
 
-    shared_examples "initialises Contact factory" do
-      it { is_expected.to be_a(Openapi3Parser::NodeFactory::Contact) }
-    end
-
-    context "when initialised with a factory as a class" do
-      let(:factory) { Openapi3Parser::NodeFactory::Contact }
-
-      include_examples "initialises Contact factory"
-    end
-
-    context "when initialised with a factory as a method on parent factory" do
-      let(:factory) { :contact_factory }
-      let(:parent_factory) do
-        class BasicFactory
-          def contact_factory(node_factory_context)
-            Openapi3Parser::NodeFactory::Contact.new(node_factory_context)
-          end
-        end
-        BasicFactory.new
-      end
-
-      include_examples "initialises Contact factory"
-    end
-
-    context "when initialised with a callable factory" do
-      let(:factory) do
-        ->(context) { Openapi3Parser::NodeFactory::Contact.new(context) }
-      end
-
-      include_examples "initialises Contact factory"
+      expect(instance.initialize_factory(context)).to be(factory)
     end
   end
 
   describe "#required?" do
-    subject { described_class.new(required: required).required? }
-
-    context "when initialised with required" do
-      let(:required) { true }
-
-      it { is_expected.to be true }
+    it "returns true when the class is initialised with required" do
+      instance = described_class.new(required: true)
+      expect(instance.required?).to be(true)
     end
 
-    context "when initialised without required" do
-      let(:required) { nil }
-
-      it { is_expected.to be_falsy }
+    it "returns false when the class is initialised without required" do
+      instance = described_class.new
+      expect(instance.required?).to be(false)
     end
   end
 
   describe "#check_input_type" do
-    subject(:check_input_type) do
-      described_class.new(input_type: input_type)
-                     .check_input_type(validatable, building_node)
+    it "returns true when there isn't an expected type" do
+      instance = described_class.new(input_type: nil)
+      validatable = create_contact_validatable
+      expect(instance.check_input_type(validatable)).to be(true)
     end
 
-    let(:validatable) { create_contact_validatable(node_factory_context) }
-    let(:building_node) { false }
+    it "returns true when the input is nil" do
+      instance = described_class.new(input_type: String)
+      validatable = create_contact_validatable(
+        create_node_factory_context(nil)
+      )
 
-    context "when input type is valid" do
-      let(:input_type) { String }
-      let(:node_factory_context) { create_node_factory_context("a string") }
-
-      it { is_expected.to be true }
+      expect(instance.check_input_type(validatable)).to be(true)
     end
 
-    context "when context input is nil" do
-      let(:input_type) { String }
-      let(:node_factory_context) { create_node_factory_context(nil) }
+    it "returns true when the input type matches" do
+      instance = described_class.new(input_type: String)
+      validatable = create_contact_validatable(
+        create_node_factory_context("a string")
+      )
 
-      it { is_expected.to be true }
+      expect(instance.check_input_type(validatable)).to be(true)
     end
 
-    context "when input type is invalid and building_node is false" do
-      let(:input_type) { String }
-      let(:node_factory_context) { create_node_factory_context(1) }
-      let(:building_node) { false }
+    context "when the type doesn't match" do
+      let(:instance) { described_class.new(input_type: Integer) }
+      let(:validatable) do
+        create_contact_validatable(
+          create_node_factory_context("not an integer")
+        )
+      end
 
-      it { is_expected.to be false }
+      it "returns false" do
+        expect(instance.check_input_type(validatable)).to be(false)
+      end
 
-      it "adds an error to validatable" do
-        expect { check_input_type }
+      it "adds an error to the validatable" do
+        expect { instance.check_input_type(validatable) }
           .to change { validatable.errors.count }.by(1)
       end
-    end
 
-    context "when input type is invalid and building_node is true" do
-      let(:input_type) { String }
-      let(:node_factory_context) { create_node_factory_context(1) }
-      let(:building_node) { true }
-
-      it "raises an InvalidType error" do
-        expect { check_input_type }
+      it "raises an error when building_node is true" do
+        expect { instance.check_input_type(validatable, true) }
           .to raise_error(Openapi3Parser::Error::InvalidType)
       end
     end
   end
 
   describe "#validate_field" do
-    subject(:validate_field) do
-      described_class.new(validate: validate)
-                     .validate_field(validatable, building_node)
+    it "returns true when there isnt a validation" do
+      instance = described_class.new(validate: nil)
+      validatable = create_contact_validatable
+      expect(instance.validate_field(validatable)).to be(true)
     end
 
-    let(:node_factory_context) { create_node_factory_context("a string") }
-    let(:validatable) { create_contact_validatable(node_factory_context) }
-    let(:building_node) { false }
+    it "returns true when the input is nil" do
+      instance = described_class.new(validate: ->(_) {})
+      validatable = create_contact_validatable(
+        create_node_factory_context(nil)
+      )
 
-    context "when not provided validation" do
-      let(:validate) { nil }
-
-      it { is_expected.to be true }
+      expect(instance.validate_field(validatable)).to be(true)
     end
 
-    context "when context input is nil" do
-      let(:validate) { ->(validatable) { validatable.add_error("bad") } }
-      let(:node_factory_context) { create_node_factory_context(nil) }
+    it "returns true when the validation passes" do
+      instance = described_class.new(validate: ->(_) {})
+      validatable = create_contact_validatable
 
-      it { is_expected.to be true }
+      expect(instance.validate_field(validatable)).to be(true)
     end
 
-    context "when there are no validation errors" do
-      let(:validate) { ->(_validatable) {} }
+    it "can validate based off a symbol to call a partiular method on the factory" do
+      instance = described_class.new(validate: :my_validation_method)
+      validatable = create_contact_validatable
+      allow(validatable.factory).to receive(:my_validation_method)
 
-      it { is_expected.to be true }
+      instance.validate_field(validatable)
+      expect(validatable.factory).to have_received(:my_validation_method)
     end
 
-    context "when there is a validation error and building_node is false" do
-      let(:validate) { ->(validatable) { validatable.add_error("fail") }  }
-      let(:building_node) { false }
+    context "when the validation fails" do
+      let(:validatable) { create_contact_validatable }
+      let(:instance) do
+        described_class.new(validate: ->(v) { v.add_error("Error") })
+      end
 
-      it { is_expected.to be false }
+      it "returns false" do
+        expect(instance.validate_field(validatable)).to be(false)
+      end
 
-      it "adds an error to validatable" do
-        expect { validate_field }
+      it "adds an error to the validatable" do
+        expect { instance.validate_field(validatable) }
           .to change { validatable.errors.count }.by(1)
       end
-    end
 
-    context "when there is a validation error and building_node is true" do
-      let(:validate) { ->(validatable) { validatable.add_error("fail") } }
-      let(:building_node) { true }
-
-      it "raises an InvalidData error" do
-        expect { validate_field }
+      it "raises an error when building_node is true" do
+        expect { instance.validate_field(validatable, true) }
           .to raise_error(Openapi3Parser::Error::InvalidData,
-                          "Invalid data for #/: fail")
+                          "Invalid data for #/: Error")
       end
     end
   end
 
   describe "#default" do
-    subject(:run_default) do
-      described_class.new(default: default).default(factory)
+    let(:factory) do
+      Openapi3Parser::NodeFactory::Contact.new(
+        create_node_factory_context({ "name" => "Mike" })
+      )
     end
 
-    let(:factory) { double("factory") }
-
-    context "when nil is given as default" do
-      let(:default) { nil }
-
-      it { is_expected.to be_nil }
+    it "returns nil when a default isn't provided" do
+      expect(described_class.new.default(factory)).to be_nil
     end
 
-    context "when a value is given as a default" do
-      let(:default) { 123 }
-
-      it { is_expected.to be 123 }
+    it "returns a value when one is provided" do
+      instance = described_class.new(default: 123)
+      expect(instance.default(factory)).to eq(123)
     end
 
-    context "when a symbol of a factory method is given as default" do
-      before do
-        allow(factory).to receive(:factory_default).and_return("default")
-      end
-
-      let(:default) { :factory_default }
-
-      it { is_expected.to be "default" }
+    it "calls the function when a callable is given" do
+      instance = described_class.new(default: -> { "a default" })
+      expect(instance.default(factory)).to eq("a default")
     end
 
-    context "when a callable is given as a default" do
-      let(:default) { -> { true } }
-
-      it { is_expected.to be true }
+    it "calls the method on the factory when a symbol is given" do
+      allow(factory).to receive(:my_factory_default).and_return("factory default")
+      instance = described_class.new(default: :my_factory_default)
+      expect(instance.default(factory)).to eq("factory default")
     end
   end
 end

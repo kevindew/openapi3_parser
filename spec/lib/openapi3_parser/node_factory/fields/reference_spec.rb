@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
-  include Helpers::Context
-
   let(:factory_class) { Openapi3Parser::NodeFactory::Contact }
   let(:factory_context) do
     create_node_factory_context(
@@ -15,16 +11,17 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
   end
 
   describe "#resolved_input" do
-    subject do
-      described_class.new(factory_context, factory_class).resolved_input
-    end
+    let(:instance) { described_class.new(factory_context, factory_class) }
 
     context "when reference can be resolved" do
       let(:document_input) do
         { "reference" => { "name" => "Joe" } }
       end
 
-      it { is_expected.to match(hash_including("name" => "Joe")) }
+      it "returns the resolved input" do
+        expect(instance.resolved_input)
+          .to match(hash_including({ "name" => "Joe" }))
+      end
     end
 
     context "when reference can't be resolved" do
@@ -32,34 +29,34 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
         { "not_reference" => {} }
       end
 
-      it { is_expected.to be_nil }
+      it "returns nil" do
+        expect(instance.resolved_input).to be_nil
+      end
     end
   end
 
   describe "#node" do
-    subject(:node) do
-      described_class.new(factory_context, factory_class).node(node_context)
-    end
+    let(:instance) { described_class.new(factory_context, factory_class) }
+    let(:node_context) { node_factory_context_to_node_context(factory_context) }
 
-    let(:node_context) do
-      node_factory_context_to_node_context(factory_context)
-    end
-
-    context "when reference is valid" do
+    context "when the reference can be resolved" do
       let(:document_input) do
         { "reference" => { "name" => "Joe" } }
       end
 
-      it { is_expected.to be_a(Openapi3Parser::Node::Contact) }
+      it "returns an instance of the referenced node" do
+        expect(instance.node(node_context))
+          .to be_a(Openapi3Parser::Node::Contact)
+      end
     end
 
-    context "when reference is invalid" do
+    context "when the reference can't be resolved" do
       let(:document_input) do
         { "reference" => { "url" => "invalid url" } }
       end
 
       it "raises an error" do
-        expect { node }
+        expect { instance.node(node_context) }
           .to raise_error(Openapi3Parser::Error::InvalidData)
       end
     end
@@ -68,7 +65,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
   describe "validations" do
     let(:instance) { described_class.new(factory_context, factory_class) }
 
-    context "when reference is valid" do
+    context "when the reference can be resolved" do
       let(:document_input) do
         { "reference" => { "name" => "Joe" } }
       end
@@ -76,22 +73,15 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
       it "is valid" do
         expect(instance).to be_valid
       end
-
-      it "has no errors" do
-        expect(instance.errors).to be_empty
-      end
     end
 
-    context "when reference is invalid" do
+    context "when the reference can't be resolved" do
       let(:document_input) do
         { "reference" => { "url" => "invalid url" } }
       end
 
       it "is invalid" do
         expect(instance).not_to be_valid
-      end
-
-      it "has a validation error" do
         expect(instance).to have_validation_error("#/field/%24ref")
       end
     end

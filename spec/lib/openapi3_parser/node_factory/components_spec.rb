@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Components do
-  include Helpers::Context
-
   it_behaves_like "node object factory", Openapi3Parser::Node::Components do
     let(:input) do
       {
@@ -104,40 +99,36 @@ RSpec.describe Openapi3Parser::NodeFactory::Components do
       }
     end
 
-    let(:document_input) { { "components" => input } }
-
     let(:node_factory_context) do
-      create_node_factory_context(input, document_input: document_input)
-    end
-
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
+      create_node_factory_context(input,
+                                  document_input: { "components" => input })
     end
   end
 
-  describe "key format" do
-    subject do
-      described_class.new(create_node_factory_context(input))
-    end
-
-    let(:input) do
-      {
-        "responses" => {
-          key => { "description" => "Example description" }
+  describe "validing response key format" do
+    it "is valid for a valid key" do
+      factory_context = create_node_factory_context(
+        {
+          "responses" => {
+            "valid.key" => { "description" => "Example description" }
+          }
         }
-      }
+      )
+      expect(described_class.new(factory_context)).to be_valid
     end
 
-    context "when key is invalid" do
-      let(:key) { "Invalid Key" }
+    it "is invalid for an invalid key" do
+      factory_context = create_node_factory_context(
+        {
+          "responses" => {
+            "Invalid Key" => { "description" => "Example description" }
+          }
+        }
+      )
 
-      it { is_expected.to have_validation_error("#/responses") }
-    end
-
-    context "when key is valid" do
-      let(:key) { "valid.key" }
-
-      it { is_expected.to be_valid }
+      instance = described_class.new(factory_context)
+      expect(instance).not_to be_valid
+      expect(instance).to have_validation_error("#/responses")
     end
   end
 end

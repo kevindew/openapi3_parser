@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Info do
-  include Helpers::Context
   let(:minimal_info_definition) do
     {
       "title" => "Info",
@@ -19,31 +15,23 @@ RSpec.describe Openapi3Parser::NodeFactory::Info do
         "contact" => { "name" => "Contact" }
       )
     end
-
-    let(:node_factory_context) { create_node_factory_context(input) }
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
   end
 
-  describe "terms of service" do
-    subject(:factory) { described_class.new(node_factory_context) }
-
-    let(:input) do
-      minimal_info_definition.merge("termsOfService" => terms_of_service)
-    end
-    let(:node_factory_context) { create_node_factory_context(input) }
-
-    context "when terms of service is a url" do
-      let(:terms_of_service) { "https://example.com/path" }
-
-      it { is_expected.to be_valid }
+  describe "validating terms of service URL" do
+    it "is valid for an actual URL" do
+      factory_context = create_node_factory_context(
+        minimal_info_definition.merge({ "termsOfService" => "https://example.com/path" })
+      )
+      expect(described_class.new(factory_context)).to be_valid
     end
 
-    context "when terms of service is not a url" do
-      let(:terms_of_service) { "not a url" }
-
-      it { is_expected.not_to be_valid }
+    it "is invalid for an incorrect URL" do
+      factory_context = create_node_factory_context(
+        minimal_info_definition.merge({ "termsOfService" => "not a url" })
+      )
+      instance = described_class.new(factory_context)
+      expect(instance).not_to be_valid
+      expect(instance).to have_validation_error("#/termsOfService")
     end
   end
 end

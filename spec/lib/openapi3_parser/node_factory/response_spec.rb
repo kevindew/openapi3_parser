@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Response do
-  include Helpers::Context
+  let(:minimal_definition) do
+    { "description" => "Description" }
+  end
 
   it_behaves_like "node object factory", Openapi3Parser::Node::Response do
     let(:input) do
@@ -36,74 +35,63 @@ RSpec.describe Openapi3Parser::NodeFactory::Response do
         }
       }
     end
-
-    let(:node_factory_context) { create_node_factory_context(input) }
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
   end
 
-  describe "content" do
-    subject { described_class.new(node_factory_context) }
-
-    let(:node_factory_context) do
-      create_node_factory_context({ "description" => "Description",
-                                    "content" => content })
-    end
-
-    context "when content is an empty hash" do
-      let(:content) { {} }
-
-      it { is_expected.to be_valid }
-    end
-
-    context "when content has a valid media type" do
-      let(:content) do
-        {
-          "application/json" => {}
-        }
-      end
-
-      it { is_expected.to be_valid }
-    end
-
-    context "when content has an invalid valid media type" do
-      let(:content) do
-        {
-          "bad-media-type" => {}
-        }
-      end
-
-      it do
-        expect(subject)
-          .to have_validation_error("#/content/bad-media-type")
-          .with_message(%("bad-media-type" is not a valid media type))
-      end
-    end
-  end
-
-  describe "links" do
-    subject { described_class.new(node_factory_context) }
-
-    let(:node_factory_context) do
-      create_node_factory_context(
-        {
-          "description" => "Description",
-          "links" => { key => { "operationRef" => "#/test" } }
-        }
+  describe "validating content" do
+    it "is valid when content is an empty hash" do
+      instance = described_class.new(
+        create_node_factory_context(
+          minimal_definition.merge({ "content" => {} })
+        )
       )
+      expect(instance).to be_valid
     end
 
-    context "when key is invalid" do
-      let(:key) { "Invalid Key" }
-
-      it { is_expected.not_to be_valid }
+    it "is valid when content has a valid media type" do
+      instance = described_class.new(
+        create_node_factory_context(
+          minimal_definition.merge({ "content" => { "application/json" => {} } })
+        )
+      )
+      expect(instance).to be_valid
     end
 
-    context "when key is valid" do
-      let(:key) { "valid.key" }
+    it "is invalid when content has an invalid media type" do
+      instance = described_class.new(
+        create_node_factory_context(
+          minimal_definition.merge({ "content" => { "bad-media-type" => {} } })
+        )
+      )
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/content/bad-media-type")
+        .with_message(%("bad-media-type" is not a valid media type))
+    end
+  end
 
-      it { is_expected.to be_valid }
+  describe "validating links keys" do
+    let(:link) { { "operationRef" => "#/test" } }
+
+    it "is valid for a key that matches the expected formatting" do
+      instance = described_class.new(
+        create_node_factory_context(
+          minimal_definition.merge(
+            { "links" => { "valid.key" => link } }
+          )
+        )
+      )
+      expect(instance).to be_valid
+    end
+
+    it "is invalid for a key that doesn't match the expected formatting" do
+      instance = described_class.new(
+        create_node_factory_context(
+          minimal_definition.merge(
+            { "links" => { "Invalid Key" => link } }
+          )
+        )
+      )
+      expect(instance).not_to be_valid
     end
   end
 end

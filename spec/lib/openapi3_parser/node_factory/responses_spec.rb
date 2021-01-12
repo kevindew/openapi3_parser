@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Responses do
-  include Helpers::Context
-
   it_behaves_like "node object factory", Openapi3Parser::Node::Responses do
     let(:input) do
       {
@@ -27,16 +22,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Responses do
         }
       }
     end
-
-    let(:node_factory_context) { create_node_factory_context(input) }
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
   end
 
-  describe "valid keys" do
-    subject { described_class.new(node_factory_context) }
-
+  describe "validating keys" do
     let(:response) do
       {
         "description" => "A response",
@@ -47,39 +35,45 @@ RSpec.describe Openapi3Parser::NodeFactory::Responses do
         }
       }
     end
-    let(:node_factory_context) do
-      create_node_factory_context({ key_value => response })
+
+    it "is valid when the key is 'default'" do
+      instance = described_class.new(
+        create_node_factory_context({ "default" => response })
+      )
+      expect(instance).to be_valid
     end
 
-    context "when the key_value is a status code range" do
-      let(:key_value) { "2XX" }
-
-      it { is_expected.to be_valid }
+    it "is valid when the key is a status code range" do
+      instance = described_class.new(
+        create_node_factory_context({ "2XX" => response })
+      )
+      expect(instance).to be_valid
     end
 
-    context "when the key_value is a status code" do
-      let(:key_value) { "503" }
-
-      it { is_expected.to be_valid }
+    it "is valid when the key is a valid status code" do
+      instance = described_class.new(
+        create_node_factory_context({ "503" => response })
+      )
+      expect(instance).to be_valid
     end
 
-    context "when the key_value is a random string" do
-      let(:key_value) { "5tsd8s" }
-
-      it do
-        expect(subject)
-          .to have_validation_error("#/")
-          .with_message(
-            "Invalid responses keys: '5tsd8s' - default, status codes and "\
-            "status code ranges allowed"
-          )
-      end
+    it "is invalid when the key is an invalid status code" do
+      instance = described_class.new(
+        create_node_factory_context({ "999" => response })
+      )
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/")
+        .with_message(
+          "Invalid responses keys: '999' - default, status codes and status code ranges allowed"
+        )
     end
 
-    context "when the key_value is an invalid status code" do
-      let(:key_value) { "999" }
-
-      it { is_expected.to have_validation_error("#/") }
+    it "is invalid when the key is not a status code od default" do
+      instance = described_class.new(
+        create_node_factory_context({ "any string" => response })
+      )
+      expect(instance).not_to be_valid
     end
   end
 end

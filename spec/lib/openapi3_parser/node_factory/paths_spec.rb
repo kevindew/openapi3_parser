@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Paths do
-  include Helpers::Context
-
   it_behaves_like "node object factory", Openapi3Parser::Node::Paths do
     let(:input) do
       {
@@ -29,16 +24,9 @@ RSpec.describe Openapi3Parser::NodeFactory::Paths do
         }
       }
     end
-
-    let(:node_factory_context) { create_node_factory_context(input) }
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
   end
 
-  describe "path keys" do
-    subject { described_class.new(create_node_factory_context(input)) }
-
+  describe "validating path keys" do
     let(:path) do
       {
         "get" => {
@@ -50,40 +38,36 @@ RSpec.describe Openapi3Parser::NodeFactory::Paths do
       }
     end
 
-    context "when the path key is a valid path" do
-      let(:input) { { "/path" => path } }
-
-      it { is_expected.to be_valid }
+    it "is valid when the path key is a valid path" do
+      instance = described_class.new(create_node_factory_context({ "/path" => path }))
+      expect(instance).to be_valid
     end
 
-    context "when the path key has template paramaters" do
-      let(:input) { { "/path/{test}" => path } }
-
-      it { is_expected.to be_valid }
+    it "is valid when the path key has template parameters" do
+      instance = described_class.new(
+        create_node_factory_context({ "/path/{test}" => path })
+      )
+      expect(instance).to be_valid
     end
 
-    context "when a path key does not begin with a slash" do
-      let(:input) { { "path" => path } }
-
-      it { is_expected.not_to be_valid }
+    it "is invalid when the path isn't prefixed with a slash" do
+      instance = described_class.new(
+        create_node_factory_context({ "path" => path })
+      )
+      expect(instance).not_to be_valid
     end
 
-    context "when a path key is not a path" do
-      let(:input) { { "invalid path" => path } }
-
-      it { is_expected.not_to be_valid }
+    it "is invalid when the path isn't a valid path" do
+      instance = described_class.new(
+        create_node_factory_context({ "invalid path" => path })
+      )
+      expect(instance).not_to be_valid
     end
 
-    context "when there are two paths with same hiearchy but different "\
-            "templated names" do
-      let(:input) do
-        {
-          "/path/{param_a}/test" => path,
-          "/path/{param_b}/test" => path
-        }
-      end
-
-      it { is_expected.not_to be_valid }
+    it "is invalid when there are two paths with same hiearchy but different templated names" do
+      factory_context = create_node_factory_context({ "/path/{param_a}/test" => path,
+                                                      "/path/{param_b}/test" => path })
+      expect(described_class.new(factory_context)).not_to be_valid
     end
   end
 end

@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Operation do
-  include Helpers::Context
-
   it_behaves_like "node object factory", Openapi3Parser::Node::Operation do
     let(:input) do
       {
@@ -95,47 +90,49 @@ RSpec.describe Openapi3Parser::NodeFactory::Operation do
         ]
       }
     end
-
-    let(:node_factory_context) { create_node_factory_context(input) }
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
   end
 
-  describe "parameters" do
-    subject do
-      described_class.new(
-        create_node_factory_context({ "parameters" => parameters,
-                                      "responses" => {} })
+  describe "validating parameters" do
+    it "is valid when parameters are valid" do
+      factory_context = create_node_factory_context(
+        {
+          "parameters" => [
+            { "name" => "id", "in" => "header" },
+            { "name" => "id", "in" => "query" }
+          ],
+          "responses" => {}
+        }
       )
+      expect(described_class.new(factory_context)).to be_valid
     end
 
-    context "when there are no duplicate parameters" do
-      let(:parameters) do
-        [
-          { "name" => "id", "in" => "header" },
-          { "name" => "id", "in" => "query" }
-        ]
-      end
-
-      it { is_expected.to be_valid }
+    it "is invalid when there are duplicate parameters" do
+      factory_context = create_node_factory_context(
+        {
+          "parameters" => [
+            { "name" => "id", "in" => "query" },
+            { "name" => "id", "in" => "query" }
+          ],
+          "responses" => {}
+        }
+      )
+      instance = described_class.new(factory_context)
+      expect(instance).not_to be_valid
+      expect(instance).to have_validation_error("#/parameters")
     end
 
-    context "when there are duplicate parameters" do
-      let(:parameters) do
-        [
-          { "name" => "id", "in" => "query" },
-          { "name" => "id", "in" => "query" }
-        ]
-      end
-
-      it { is_expected.not_to be_valid }
-    end
-
-    context "when parameters are in the wrong type" do
-      let(:parameters) { [1, "string"] }
-
-      it { is_expected.not_to be_valid }
+    it "is invalid when parameters are the wrong type" do
+      factory_context = create_node_factory_context(
+        {
+          "parameters" => [1, "string"],
+          "responses" => {}
+        }
+      )
+      instance = described_class.new(factory_context)
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/parameters/0")
+        .and have_validation_error("#/parameters/1")
     end
   end
 
@@ -168,17 +165,15 @@ RSpec.describe Openapi3Parser::NodeFactory::Operation do
       }
     end
 
-    let(:node_factory_context) do
-      create_node_factory_context(input,
-                                  document_input: document_input,
-                                  pointer_segments: %w[paths /test get])
-    end
-
-    let(:instance) { described_class.new(node_factory_context) }
-
     let(:node) do
+      node_factory_context = create_node_factory_context(
+        input,
+        document_input: document_input,
+        pointer_segments: %w[paths /test get]
+      )
       node_context = node_factory_context_to_node_context(node_factory_context)
-      instance.node(node_context)
+      described_class.new(node_factory_context)
+                     .node(node_context)
     end
 
     shared_examples "defaults to servers from path item object" do

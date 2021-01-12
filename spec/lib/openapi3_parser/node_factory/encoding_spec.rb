@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Encoding do
-  include Helpers::Context
-
   it_behaves_like "node object factory", Openapi3Parser::Node::Encoding do
     let(:input) do
       {
@@ -19,40 +14,23 @@ RSpec.describe Openapi3Parser::NodeFactory::Encoding do
         }
       }
     end
-
-    let(:node_factory_context) { create_node_factory_context(input) }
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
   end
 
-  describe "default explode" do
-    subject(:node) do
-      described_class.new(node_factory_context).node(node_context)
+  describe "default value for explode" do
+    it "sets explode to true when style is 'form'" do
+      factory_context = create_node_factory_context({ "style" => "form" })
+      node = described_class.new(factory_context).node(
+        node_factory_context_to_node_context(factory_context)
+      )
+      expect(node["explode"]).to be(true)
     end
 
-    let(:node_factory_context) do
-      create_node_factory_context({ "style" => style })
-    end
-
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
-
-    context "when style is 'form'" do
-      let(:style) { "form" }
-
-      it "has a value of true" do
-        expect(node["explode"]).to be true
-      end
-    end
-
-    context "when style is 'simple'" do
-      let(:style) { "simple" }
-
-      it "has a value of false" do
-        expect(node["explode"]).to be false
-      end
+    it "sets explode to false when style is not 'form'" do
+      factory_context = create_node_factory_context({ "style" => "simple" })
+      node = described_class.new(factory_context).node(
+        node_factory_context_to_node_context(factory_context)
+      )
+      expect(node["explode"]).to be(false)
     end
   end
 end

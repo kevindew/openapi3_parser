@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::PathItem do
-  include Helpers::Context
-
   it_behaves_like "node object factory", Openapi3Parser::Node::PathItem do
     let(:input) do
       {
@@ -59,133 +54,97 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
         ]
       }
     end
-
-    let(:node_factory_context) do
-      create_node_factory_context(input)
-    end
-
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
   end
 
-  describe "parameters" do
-    subject do
-      described_class.new(
-        create_node_factory_context({ "parameters" => parameters })
-      )
-    end
-
-    context "when there are no duplicate parameters" do
-      let(:parameters) do
-        [
+  describe "validating parameters" do
+    it "is valid when there aren't duplicate parameters" do
+      input = {
+        "parameters" => [
           { "name" => "id", "in" => "header" },
           { "name" => "id", "in" => "query" }
         ]
-      end
+      }
+      instance = described_class.new(create_node_factory_context(input))
 
-      it { is_expected.to be_valid }
+      expect(instance).to be_valid
     end
 
-    context "when there are duplicate parameters" do
-      let(:parameters) do
-        [
+    it "is invalid when there are duplicate parameters" do
+      input = {
+        "parameters" => [
           { "name" => "id", "in" => "query" },
           { "name" => "id", "in" => "query" }
         ]
-      end
+      }
+      instance = described_class.new(create_node_factory_context(input))
 
-      it { is_expected.not_to be_valid }
+      expect(instance).not_to be_valid
     end
   end
 
-  describe "merging with reference" do
-    let(:input) do
-      { "$ref" => "#/path_items/example" }
-    end
-
+  describe "merging contents with a reference" do
     let(:document_input) do
       {
-        "path_items" => { "example" => reference_input }
-      }
-    end
-
-    let(:node_factory_context) do
-      create_node_factory_context(input, document_input: document_input)
-    end
-
-    let(:reference_input) do
-      {
-        "summary" => "My summary",
-        "parameters" => [
-          { "name" => "id", "in" => "query" }
-        ],
-        "servers" => [{ "url" => "/" }]
-      }
-    end
-
-    let(:instance) { described_class.new(node_factory_context) }
-
-    let(:node) do
-      node_context = node_factory_context_to_node_context(node_factory_context)
-      instance.node(node_context)
-    end
-
-    it "can be accessed via resolved_input" do
-      expect(instance.resolved_input).to match(
-        hash_including(
-          "summary" => "My summary",
-          "parameters" => [
-            hash_including("name" => "id", "in" => "query")
-          ]
-        )
-      )
-    end
-
-    it "is within the node" do
-      expect(node.summary).to eq "My summary"
-      expect(node.parameters[0].name).to eq "id"
-    end
-
-    context "when both structures contain the same field" do
-      let(:input) do
-        {
-          "$ref" => "#/path_items/example",
-          "summary" => "A different summary"
+        "path_items" => {
+          "example" => {
+            "summary" => "My summary",
+            "parameters" => [
+              { "name" => "id", "in" => "query" }
+            ],
+            "servers" => [{ "url" => "/" }]
+          }
         }
-      end
-
-      it "uses the input at a higher priority than the reference" do
-        expect(instance.resolved_input).to match(
-          hash_including("summary" => "A different summary")
-        )
-
-        expect(node.summary).to eq "A different summary"
-      end
+      }
     end
 
     context "when the input is only a reference" do
-      it "deems the source location to be that of the reference" do
+      let(:input) { { "$ref" => "#/path_items/example" } }
+
+      it "includes the reference data in the resolved_input" do
+        factory_context = create_node_factory_context(
+          input, document_input: document_input
+        )
+        expect(described_class.new(factory_context).resolved_input).to match(
+          hash_including(
+            "summary" => "My summary",
+            "parameters" => [
+              hash_including("name" => "id", "in" => "query")
+            ]
+          )
+        )
+      end
+
+      it "uses the reference data in the node" do
+        node = create_node(input, document_input)
+        expect(node.summary).to eq "My summary"
+        expect(node.parameters[0].name).to eq "id"
+      end
+
+      it "sets the source location to be the refrence path" do
+        node = create_node(input, document_input)
         expect(node.node_context.source_location.to_s)
           .to eq "#/path_items/example"
       end
     end
 
-    context "when the input is not only a reference" do
+    context "when the input includes fields besides a reference" do
       let(:input) do
-        {
-          "$ref" => "#/path_items/example",
-          "summary" => "A different summary"
-        }
+        { "$ref" => "#/path_items/example", "summary" => "A different summary" }
       end
 
-      it "deems the source location to be that of the original node" do
+      it "overwrites reference data with input data" do
+        node = create_node(input, document_input)
+        expect(node.summary).to eq "A different summary"
+      end
+
+      it "sets the source location to be the original node" do
+        node = create_node(input, document_input)
         expect(node.node_context.source_location.to_s).to eq "#/"
       end
     end
   end
 
-  describe "servers" do
+  describe "default values for servers" do
     let(:document_input) do
       {
         "openapi" => "3.0.0",
@@ -193,9 +152,7 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
           "title" => "Minimal Openapi definition",
           "version" => "1.0.0"
         },
-        "paths" => {
-          "/test" => input
-        },
+        "paths" => {},
         "servers" => [
           {
             "url" => "https://dev.example.com/v1",
@@ -205,40 +162,20 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
       }
     end
 
-    let(:node_factory_context) do
-      create_node_factory_context(input,
-                                  document_input: document_input,
-                                  pointer_segments: %w[paths /test])
+    it "uses the root object servers when servers is nil" do
+      node = create_node({ "servers" => nil }, document_input)
+      expect(node["servers"][0].url).to eq "https://dev.example.com/v1"
+      expect(node["servers"][0].description).to eq "Development server"
     end
 
-    let(:instance) { described_class.new(node_factory_context) }
-
-    let(:node) do
-      node_context = node_factory_context_to_node_context(node_factory_context)
-      instance.node(node_context)
+    it "uses the root object servers when servers is an empty array" do
+      node = create_node({ "servers" => [] }, document_input)
+      expect(node["servers"][0].url).to eq "https://dev.example.com/v1"
+      expect(node["servers"][0].description).to eq "Development server"
     end
 
-    shared_examples "defaults to servers from root object" do
-      it "uses the servers from the root object" do
-        expect(node["servers"][0].url).to eq "https://dev.example.com/v1"
-        expect(node["servers"][0].description).to eq "Development server"
-      end
-    end
-
-    context "when servers is nil" do
-      let(:input) { { "servers" => nil } }
-
-      include_examples "defaults to servers from root object"
-    end
-
-    context "when servers is an empty array" do
-      let(:input) { { "servers" => [] } }
-
-      include_examples "defaults to servers from root object"
-    end
-
-    context "when servers are provided" do
-      let(:input) do
+    it "uses the defined servers when they are provided" do
+      node = create_node(
         {
           "servers" => [
             {
@@ -246,13 +183,19 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
               "description" => "Production server"
             }
           ]
-        }
-      end
+        },
+        document_input
+      )
 
-      it "uses it's defined servers" do
-        expect(node["servers"][0].url).to eq "https://prod.example.com/v1"
-        expect(node["servers"][0].description).to eq "Production server"
-      end
+      expect(node["servers"][0].url).to eq "https://prod.example.com/v1"
+      expect(node["servers"][0].description).to eq "Production server"
     end
+  end
+
+  def create_node(input, document_input)
+    node_factory_context = create_node_factory_context(input, document_input: document_input)
+    instance = described_class.new(node_factory_context)
+    node_context = node_factory_context_to_node_context(node_factory_context)
+    instance.node(node_context)
   end
 end

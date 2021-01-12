@@ -1,143 +1,68 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-require "support/node_factory"
-
 RSpec.describe Openapi3Parser::NodeFactory::Map do
-  include Helpers::Context
-  let(:node_factory_context) { create_node_factory_context(input) }
-  let(:input) { {} }
-
-  let(:allow_extensions) { false }
-  let(:default) { {} }
-  let(:value_input_type) { nil }
-  let(:value_factory) { nil }
-  let(:validate) { nil }
-
-  let(:instance) do
-    described_class.new(node_factory_context,
-                        allow_extensions: allow_extensions,
-                        default: default,
-                        value_input_type: value_input_type,
-                        value_factory: value_factory,
-                        validate: validate)
+  it_behaves_like "node factory", ::Hash do
+    let(:node_factory_context) { create_node_factory_context({}) }
   end
 
-  it_behaves_like "node factory", ::Hash
-
-  describe "non hash input" do
-    subject { instance }
-
-    let(:input) { "a string" }
-
-    it "doesn't raise an error" do
-      expect { instance }.not_to raise_error
+  describe "validating input" do
+    it "is not valid when given a non-hash input" do
+      instance = described_class.new(create_node_factory_context("a string"))
+      expect(instance).not_to be_valid
     end
-
-    it { is_expected.not_to be_valid }
   end
 
   describe "#node" do
-    subject { instance.node(node_context) }
-
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
+    it "returns a type of Openapi3Parser::Node::Map" do
+      expect(create_node({})).to be_a(Openapi3Parser::Node::Map)
     end
 
-    it { is_expected.to be_a(Openapi3Parser::Node::Map) }
+    context "when input is nil" do
+      it "returns a Openapi3Parser::Node::Map when a hash is specified as the default" do
+        expect(create_node(nil, default: {})).to be_a(Openapi3Parser::Node::Map)
+      end
 
-    context "when input is expected to contain hashes" do
-      let(:input) { { "a" => {}, "b" => 1 } }
-      let(:value_input_type) { Hash }
-
-      it "raises an InvalidType error" do
-        error_type = Openapi3Parser::Error::InvalidType
-        error_message = "Invalid type for #/b: Expected Object"
-        expect { instance.node(node_context) }
-          .to raise_error(error_type, error_message)
+      it "returns nil when nil is specified as the default" do
+        expect(create_node(nil, default: nil)).to be_nil
       end
     end
 
-    context "when input is nil and default is an empty hash" do
-      let(:input) { nil }
-      let(:default) { {} }
+    it "can build the items based on a value factory" do
+      node = create_node({ "item" => { "name" => "Kenneth" } },
+                         value_factory: Openapi3Parser::NodeFactory::Contact)
 
-      it { is_expected.to be_a(Openapi3Parser::Node::Map) }
+      expect(node["item"]).to be_a(Openapi3Parser::Node::Contact)
     end
 
-    context "when input is nil and default is nil" do
-      let(:input) { nil }
-      let(:default) { nil }
-
-      it { is_expected.to be_nil }
+    it "allows extensions to be a different input type to valid_input_type" do
+      input = { "real" => 1, "x-item" => "string" }
+      expect { create_node(input, allow_extensions: true, value_input_type: Integer) }
+        .not_to raise_error
     end
 
-    context "when a not string key is passed" do
-      let(:input) do
-        {
-          1 => { "name" => "Kenneth" }
-        }
-      end
-
-      it "raises an InvalidType error" do
-        expect { instance.node(node_context) }
-          .to raise_error(Openapi3Parser::Error::InvalidType)
-      end
+    it "raises an error when a type other than string is given as an input key" do
+      expect { create_node({ 1 => "Test" }) }
+        .to raise_error(Openapi3Parser::Error::InvalidType,
+                        "Invalid keys for #/: Expected keys to be of type String")
     end
 
-    context "when value_input_type does not match" do
-      let(:value_input_type) { Integer }
-      let(:input) do
-        {
-          "item" => { "name" => "Kenneth" }
-        }
-      end
-
-      it "raises an InvalidType error" do
-        expect { instance.node(node_context) }
-          .to raise_error(Openapi3Parser::Error::InvalidType)
-      end
+    it "raises an error when the hash values are the wrong type" do
+      expect { create_node({ "a" => "Test" }, value_input_type: Integer) }
+        .to raise_error(Openapi3Parser::Error::InvalidType,
+                        "Invalid type for #/a: Expected Integer")
     end
 
-    context "when value_input_type does not match on an extension" do
-      let(:allow_extensions) { true }
-      let(:value_input_type) { Integer }
-      let(:input) do
-        {
-          "real" => 1,
-          "x-item" => { "name" => "Kenneth" }
-        }
-      end
-
-      it "doesn't raise an InvalidType error" do
-        expect { instance.node(node_context) }.not_to raise_error
-      end
+    it "raises an error when input fails a passed validation constraint" do
+      validation_rule = ->(validatable) { validatable.add_error("Fail") }
+      expect { create_node({}, validate: validation_rule) }
+        .to raise_error(Openapi3Parser::Error::InvalidData)
     end
 
-    context "when value_factory is set" do
-      subject(:item) { instance.node(node_context)["item"] }
-
-      let(:value_factory) { Openapi3Parser::NodeFactory::Contact }
-      let(:input) do
-        {
-          "item" => { "name" => "Kenneth" }
-        }
-      end
-
-      it "returns items created by the value factory" do
-        expect(item).to be_a(Openapi3Parser::Node::Contact)
-      end
-    end
-
-    context "when validation is set and failing" do
-      let(:validate) do
-        ->(validatable) { validatable.add_error("Fail") }
-      end
-
-      it "raises an error" do
-        expect { instance.node(node_context) }
-          .to raise_error(Openapi3Parser::Error::InvalidData)
-      end
+    def create_node(input, **options)
+      node_factory_context = create_node_factory_context(input)
+      instance = described_class.new(node_factory_context, **options)
+      node_context = node_factory_context_to_node_context(node_factory_context)
+      instance.node(node_context)
     end
   end
 end

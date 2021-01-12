@@ -1,157 +1,128 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Reference do
-  include Helpers::Context
-
-  let(:input) { { "$ref" => "#/contact" } }
-  let(:node_factory_context) do
-    create_node_factory_context(input, document_input: { contact: {} })
+  def create_instance(input)
+    factory_context = create_node_factory_context(
+      input,
+      document_input: { contact: {} }
+    )
+    factory = Openapi3Parser::NodeFactory::Contact
+    described_class.new(factory_context, factory)
   end
-  let(:factory) { Openapi3Parser::NodeFactory::Contact }
-  let(:instance) { described_class.new(node_factory_context, factory) }
+
+  def create_node(input)
+    instance = create_instance(input)
+    node_context = node_factory_context_to_node_context(instance.context)
+    instance.node(node_context)
+  end
 
   describe "#node" do
-    subject(:node) do
-      node_context = node_factory_context_to_node_context(node_factory_context)
-      instance.node(node_context)
+    it "can return the referenced node" do
+      expect(create_node({ "$ref" => "#/contact" }))
+        .to be_a(Openapi3Parser::Node::Contact)
     end
 
-    context "when the reference is valid" do
-      it { is_expected.to be_a(Openapi3Parser::Node::Contact) }
+    it "raises an error when the reference input is the wrong type" do
+      expect { create_node("a string") }
+        .to raise_error(Openapi3Parser::Error::InvalidType)
     end
 
-    context "when the reference is incorrect type" do
-      let(:input) { "" }
-
-      it "raises an error" do
-        expect { node }.to raise_error(Openapi3Parser::Error::InvalidType)
-      end
+    it "raises an error when the reference input is missing fields" do
+      expect { create_node({}) }
+        .to raise_error(Openapi3Parser::Error::MissingFields)
     end
 
-    context "when the reference is missing fields" do
-      let(:input) { {} }
-
-      it "raises an error" do
-        expect { node }.to raise_error(Openapi3Parser::Error::MissingFields)
-      end
+    it "raises an error when the reference is invalid" do
+      expect { create_node({ "$ref" => "invalid reference" }) }
+        .to raise_error(Openapi3Parser::Error::InvalidData)
     end
 
-    context "when the reference is invalid" do
-      let(:input) { { "$ref" => "invalid reference" } }
-
-      it "raises an error" do
-        expect { node }.to raise_error(Openapi3Parser::Error::InvalidData)
-      end
-    end
-
-    context "when the reference is syntactically correct but unresolvable" do
-      let(:input) { { "$ref" => "#/unresolvable" } }
-
-      it "raises an error" do
-        expect { node }.to raise_error(Openapi3Parser::Error::InvalidData)
-      end
+    it "raises an error when the reference is unresolvable" do
+      expect { create_node({ "$ref" => "#/cant-find-this" }) }
+        .to raise_error(Openapi3Parser::Error::InvalidData)
     end
   end
 
   describe "#valid?" do
-    subject { instance.valid? }
-
-    context "when input is valid" do
-      it { is_expected.to be true }
+    it "returns true for valid input" do
+      expect(create_instance({ "$ref" => "#/contact" }).valid?)
+        .to be true
     end
 
-    context "when input is invalid" do
-      let(:input) { {} }
-
-      it { is_expected.to be false }
+    it "returns false for invalid input" do
+      expect(create_instance({}).valid?).to be false
     end
   end
 
   describe "#errors" do
-    subject { instance.errors }
-
-    context "when input is valid" do
-      it { is_expected.to be_empty }
+    it "is empty when it is valid" do
+      expect(create_instance({ "$ref" => "#/contact" }).errors)
+        .to be_empty
     end
 
-    context "when it is missing a $ref" do
-      let(:input) { {} }
+    it "has validation errors when it is invalid" do
+      expect(create_instance({ "$ref" => "#/contact", "extra" => "field" }))
+        .to have_validation_error("#/").with_message("Unexpected fields: extra")
+    end
 
-      it "has a validation error" do
-        expect(instance)
-          .to have_validation_error("#/",
-                                    "Missing required fields: $ref")
-      end
+    it "has no validation errors when invalid and in a recursive loop" do
+      # If the object is in a recursive loop we can never fully validate
+      # the item so we abort early knowing that the recursive loop will
+      # produce an error on the item calling this.
+
+      # cheat a recursive loop by suggesting we've already visited this node
+      factory_context = create_node_factory_context(
+        { "$ref" => "#/contact", "extra" => "field" },
+        reference_pointer_fragments: ["#/%24ref"]
+      )
+      instance = described_class.new(factory_context, Openapi3Parser::NodeFactory::Contact)
+
+      expect(instance.errors).to be_empty
     end
   end
 
   describe "#resolves?" do
-    subject { instance.resolves?(control_factory) }
-
     let(:factory) do
       Openapi3Parser::NodeFactory::OptionalReference.new(
         Openapi3Parser::NodeFactory::Contact
       )
     end
 
-    let(:input) { { "$ref" => "#/contact_2" } }
-
-    let(:node_factory_context) do
-      create_node_factory_context(input,
-                                  document_input: document_input,
-                                  pointer_segments: %w[contact_1])
-    end
-
-    let(:control_factory) do
+    def control_factory(instance)
       # As references need to be registered and this happens in the process
       # of creating a reference node we need to check reference loop using
       # a factory from the reference registry
-      node_factory_context.source.reference_registry.factories.first
+      instance.context.source.reference_registry.factories.first
     end
 
-    context "when a reference can reach an object" do
-      let(:document_input) do
-        {
-          contact_1: { "$ref" => "#/contact_2" },
-          contact_2: { "$ref" => "#/contact_3" },
-          contact_3: {}
-        }
-      end
+    it "returns true when following a chain of references leads to an object" do
+      factory_context = create_node_factory_context(
+        { "$ref" => "#/contact2" },
+        document_input: {
+          contact1: { "$ref" => "#/contact2" },
+          contact2: { "$ref" => "#/contact3" },
+          contact3: {}
+        },
+        pointer_segments: %w[contact1]
+      )
+      instance = described_class.new(factory_context, factory)
 
-      it { is_expected.to be true }
+      expect(instance.resolves?(control_factory(instance))).to be true
     end
 
-    context "when a reference never reaches an object" do
-      let(:document_input) do
-        {
-          contact_1: { "$ref" => "#/contact_2" },
-          contact_2: { "$ref" => "#/contact_3" },
-          contact_3: { "$ref" => "#/contact_1" }
-        }
-      end
+    it "returns false when following a chain of references leads to a recursive loop" do
+      factory_context = create_node_factory_context(
+        { "$ref" => "#/contact2" },
+        document_input: {
+          contact1: { "$ref" => "#/contact2" },
+          contact2: { "$ref" => "#/contact3" },
+          contact3: { "$ref" => "#/contact1" }
+        },
+        pointer_segments: %w[contact1]
+      )
+      instance = described_class.new(factory_context, factory)
 
-      it { is_expected.to be false }
-    end
-  end
-
-  describe "#errors" do
-    subject { instance.errors }
-
-    let(:input) { { "$ref" => "#/contact", "extra" => "produces error" } }
-
-    context "when not in a recursive loop" do
-      it { is_expected.not_to be_empty }
-    end
-
-    context "when in a recursive loop" do
-      let(:node_factory_context) do
-        create_node_factory_context(input,
-                                    reference_pointer_fragments: ["#/%24ref"])
-      end
-
-      it { is_expected.to be_empty }
+      expect(instance.resolves?(control_factory(instance))).to be false
     end
   end
 end

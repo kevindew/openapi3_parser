@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::RequestBody do
-  include Helpers::Context
-
   it_behaves_like "node object factory", Openapi3Parser::Node::RequestBody do
     let(:input) do
       {
@@ -20,86 +15,51 @@ RSpec.describe Openapi3Parser::NodeFactory::RequestBody do
         }
       }
     end
+  end
 
-    let(:node_factory_context) { create_node_factory_context(input) }
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
+  describe "validating content" do
+    it "is valid when content has a valid media type" do
+      instance = described_class.new(
+        create_node_factory_context({ "content" => { "application/json" => {} } })
+      )
+      expect(instance).to be_valid
+    end
+
+    it "is valid when content has a valid media type range" do
+      instance = described_class.new(
+        create_node_factory_context({ "content" => { "text/*" => {} } })
+      )
+      expect(instance).to be_valid
+    end
+
+    it "is invalid when content has an invalid media type" do
+      instance = described_class.new(
+        create_node_factory_context({ "content" => { "bad-media-type" => {} } })
+      )
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/content/bad-media-type")
+        .with_message(%("bad-media-type" is not a valid media type))
+    end
+
+    it "is invalid when content is an empty hash" do
+      instance = described_class.new(create_node_factory_context({ "content" => {} }))
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/content")
+        .with_message("Expected to have at least 1 item")
     end
   end
 
-  describe "content" do
-    subject { described_class.new(node_factory_context) }
-
-    let(:node_factory_context) do
-      create_node_factory_context({ "content" => content })
-    end
-
-    context "when content is an empty hash" do
-      let(:content) { {} }
-
-      it do
-        expect(subject)
-          .to have_validation_error("#/content")
-          .with_message("Expected to have at least 1 item")
-      end
-    end
-
-    context "when content has a valid media type" do
-      let(:content) do
-        {
-          "application/json" => {}
-        }
-      end
-
-      it { is_expected.to be_valid }
-    end
-
-    context "when content has a valid media type range" do
-      let(:content) do
-        {
-          "text/*" => {}
-        }
-      end
-
-      it { is_expected.to be_valid }
-    end
-
-    context "when content has an invalid valid media type" do
-      let(:content) do
-        {
-          "bad-media-type" => {}
-        }
-      end
-
-      it do
-        expect(subject)
-          .to have_validation_error("#/content/bad-media-type")
-          .with_message(%("bad-media-type" is not a valid media type))
-      end
-    end
-  end
-
-  describe "required" do
-    subject do
-      node_context = node_factory_context_to_node_context(node_factory_context)
-      described_class.new(node_factory_context).node(node_context)["required"]
-    end
-
-    let(:node_factory_context) do
-      create_node_factory_context({ "content" => { "*/*" => {} },
-                                    "required" => required })
-    end
-
-    context "when required is set" do
-      let(:required) { true }
-
-      it { is_expected.to be true }
-    end
-
-    context "when required is not set" do
-      let(:required) { nil }
-
-      it { is_expected.to be false }
+  describe "required field" do
+    it "defaults to false" do
+      factory_context = create_node_factory_context(
+        { "content" => { "application/json" => {} } }
+      )
+      node = described_class.new(factory_context).node(
+        node_factory_context_to_node_context(factory_context)
+      )
+      expect(node["required"]).to be(false)
     end
   end
 end

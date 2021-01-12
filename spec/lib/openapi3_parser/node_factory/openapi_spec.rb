@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Openapi do
-  include Helpers::Context
   let(:minimal_openapi_definition) do
     {
       "openapi" => "3.0.0",
@@ -18,110 +14,89 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
 
   it_behaves_like "node object factory", Openapi3Parser::Node::Openapi do
     let(:input) { minimal_openapi_definition }
-    let(:node_factory_context) { create_node_factory_context(input) }
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
   end
 
   context "when input is nil" do
-    subject(:factory) { described_class.new(node_factory_context) }
+    let(:factory_context) { create_node_factory_context(nil) }
 
-    let(:input) { nil }
-    let(:node_factory_context) { create_node_factory_context(input) }
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
+    it "is invalid" do
+      instance = described_class.new(factory_context)
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/")
+        .with_message("Invalid type. Expected Object")
     end
 
-    it { is_expected.not_to be_valid }
-
-    it "raises error accessing node" do
-      expect { subject.node(node_context) }
-        .to raise_error(Openapi3Parser::Error)
-    end
-  end
-
-  describe "tags" do
-    subject(:factory) { described_class.new(node_factory_context) }
-
-    let(:input) { minimal_openapi_definition.merge("tags" => tags) }
-    let(:node_factory_context) { create_node_factory_context(input) }
-
-    context "when tags contains no duplicate names" do
-      let(:tags) do
-        [
-          { "name" => "a" }
-        ]
-      end
-
-      it { is_expected.to be_valid }
-    end
-
-    context "when tags contains duplicate names" do
-      let(:tags) do
-        [
-          { "name" => "a" },
-          { "name" => "a" }
-        ]
-      end
-
-      it { is_expected.not_to be_valid }
-
-      it "has a duplicate tags names error" do
-        message = "Duplicate tag names: a"
-        expect(factory.errors.first.message).to eq message
-      end
+    it "raises an error trying to access the node" do
+      instance = described_class.new(factory_context)
+      node_context = node_factory_context_to_node_context(factory_context)
+      expect { instance.node(node_context) }.to raise_error(Openapi3Parser::Error)
     end
   end
 
-  describe "servers" do
-    subject(:node) do
-      input = minimal_openapi_definition.merge("servers" => servers)
-      node_factory_context = create_node_factory_context(input)
-      node_context = node_factory_context_to_node_context(node_factory_context)
-      described_class.new(node_factory_context)
-                     .node(node_context)
+  describe "validating tags" do
+    it "is valid when tags contain no duplicates" do
+      factory_context = create_node_factory_context(
+        minimal_openapi_definition.merge(
+          "tags" => [{ "name" => "a" }, { "name" => "b" }]
+        )
+      )
+      expect(described_class.new(factory_context)).to be_valid
     end
 
-    shared_examples "defaults to a single root server" do
-      # As per: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#fixed-fields
-      it "has an array with a root server" do
-        servers = node["servers"]
-        expect(servers.length).to be 1
-        expect(servers[0]).to be_a(Openapi3Parser::Node::Server)
-        expect(servers[0].url).to eq "/"
-        expect(servers[0].description).to be_nil
-      end
+    it "is invalid for an invalid key" do
+      factory_context = create_node_factory_context(
+        minimal_openapi_definition.merge(
+          "tags" => [{ "name" => "a" }, { "name" => "a" }]
+        )
+      )
+
+      instance = described_class.new(factory_context)
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/tags")
+        .with_message("Duplicate tag names: a")
+    end
+  end
+
+  describe "default values for servers" do
+    it "contains a basic root server when servers input is nil" do
+      node = create_node(minimal_openapi_definition.merge({ "servers" => nil }))
+      expect(node["servers"].length).to be 1
+      expect(node["servers"][0].url).to eq "/"
+      expect(node["servers"][0].description).to be_nil
     end
 
-    context "when servers are not provided" do
-      let(:servers) { nil }
-
-      include_examples "defaults to a single root server"
+    it "contains a basic root server when servers input is an empty array" do
+      node = create_node(minimal_openapi_definition.merge({ "servers" => [] }))
+      expect(node["servers"].length).to be 1
+      expect(node["servers"][0].url).to eq "/"
+      expect(node["servers"][0].description).to be_nil
     end
 
-    context "when servers are an empty array" do
-      let(:servers) { [] }
-
-      include_examples "defaults to a single root server"
-    end
-
-    context "when servers are set" do
-      let(:servers) do
-        [
+    it "uses the defined servers when they are provided" do
+      node = create_node(
+        minimal_openapi_definition.merge(
           {
-            "url" => "https://development.gigantic-server.com/v1",
-            "description" => "Development server"
+            "servers" => [
+              {
+                "url" => "https://prod.example.com/v1",
+                "description" => "Production server"
+              }
+            ]
           }
-        ]
-      end
+        )
+      )
 
-      it "has an array with the server value" do
-        servers = node["servers"]
-        expect(servers.length).to be 1
-        expect(servers[0]).to be_a(Openapi3Parser::Node::Server)
-        expect(servers[0].description).to eq "Development server"
-      end
+      expect(node["servers"][0].url).to eq "https://prod.example.com/v1"
+      expect(node["servers"][0].description).to eq "Production server"
     end
+  end
+
+  def create_node(input)
+    node_factory_context = create_node_factory_context(input)
+    instance = described_class.new(node_factory_context)
+    node_context = node_factory_context_to_node_context(node_factory_context)
+    instance.node(node_context)
   end
 end

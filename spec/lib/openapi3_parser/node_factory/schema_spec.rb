@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
-require "support/default_field"
-require "support/node_object_factory"
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::NodeFactory::Schema do
-  include Helpers::Context
-
   it_behaves_like "node object factory", Openapi3Parser::Node::Schema do
     let(:input) do
       {
@@ -48,59 +42,6 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
 
     let(:node_context) do
       node_factory_context_to_node_context(node_factory_context)
-    end
-  end
-
-  describe "items" do
-    subject { described_class.new(node_factory_context) }
-
-    let(:node_factory_context) do
-      create_node_factory_context({ "type" => type, "items" => items })
-    end
-
-    context "when type is not array and items is not provided" do
-      let(:type) { "string" }
-      let(:items) { nil }
-
-      it { is_expected.to be_valid }
-    end
-
-    context "when type is array and items is not provided" do
-      let(:type) { "array" }
-      let(:items) { nil }
-
-      it do
-        expect(subject)
-          .to have_validation_error("#/")
-          .with_message("items must be defined for a type of array")
-      end
-    end
-
-    context "when type is array and items areprovided" do
-      let(:type) { "array" }
-      let(:items) { { "type" => "string" } }
-
-      it { is_expected.to be_valid }
-    end
-  end
-
-  describe "writeOnly and readOnly" do
-    subject { described_class.new(node_factory_context) }
-
-    let(:node_factory_context) do
-      create_node_factory_context({ "readOnly" => read_only,
-                                    "writeOnly" => write_only })
-    end
-
-    context "when both are true" do
-      let(:read_only) { true }
-      let(:write_only) { true }
-
-      it do
-        expect(subject)
-          .to have_validation_error("#/")
-          .with_message("readOnly and writeOnly cannot both be true")
-      end
     end
   end
 
@@ -153,41 +94,84 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
     end
   end
 
-  describe "additionalProperties" do
-    subject do
-      context = create_node_factory_context(
-        { "additionalProperties" => additional_properties }
+  describe "validating items" do
+    it "is valid when type is 'array' and items are provided" do
+      instance = described_class.new(
+        create_node_factory_context({ "type" => "array", "items" => { "type" => "string" } })
       )
-
-      described_class.new(context)
+      expect(instance).to be_valid
     end
 
-    context "when it is set to true" do
-      let(:additional_properties) { true }
-
-      it { is_expected.to be_valid }
+    it "is valid when type isn't 'array' and items aren't provided" do
+      instance = described_class.new(
+        create_node_factory_context({ "type" => "string" })
+      )
+      expect(instance).to be_valid
     end
 
-    context "when it is set to false" do
-      let(:additional_properties) { false }
+    it "is invalid when type is 'array' and items aren't provided" do
+      instance = described_class.new(
+        create_node_factory_context({ "type" => "array" })
+      )
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/")
+        .with_message("items must be defined for a type of array")
+    end
+  end
 
-      it { is_expected.to be_valid }
+  describe "validating writeOnly and readOnly" do
+    it "is invalid when both writeOnly and readOnly are true" do
+      instance = described_class.new(
+        create_node_factory_context({ "writeOnly" => true, "readOnly" => true })
+      )
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/")
+        .with_message("readOnly and writeOnly cannot both be true")
     end
 
-    context "when it is an object" do
-      let(:additional_properties) { { "type" => "object" } }
+    it "is valid when one of writeOnly and readOnly are true" do
+      write_only = described_class.new(
+        create_node_factory_context({ "writeOnly" => true })
+      )
+      expect(write_only).to be_valid
 
-      it { is_expected.to be_valid }
+      read_only = described_class.new(
+        create_node_factory_context({ "readOnly" => true })
+      )
+      expect(read_only).to be_valid
+    end
+  end
+
+  describe "validating additionalProperties" do
+    it "is valid for a boolean" do
+      true_instance = described_class.new(
+        create_node_factory_context({ "additionalProperties" => true })
+      )
+      expect(true_instance).to be_valid
+
+      false_instance = described_class.new(
+        create_node_factory_context({ "additionalProperties" => false })
+      )
+      expect(false_instance).to be_valid
     end
 
-    context "when it is something different" do
-      let(:additional_properties) { %w[item_1 item_2] }
+    it "is valid for a schema" do
+      instance = described_class.new(
+        create_node_factory_context({ "additionalProperties" => { "type" => "object" } })
+      )
+      expect(instance).to be_valid
+    end
 
-      it do
-        expect(subject)
-          .to have_validation_error("#/additionalProperties")
-          .with_message("Expected a Boolean or an Object")
-      end
+    it "is invalid for something different" do
+      instance = described_class.new(
+        create_node_factory_context({ "additionalProperties" => %w[item1 item2] })
+      )
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/additionalProperties")
+        .with_message("Expected a Boolean or an Object")
     end
   end
 end
