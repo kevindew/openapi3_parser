@@ -22,7 +22,7 @@ module Openapi3Parser
           !given_factory.nil?
         end
 
-        def initialize_factory(context, parent_factory)
+        def initialize_factory(context, parent_factory = nil)
           case given_factory
           when Class
             given_factory.new(context)
@@ -37,7 +37,7 @@ module Openapi3Parser
           given_required
         end
 
-        def check_input_type(validatable, building_node)
+        def check_input_type(validatable, building_node = false)
           return true if !given_input_type || validatable.input.nil?
 
           if building_node
@@ -48,7 +48,7 @@ module Openapi3Parser
           end
         end
 
-        def validate_field(validatable, building_node)
+        def validate_field(validatable, building_node = false)
           return true if !given_validate || validatable.input.nil?
 
           run_validation(validatable)
@@ -62,9 +62,9 @@ module Openapi3Parser
                 "Invalid data for #{location_summary}: #{error.message}"
         end
 
-        def default(factory)
+        def default(factory = nil)
           return given_default.call if given_default.is_a?(Proc)
-          return factory.send(given_default) if given_default.is_a?(Symbol)
+          return factory&.send(given_default) if given_default.is_a?(Symbol)
 
           given_default
         end
