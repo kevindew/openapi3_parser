@@ -5,9 +5,14 @@ SimpleCov.start
 
 require "openapi3_parser"
 require "webmock/rspec"
-require "support/matchers/have_validation_error"
+
+files = Dir.glob(File.join(__dir__, "support", "**", "*.rb")).sort
+files.each { |file| require file }
 
 RSpec.configure do |config|
+  include Helpers::Context
+  include Helpers::Source
+
   config.disable_monkey_patching!
 
   config.order = :random
