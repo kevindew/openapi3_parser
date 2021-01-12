@@ -10,7 +10,7 @@ module Openapi3Parser
       end
 
       def call(validatable)
-        error = @callable.call(validatable.input)
+        error = callable.call(validatable.input)
         validatable.add_error(error) if error
       end
     end
