@@ -7,15 +7,15 @@ module Openapi3Parser
     module ObjectFactory
       class Validator
         private_class_method :new
-        attr_reader :factory, :validatable, :building_node
+        attr_reader :factory, :validatable, :raise_on_invalid
 
         def self.call(*args)
           new(*args).call
         end
 
-        def initialize(factory, building_node)
+        def initialize(factory, raise_on_invalid: false)
           @factory = factory
-          @building_node = building_node
+          @raise_on_invalid = raise_on_invalid
           @validatable = Validation::Validatable.new(factory)
         end
 
@@ -34,7 +34,7 @@ module Openapi3Parser
           Validators::RequiredFields.call(
             validatable,
             required_fields: factory.required_fields,
-            raise_on_invalid: building_node
+            raise_on_invalid: raise_on_invalid
           )
         end
 
@@ -43,7 +43,7 @@ module Openapi3Parser
             validatable,
             allow_extensions: factory.allowed_extensions?,
             allowed_fields: factory.allowed_fields,
-            raise_on_invalid: building_node
+            raise_on_invalid: raise_on_invalid
           )
         end
 
@@ -51,7 +51,7 @@ module Openapi3Parser
           Validators::MutuallyExclusiveFields.call(
             validatable,
             mutually_exclusive_fields: factory.mutually_exclusive_fields,
-            raise_on_invalid: building_node
+            raise_on_invalid: raise_on_invalid
           )
         end
 
@@ -67,7 +67,7 @@ module Openapi3Parser
           extend Forwardable
           attr_reader :validator
 
-          def_delegators :validator, :factory, :building_node, :validatable
+          def_delegators :validator, :factory, :raise_on_invalid, :validatable
           private_class_method :new
 
           def self.call(validator)
@@ -89,7 +89,7 @@ module Openapi3Parser
 
               # We don't add errors when we're building a node as they will
               # be raised when that child node is built
-              validatable.add_errors(field.errors) unless building_node
+              validatable.add_errors(field.errors) unless raise_on_invalid
             end
           end
 
@@ -115,9 +115,9 @@ module Openapi3Parser
                                                             context: context)
 
             valid_input_type = field_config.check_input_type(field_validatable,
-                                                             building_node)
+                                                             raise_on_invalid)
 
-            field_config.validate_field(field_validatable, building_node) if valid_input_type
+            field_config.validate_field(field_validatable, raise_on_invalid) if valid_input_type
 
             validatable.add_errors(field_validatable.errors)
             field_validatable.errors
@@ -136,7 +136,7 @@ module Openapi3Parser
 
             errors = validator.validatable.errors
 
-            return if errors.empty? || !validator.building_node
+            return if errors.empty? || !validator.raise_on_invalid
 
             location_summary = errors.first.context.location_summary
             raise Error::InvalidData,

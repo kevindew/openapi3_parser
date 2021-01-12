@@ -44,7 +44,7 @@ module Openapi3Parser
 
       def build_node(node_context)
         TypeChecker.raise_on_invalid_type(context, type: ::Hash)
-        ObjectFactory::Validator.call(self, true)
+        ObjectFactory::Validator.call(self, raise_on_invalid: true)
         data["$ref"].node(node_context)
       end
 
