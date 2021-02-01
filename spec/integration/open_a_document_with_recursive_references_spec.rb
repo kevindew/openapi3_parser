@@ -13,7 +13,7 @@ RSpec.describe "Open a document with recursive references" do
       paths: {},
       components: {
         schemas: {
-          "RecursiveItem": {
+          RecursiveItem: {
             type: "object",
             properties: {
               links: {
@@ -28,13 +28,13 @@ RSpec.describe "Open a document with recursive references" do
               }
             }
           },
-          "IndirectlyRecursiveItem": {
+          IndirectlyRecursiveItem: {
             type: "object",
             properties: {
               recursive_item: { "$ref": "#/components/schemas/RecursiveItem" }
             }
           },
-          "RecursiveArray": {
+          RecursiveArray: {
             oneOf: [
               { "$ref": "#/components/schemas/RecursiveArray" },
               { "$ref": "#/components/schemas/RecursiveItem" },
