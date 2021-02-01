@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rspec/expectations"
-
 RSpec::Matchers.define :have_validation_error do |expected_location|
   match do |actual|
     errors_hash = actual.errors.to_h

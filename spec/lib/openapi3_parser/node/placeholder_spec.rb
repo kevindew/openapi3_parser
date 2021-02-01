@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::Node::Placeholder do
-  include Helpers::Context
-
   let(:node_factory) do
     Openapi3Parser::NodeFactory::Contact.new(create_node_factory_context({}))
   end

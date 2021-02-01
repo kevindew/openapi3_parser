@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.shared_examples "node equality" do |input|
-  include Helpers::Context
-
   describe "#==" do
     let(:context) { create_node_context({}) }
 

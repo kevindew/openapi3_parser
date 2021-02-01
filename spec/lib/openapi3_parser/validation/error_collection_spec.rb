@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-
 RSpec.describe Openapi3Parser::Validation::ErrorCollection do
-  include Helpers::Context
-
   let(:base_document) do
     source_input = Openapi3Parser::SourceInput::Raw.new({})
     Openapi3Parser::Document.new(source_input)

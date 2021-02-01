@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
-require "support/helpers/context"
-require "support/helpers/source"
-
 RSpec.describe Openapi3Parser::Node::Context do
-  include Helpers::Context
-  include Helpers::Source
-
   describe ".root" do
     it "returns an instance of context with a root document_location" do
       factory_context = create_node_factory_context({})
