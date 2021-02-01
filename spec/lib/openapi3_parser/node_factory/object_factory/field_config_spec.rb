@@ -110,7 +110,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
       end
 
       it "raises an error when building_node is true" do
-        expect { instance.check_input_type(validatable, true) }
+        expect { instance.check_input_type(validatable, building_node: true) }
           .to raise_error(Openapi3Parser::Error::InvalidType)
       end
     end
@@ -164,7 +164,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
       end
 
       it "raises an error when building_node is true" do
-        expect { instance.validate_field(validatable, true) }
+        expect { instance.validate_field(validatable, building_node: true) }
           .to raise_error(Openapi3Parser::Error::InvalidData,
                           "Invalid data for #/: Error")
       end

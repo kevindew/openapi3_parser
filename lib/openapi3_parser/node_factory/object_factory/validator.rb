@@ -114,10 +114,15 @@ module Openapi3Parser
             field_validatable = Validation::Validatable.new(factory,
                                                             context: context)
 
-            valid_input_type = field_config.check_input_type(field_validatable,
-                                                             raise_on_invalid)
+            valid_input_type = field_config.check_input_type(
+              field_validatable,
+              building_node: raise_on_invalid
+            )
 
-            field_config.validate_field(field_validatable, raise_on_invalid) if valid_input_type
+            if valid_input_type
+              field_config.validate_field(field_validatable,
+                                          building_node: raise_on_invalid)
+            end
 
             validatable.add_errors(field_validatable.errors)
             field_validatable.errors

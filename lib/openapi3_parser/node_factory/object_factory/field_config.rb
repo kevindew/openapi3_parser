@@ -37,7 +37,7 @@ module Openapi3Parser
           given_required
         end
 
-        def check_input_type(validatable, building_node = false)
+        def check_input_type(validatable, building_node: false)
           return true if !given_input_type || validatable.input.nil?
 
           if building_node
@@ -48,7 +48,7 @@ module Openapi3Parser
           end
         end
 
-        def validate_field(validatable, building_node = false)
+        def validate_field(validatable, building_node: false)
           return true if !given_validate || validatable.input.nil?
 
           run_validation(validatable)
