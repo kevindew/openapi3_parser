@@ -9,8 +9,8 @@ module Openapi3Parser
         private_class_method :new
         attr_reader :factory, :validatable, :raise_on_invalid
 
-        def self.call(*args)
-          new(*args).call
+        def self.call(*args, **kwargs)
+          new(*args, **kwargs).call
         end
 
         def initialize(factory, raise_on_invalid: false)
