@@ -15,7 +15,12 @@ RSpec.describe Openapi3Parser::NodeFactory::Parameter do
           }
         },
         "style" => "form",
-        "explode" => true
+        "explode" => true,
+        "examples" => {
+          "example_name" => {
+            "value" => [1, 2]
+          }
+        }
       }
     end
   end

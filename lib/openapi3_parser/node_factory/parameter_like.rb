@@ -13,7 +13,7 @@ module Openapi3Parser
       end
 
       def examples_factory(context)
-        factory = NodeFactory::OptionalReference.new(NodeFactory::Schema)
+        factory = NodeFactory::OptionalReference.new(NodeFactory::Example)
         NodeFactory::Map.new(context,
                              default: nil,
                              value_factory: factory)
