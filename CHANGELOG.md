@@ -1,5 +1,7 @@
-# Unreleased
+# 0.9.0
 
+- Fix unexpected fields error when using Example nodes inside a Parameter -
+  https://github.com/kevindew/openapi3_parser/pull/19
 - Drop support for Ruby 2.4
 
 # 0.8.2
