@@ -1,3 +1,8 @@
+# Unreleased
+
+- Fix Schema#requires? incorrectly returning true for referenced properties -
+  https://github.com/kevindew/openapi3_parser/issues/20
+
 # 0.9.0
 
 - Fix unexpected fields error when using Example nodes inside a Parameter -
