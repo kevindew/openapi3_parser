@@ -2,6 +2,7 @@
 
 - Fix Schema#requires? incorrectly returning true for referenced properties -
   https://github.com/kevindew/openapi3_parser/issues/20
+- Drop support for Ruby 2.5
 
 # 0.9.0
 

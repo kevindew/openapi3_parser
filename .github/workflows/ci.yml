@@ -3,7 +3,7 @@ jobs:
   test:
     strategy:
       matrix:
-        ruby: [2.5, 2.6, 2.7, 3.0]
+        ruby: [2.6, 2.7, 3.0]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -13,11 +13,11 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
       - name: Test Ruby ${{ matrix.ruby }}
         run: bundle exec rake
-        if: matrix.ruby != '2.5'
+        if: matrix.ruby != '2.6'
       - name: Test and publish coverage for Ruby ${{ matrix.ruby }}
         uses: paambaati/codeclimate-action@v2.7.5
         env:
           CC_TEST_REPORTER_ID: 8bc2d8e54331569aeb442094c21cb64a58d6efa0670f65ff00d9ae887f63c0b4
         with:
           coverageCommand: bundle exec rake
-        if: matrix.ruby == '2.5'
+        if: matrix.ruby == '2.6'
