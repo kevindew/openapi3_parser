@@ -8,7 +8,7 @@ module Openapi3Parser
     # provide common means to convert it into different representations.
     class Pointer
       def self.from_fragment(fragment)
-        fragment = fragment[1..-1] if fragment.start_with?("#")
+        fragment = fragment[1..] if fragment.start_with?("#")
         absolute = fragment[0] == "/"
         segments = fragment.split("/").map do |part|
           next if part == ""
@@ -93,7 +93,7 @@ module Openapi3Parser
 
           joined = File.expand_path("/#{fragment_a}/#{fragment_b}", "/")
 
-          joined = joined[1..-1] unless pointer_a.absolute
+          joined = joined[1..] unless pointer_a.absolute
 
           Pointer.from_fragment("##{joined}")
         end

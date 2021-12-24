@@ -10,6 +10,7 @@ Gem::Specification.new do |spec|
   spec.version       = Openapi3Parser::VERSION
   spec.author        = "Kevin Dew"
   spec.email         = "kevindew@me.com"
+  spec.metadata      = { "rubygems_mfa_required" => "true" }
 
   spec.summary       = "An OpenAPI V3 parser for Ruby"
   spec.description   = <<-DESCRIPTION

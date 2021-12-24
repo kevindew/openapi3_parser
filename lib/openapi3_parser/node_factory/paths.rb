@@ -36,9 +36,7 @@ module Openapi3Parser
       end
 
       def validate(validatable)
-        paths = validatable.input.keys.reject do |key|
-          NodeFactory::EXTENSION_REGEX =~ key
-        end
+        paths = validatable.input.keys.grep_v(NodeFactory::EXTENSION_REGEX)
         validate_paths(validatable, paths)
       end
 

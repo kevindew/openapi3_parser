@@ -9,7 +9,7 @@ RSpec.describe "Open a YAML Document via URL" do
       __dir__, "..", "support", "examples", "petstore-expanded.yaml"
     )
     stub_request(:get, "example.com/openapi.yml")
-      .to_return(body: File.open(path).read)
+      .to_return(body: File.read(path))
   end
 
   it "is a valid document" do

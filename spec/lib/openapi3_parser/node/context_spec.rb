@@ -55,7 +55,7 @@ RSpec.describe Openapi3Parser::Node::Context do
       expect(instance.input).to eq "data"
     end
 
-    it "maintains the document location of the current context " do
+    it "maintains the document location of the current context" do
       instance = described_class.resolved_reference(current_context,
                                                     reference_factory_context)
 

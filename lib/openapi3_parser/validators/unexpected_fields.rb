@@ -39,7 +39,7 @@ module Openapi3Parser
         extra_keys = input.keys - allowed_fields
         return extra_keys unless allow_extensions
 
-        extra_keys.reject { |key| key =~ NodeFactory::EXTENSION_REGEX }
+        extra_keys.grep_v(NodeFactory::EXTENSION_REGEX)
       end
     end
   end

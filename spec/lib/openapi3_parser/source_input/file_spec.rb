@@ -79,7 +79,7 @@ RSpec.describe Openapi3Parser::SourceInput::File do
 
   describe "#==" do
     it "returns true for the same class and same url" do
-      expect(described_class.new("/file")).to eq described_class.new("/file")
+      expect(described_class.new("/file")).to eq described_class.new("/file") # rubocop:disable RSpec/IdenticalEqualityAssertion
     end
 
     it "returns false for the same class and different url" do

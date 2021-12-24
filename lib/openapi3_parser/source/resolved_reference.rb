@@ -29,13 +29,9 @@ module Openapi3Parser
       end
 
       def factory
-        @factory ||= begin
-          reference_registry
-            .factory(object_type, source_location)
-            .tap do |factory|
-              message = "Unregistered node factory at #{source_location}"
-              raise Openapi3Parser::Error, message unless factory
-            end
+        @factory ||= reference_registry.factory(object_type, source_location).tap do |factory|
+          message = "Unregistered node factory at #{source_location}"
+          raise Openapi3Parser::Error, message unless factory
         end
       end
 
