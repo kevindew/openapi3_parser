@@ -16,7 +16,7 @@ module Openapi3Parser
     attr_reader :openapi_version, :root_source, :warnings
 
     # A collection of the openapi versions that are supported
-    SUPPORTED_OPENAPI_VERSIONS = %w[3.0].freeze
+    SUPPORTED_OPENAPI_VERSIONS = %w[3.0 3.1].freeze
 
     # The version of OpenAPI that will be used by default for
     # validation/construction
