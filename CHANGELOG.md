@@ -1,4 +1,4 @@
-# Unreleased
+# 0.9.1
 
 - Fix Schema#requires? incorrectly returning true for referenced properties -
   https://github.com/kevindew/openapi3_parser/issues/20
