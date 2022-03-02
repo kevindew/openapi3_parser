@@ -1,3 +1,7 @@
+# Unreleased
+
+- No longer require a specific Psych dependency to instead use Ruby stdlib
+
 # 0.9.1
 
 - Fix Schema#requires? incorrectly returning true for referenced properties -
