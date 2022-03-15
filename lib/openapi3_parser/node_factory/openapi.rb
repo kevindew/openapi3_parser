@@ -14,7 +14,9 @@ module Openapi3Parser
       field "openapi", input_type: String, required: true
       field "info", factory: NodeFactory::Info, required: true
       field "servers", factory: :servers_factory
-      field "paths", factory: NodeFactory::Paths, required: true
+      field "paths",
+            factory: NodeFactory::Paths,
+            required: ->(context) { context.openapi_version < "3.1" }
       field "components", factory: NodeFactory::Components
       field "security", factory: :security_factory
       field "tags", factory: :tags_factory
