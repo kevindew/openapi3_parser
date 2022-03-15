@@ -6,9 +6,9 @@ module Openapi3Parser
   # Document is the root construct of a created OpenAPI Document and can be
   # used to navigate the contents of a document or to check it's validity.
   #
-  # @attr_reader  [String]        openapi_version
-  # @attr_reader  [Source]        root_source
-  # @attr_reader  [Array<String>] warnings
+  # @attr_reader  [OpenapiVersion]  openapi_version
+  # @attr_reader  [Source]          root_source
+  # @attr_reader  [Array<String>]   warnings
   class Document
     extend Forwardable
     include Enumerable
@@ -187,21 +187,21 @@ module Openapi3Parser
     def determine_openapi_version(version)
       minor_version = (version || "").split(".").first(2).join(".")
 
-      if SUPPORTED_OPENAPI_VERSIONS.include?(minor_version)
-        minor_version
-      elsif version
+      return OpenapiVersion.new(minor_version) if SUPPORTED_OPENAPI_VERSIONS.include?(minor_version)
+
+      if version
         add_warning(
           "Unsupported OpenAPI version (#{version}), treating as a " \
           "#{DEFAULT_OPENAPI_VERSION} document"
         )
-        DEFAULT_OPENAPI_VERSION
       else
         add_warning(
           "Unspecified OpenAPI version, treating as a " \
           "#{DEFAULT_OPENAPI_VERSION} document"
         )
-        DEFAULT_OPENAPI_VERSION
       end
+
+      OpenapiVersion.new(DEFAULT_OPENAPI_VERSION)
     end
 
     def factory
