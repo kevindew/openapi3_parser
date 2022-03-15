@@ -33,8 +33,17 @@ module Openapi3Parser
           end
         end
 
-        def required?
-          given_required
+        def required?(context, factory)
+          required = case given_required
+                     when Proc
+                       given_required.call(context)
+                     when Symbol
+                       factory.send(given_required, context)
+                     else
+                       given_required
+                     end
+
+          !!required
         end
 
         def check_input_type(validatable, building_node: false)

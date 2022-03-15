@@ -65,7 +65,7 @@ module Openapi3Parser
 
       def required_fields
         field_configs.each_with_object([]) do |(key, config), memo|
-          memo << key if config.required?
+          memo << key if config.required?(context, self)
         end
       end
 
