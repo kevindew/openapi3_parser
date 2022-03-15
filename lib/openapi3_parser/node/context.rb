@@ -154,6 +154,13 @@ module Openapi3Parser
 
         relative_node("#..")
       end
+
+      # Returns the version of OpenAPI being used
+      #
+      # @return [String]
+      def openapi_version
+        document.openapi_version
+      end
     end
   end
 end

@@ -192,4 +192,12 @@ RSpec.describe Openapi3Parser::Node::Context do
       expect(instance.parent_node).to be_nil
     end
   end
+
+  describe "#openapi_version" do
+    it "returns the document's OpenAPI version" do
+      instance = create_node_context({}, document_input: { "openapi" => "3.1.0" })
+
+      expect(instance.openapi_version).to eq("3.1")
+    end
+  end
 end
