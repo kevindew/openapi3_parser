@@ -93,6 +93,23 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
     end
   end
 
+  describe "OpenAPI version 3.1" do
+    it "is valid without the paths parameter" do
+      factory_context = create_node_factory_context(
+        {
+          "openapi" => "3.0.0",
+          "info" => {
+            "title" => "Minimal Openapi definition",
+            "version" => "1.0.0"
+          }
+        }
+      )
+
+      instance = described_class.new(factory_context)
+      expect(instance).to be_valid
+    end
+  end
+
   def create_node(input)
     node_factory_context = create_node_factory_context(input)
     instance = described_class.new(node_factory_context)

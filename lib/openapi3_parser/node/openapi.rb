@@ -22,7 +22,7 @@ module Openapi3Parser
         self["servers"]
       end
 
-      # @return [Paths]
+      # @return [Paths, nil]
       def paths
         self["paths"]
       end
