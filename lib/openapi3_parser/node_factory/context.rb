@@ -101,6 +101,13 @@ module Openapi3Parser
         reference_locations.include?(source_location)
       end
 
+      # Returns the version of OpenAPI being used
+      #
+      # @return [String]
+      def openapi_version
+        source_location.document.openapi_version
+      end
+
       def inspect
         %{#{self.class.name}(source_location: #{source_location}, } +
           %{referenced_by: #{reference_locations.map(&:to_s).join(', ')})}

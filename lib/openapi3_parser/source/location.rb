@@ -15,6 +15,7 @@ module Openapi3Parser
       end
 
       def_delegators :pointer, :root?
+      def_delegators :source, :document
       attr_reader :source, :pointer
 
       # @param [Openapi3Parser::Source] source
