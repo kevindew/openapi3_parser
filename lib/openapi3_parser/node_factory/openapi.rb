@@ -17,6 +17,7 @@ module Openapi3Parser
       field "paths",
             factory: NodeFactory::Paths,
             required: ->(context) { context.openapi_version < "3.1" }
+      field "webhooks", factory: :webhooks_factory
       field "components", factory: NodeFactory::Components
       field "security", factory: :security_factory
       field "tags", factory: :tags_factory
@@ -37,6 +38,13 @@ module Openapi3Parser
                                default: [{ "url" => "/" }],
                                use_default_on_empty: true,
                                value_factory: NodeFactory::Server)
+      end
+
+      def webhooks_factory(context)
+        NodeFactory::Map.new(
+          context,
+          value_factory: NodeFactory::OptionalReference.new(NodeFactory::PathItem)
+        )
       end
 
       def security_factory(context)

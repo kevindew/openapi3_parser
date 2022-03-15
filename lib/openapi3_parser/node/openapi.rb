@@ -27,6 +27,11 @@ module Openapi3Parser
         self["paths"]
       end
 
+      # @return [Node::Map<String, Path>, nil]
+      def webhooks
+        self["webhooks"]
+      end
+
       # @return [Components]
       def components
         self["components"]
