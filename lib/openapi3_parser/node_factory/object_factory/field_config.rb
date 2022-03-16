@@ -4,19 +4,23 @@ module Openapi3Parser
   module NodeFactory
     module ObjectFactory
       class FieldConfig
+        # rubocop:disable Metrics/ParameterLists
         def initialize(
           input_type: nil,
           factory: nil,
+          allowed: true,
           required: false,
           default: nil,
           validate: nil
         )
           @given_input_type = input_type
           @given_factory = factory
+          @given_allowed = allowed
           @given_required = required
           @given_default = default
           @given_validate = validate
         end
+        # rubocop:enable Metrics/ParameterLists
 
         def factory?
           !given_factory.nil?
@@ -31,6 +35,19 @@ module Openapi3Parser
           else
             given_factory.call(context)
           end
+        end
+
+        def allowed?(context, factory)
+          allowed = case given_allowed
+                    when Proc
+                      given_allowed.call(context)
+                    when Symbol
+                      factory.send(given_allowed, context)
+                    else
+                      given_allowed
+                    end
+
+          !!allowed
         end
 
         def required?(context, factory)
@@ -80,8 +97,8 @@ module Openapi3Parser
 
         private
 
-        attr_reader :given_input_type, :given_factory, :given_required,
-                    :given_default, :given_validate
+        attr_reader :given_input_type, :given_factory, :given_allowed,
+                    :given_required, :given_default, :given_validate
 
         def run_validation(validatable)
           if given_validate.is_a?(Symbol)
