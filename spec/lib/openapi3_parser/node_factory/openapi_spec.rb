@@ -129,8 +129,25 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
     end
   end
 
-  describe "OpenAPI version 3.1" do
+  describe "OpenAPI version > 3.0" do
     it "is valid without the paths parameter" do
+      factory_context = create_node_factory_context(
+        {
+          "openapi" => "3.1.0",
+          "info" => {
+            "title" => "Minimal Openapi definition",
+            "version" => "1.0.0"
+          },
+          "components" => {}
+        },
+        document_input: { "openapi" => "3.1.0" }
+      )
+
+      instance = described_class.new(factory_context)
+      expect(instance).to be_valid
+    end
+
+    it "requires paths, webhooks or components" do
       factory_context = create_node_factory_context(
         {
           "openapi" => "3.1.0",
@@ -143,7 +160,10 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
       )
 
       instance = described_class.new(factory_context)
-      expect(instance).to be_valid
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/")
+        .with_message("At least one of components, paths and webhooks fields are required")
     end
   end
 
