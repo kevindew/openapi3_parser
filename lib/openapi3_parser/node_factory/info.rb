@@ -11,6 +11,9 @@ module Openapi3Parser
     class Info < NodeFactory::Object
       allow_extensions
       field "title", input_type: String, required: true
+      field "summary",
+            input_type: String,
+            allowed: ->(context) { context.openapi_version >= "3.1" }
       field "description", input_type: String
       field "termsOfService",
             input_type: String,

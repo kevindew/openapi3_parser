@@ -47,5 +47,5 @@ For OpenAPI 3.1
 - [x] No longer require responses field on an Operation node
 - [x] Require OpenAPI node to have webhooks, paths or components
 - [ ] Support the switch to a fixed schema dialect
-- [ ] Support infoSummary
+- [x] Support summary field on Info node
 - [ ] Create a maxi OpenAPI 3.1 integration test to collate all the known changes
