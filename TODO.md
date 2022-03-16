@@ -39,3 +39,12 @@ These are the steps defined to reach 1.0. Assistance is very welcome.
 - [ ] Support validating a Server URL based on default values
 - [ ] Validate paths to check path parameters within them appear in paths
       see: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#fixed-fields-10
+
+For OpenAPI 3.1
+
+- [x] Conditional nodes
+- [x] Support webhooks
+- [ ] Require OpenAPI node to have webhooks, paths or components
+- [ ] Support the switch to a fixed schema dialect
+- [ ] Support infoSummary
+- [ ] Create a maxi OpenAPI 3.1 integration test to collate all the known changes
