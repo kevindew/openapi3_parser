@@ -32,4 +32,16 @@ RSpec.describe "Open v3.1 examples" do
       expect(document.openapi).to eq "3.1.0"
     end
   end
+
+  context "when using the schema I created to demonstrate changes" do
+    let(:path) { File.join(__dir__, "..", "support", "examples", "v3.1", "changes.yaml") }
+
+    xit "is a valid document" do
+      expect(document).to be_valid
+    end
+
+    xit "can access the version" do
+      expect(document.openapi).to eq "3.1.0"
+    end
+  end
 end
