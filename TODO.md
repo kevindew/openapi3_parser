@@ -49,3 +49,15 @@ For OpenAPI 3.1
 - [ ] Support the switch to a fixed schema dialect
 - [x] Support summary field on Info node
 - [ ] Create a maxi OpenAPI 3.1 integration test to collate all the known changes
+- [ ] jsonSchemaDialect should default to OAS one
+- [ ] Allow summary and description in Reference objects
+- [ ] Add identifier to License node, make mutually exclusive with URL
+- [ ] ServerVariable enum must not be empty
+- [ ] Add pathItems to components
+- [ ] Callbacks can now reference a PathItem - previously required them
+- [ ] Check out whether pathItem references match the rules for relative resolution
+- [ ] Parameter object can have space delimited or pipeDelimited styles
+- [ ] Discriminator object can be extended
+- [ ] mutualTLS as a security scheme
+- [ ] I think strictness of Security Requirement rules has changed
+
