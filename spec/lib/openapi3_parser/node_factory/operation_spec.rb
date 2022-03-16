@@ -211,4 +211,20 @@ RSpec.describe Openapi3Parser::NodeFactory::Operation do
       end
     end
   end
+
+  describe "responses field" do
+    it "requires this field for OpenAPI 3.0" do
+      context = create_node_factory_context({}, document_input: { "openapi" => "3.0.0" })
+      instance = described_class.new(context)
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/")
+        .with_message("Missing required fields: responses")
+    end
+
+    it "doesn't require this field for OpenAPI > 3.0" do
+      context = create_node_factory_context({}, document_input: { "openapi" => "3.1.0" })
+      expect(described_class.new(context)).to be_valid
+    end
+  end
 end
