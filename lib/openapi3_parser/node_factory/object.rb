@@ -60,11 +60,11 @@ module Openapi3Parser
       end
 
       def allowed_fields
-        field_configs.keys
+        allowed_field_configs.keys
       end
 
       def required_fields
-        field_configs.each_with_object([]) do |(key, config), memo|
+        allowed_field_configs.each_with_object([]) do |(key, config), memo|
           memo << key if config.required?(context, self)
         end
       end
@@ -75,6 +75,10 @@ module Openapi3Parser
 
       private
 
+      def allowed_field_configs
+        field_configs.select { |_, fc| fc.allowed?(context, self) }
+      end
+
       def build_data(raw_input)
         use_default = nil_input? || !raw_input.is_a?(::Hash)
         return if use_default && default.nil?
@@ -83,7 +87,7 @@ module Openapi3Parser
       end
 
       def process_data(raw_data)
-        field_configs.each_with_object(raw_data.dup) do |(field, config), memo|
+        allowed_field_configs.each_with_object(raw_data.dup) do |(field, config), memo|
           memo[field] = nil unless memo.key?(field)
           next unless config.factory?
 
