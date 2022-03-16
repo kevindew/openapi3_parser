@@ -11,6 +11,13 @@ module Openapi3Parser
         self["title"]
       end
 
+      # Field introduced in OpenAPI v3.1
+      #
+      # @return [String, nil]
+      def summary
+        self["summary"]
+      end
+
       # @return [String, nil]
       def description
         self["description"]
