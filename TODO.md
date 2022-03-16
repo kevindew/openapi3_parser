@@ -44,6 +44,7 @@ For OpenAPI 3.1
 
 - [x] Conditional nodes
 - [x] Support webhooks
+- [x] No longer require responses field on an Operation node
 - [ ] Require OpenAPI node to have webhooks, paths or components
 - [ ] Support the switch to a fixed schema dialect
 - [ ] Support infoSummary
