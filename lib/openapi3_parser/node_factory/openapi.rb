@@ -17,7 +17,9 @@ module Openapi3Parser
       field "paths",
             factory: NodeFactory::Paths,
             required: ->(context) { context.openapi_version < "3.1" }
-      field "webhooks", factory: :webhooks_factory
+      field "webhooks",
+            factory: :webhooks_factory,
+            allowed: ->(context) { context.openapi_version >= "3.1" }
       field "components", factory: NodeFactory::Components
       field "security", factory: :security_factory
       field "tags", factory: :tags_factory
