@@ -8,8 +8,7 @@ module Openapi3Parser
       end
 
       def schema_factory(context)
-        factory = NodeFactory::OptionalReference.new(NodeFactory::Schema)
-        factory.call(context)
+        NodeFactory::Schema.factory(context).call(context)
       end
 
       def examples_factory(context)

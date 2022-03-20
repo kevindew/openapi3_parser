@@ -23,7 +23,11 @@ module Openapi3Parser
       end
 
       def schemas_factory(context)
-        referenceable_map_factory(context, NodeFactory::Schema)
+        NodeFactory::Map.new(
+          context,
+          value_factory: NodeFactory::Schema.factory(context),
+          validate: Validation::InputValidator.new(Validators::ComponentKeys)
+        )
       end
 
       def responses_factory(context)

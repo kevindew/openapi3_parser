@@ -61,7 +61,7 @@ RSpec.describe "Open a document with recursive references" do
                    .items
                    .properties["links"]
                    .items
-    expect(node).to be_a(Openapi3Parser::Node::Schema)
+    expect(node).to be_a(Openapi3Parser::Node::Schema::V3_0)
   end
 
   it "returns the expected node class for a directly recursive property" do
@@ -69,7 +69,7 @@ RSpec.describe "Open a document with recursive references" do
                    .schemas["RecursiveItem"]
                    .properties["directly_recursive"]
                    .properties["directly_recursive"]
-    expect(node).to be_a(Openapi3Parser::Node::Schema)
+    expect(node).to be_a(Openapi3Parser::Node::Schema::V3_0)
   end
 
   it "returns the expected node class for an indirectly recursive property" do
@@ -77,13 +77,13 @@ RSpec.describe "Open a document with recursive references" do
                    .schemas["RecursiveItem"]
                    .properties["indirectly_recursive"]
                    .properties["recursive_item"]
-    expect(node).to be_a(Openapi3Parser::Node::Schema)
+    expect(node).to be_a(Openapi3Parser::Node::Schema::V3_0)
   end
 
   it "returns the expected node class for a recursive item in an array" do
     node = document.components
                    .schemas["RecursiveArray"]
                    .one_of[0]
-    expect(node).to be_a(Openapi3Parser::Node::Schema)
+    expect(node).to be_a(Openapi3Parser::Node::Schema::V3_0)
   end
 end
