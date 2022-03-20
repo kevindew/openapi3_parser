@@ -17,16 +17,12 @@ module Openapi3Parser
           @field_configs ||= {}
         end
 
-        def allow_extensions
-          @allow_extensions = true
+        def allow_extensions(regex: EXTENSION_REGEX)
+          @extension_regex = regex
         end
 
-        def allowed_extensions?
-          if instance_variable_defined?(:@allow_extensions)
-            @allow_extensions == true
-          else
-            false
-          end
+        def extension_regex
+          @extension_regex ||= nil
         end
 
         def mutually_exclusive(*fields, required: false)
