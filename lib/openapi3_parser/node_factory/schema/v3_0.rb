@@ -102,7 +102,7 @@ module Openapi3Parser
         end
 
         def referenceable_schema(context)
-          NodeFactory::Schema.factory(context).call(context)
+          NodeFactory::Schema.build_factory(context)
         end
 
         def referenceable_schema_array(context)
