@@ -12,7 +12,7 @@ RSpec.describe "Open v3.1 examples" do
   context "when using the webhook example" do
     let(:path) { File.join(__dir__, "..", "support", "examples", "v3.1", "webhook-example.yaml") }
 
-    it "is a valid document" do
+    xit "is a valid document" do
       expect(document).to be_valid
     end
 
