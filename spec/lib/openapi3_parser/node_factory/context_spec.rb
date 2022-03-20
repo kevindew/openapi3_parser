@@ -112,7 +112,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
       source_location = create_source_location(input)
       instance = described_class.new({}, source_location:)
       resolved_reference = instance.resolve_reference("#/components/schemas/item",
-                                                      Openapi3Parser::NodeFactory::Schema)
+                                                      Openapi3Parser::NodeFactory::Schema::V3_0)
       expect(resolved_reference)
         .to be_a(Openapi3Parser::Source::ResolvedReference)
     end
