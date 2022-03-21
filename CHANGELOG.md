@@ -1,4 +1,4 @@
-# Unreleased
+# 0.9.2
 
 - No longer require a specific Psych dependency to instead use Ruby stdlib
 
