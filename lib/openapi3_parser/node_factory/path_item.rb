@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 require "openapi3_parser/node_factory/object"
+require "openapi3_parser/node_factory/referenceable"
 
 module Openapi3Parser
   module NodeFactory
     class PathItem < NodeFactory::Object
+      include Referenceable
+
       allow_extensions
       field "$ref", input_type: String, factory: :ref_factory
       field "summary", input_type: String
@@ -20,28 +23,15 @@ module Openapi3Parser
       field "servers", factory: :servers_factory
       field "parameters", factory: :parameters_factory
 
-      private
-
-      def build_object(data, node_context)
-        ref = data.delete("$ref")
-        context = if node_context.input.keys == %w[$ref]
-                    referenced_factory = ref.node_factory.referenced_factory
-                    Node::Context.resolved_reference(
-                      node_context,
-                      referenced_factory.context
-                    )
-                  else
-                    node_context
-                  end
-
-        reference_data = ref.nil_input? ? {} : ref.node.node_data
-
-        data = merge_data(reference_data, data).tap do |d|
-          d["servers"] = root_server_data(context) if d["servers"].node.empty?
+      def build_node(data, node_context)
+        data = data.tap do |d|
+          d["servers"] = root_server_data(node_context) if d["servers"].node.empty?
         end
 
-        Node::PathItem.new(data, context)
+        Node::PathItem.new(data, node_context)
       end
+
+      private
 
       def ref_factory(context)
         NodeFactory::Fields::Reference.new(context, self.class)
@@ -56,24 +46,6 @@ module Openapi3Parser
           context,
           value_factory: NodeFactory::Server
         )
-      end
-
-      def build_resolved_input
-        ref = data["$ref"]
-        data_without_ref = super.tap { |d| d.delete("$ref") }
-        return data_without_ref unless ref
-
-        merge_data(ref.resolved_input || {}, data_without_ref)
-      end
-
-      def merge_data(base, priority)
-        base.merge(priority) do |_, old, new|
-          if new.nil? || (new.respond_to?(:nil_input?) && new.nil_input?)
-            old
-          else
-            new
-          end
-        end
       end
 
       def parameters_factory(context)

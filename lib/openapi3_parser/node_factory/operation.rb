@@ -22,13 +22,13 @@ module Openapi3Parser
       field "security", factory: :security_factory
       field "servers", factory: :servers_factory
 
-      private
+      def build_node(data, node_context)
+        data["servers"] = path_item_server_data(node_context) if data["servers"].node.empty?
 
-      def build_object(data, context)
-        data["servers"] = path_item_server_data(context) if data["servers"].node.empty?
-
-        Node::Operation.new(data, context)
+        Node::Operation.new(data, node_context)
       end
+
+      private
 
       def tags_factory(context)
         NodeFactory::Array.new(context, value_input_type: String)

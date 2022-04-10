@@ -36,72 +36,56 @@ module Openapi3Parser
       end
 
       def errors
-        @errors ||= ValidNodeBuilder.errors(self)
+        @errors ||= Validator.call(self)
       end
 
       def node(node_context)
-        data = ValidNodeBuilder.data(self)
-        data.nil? ? nil : build_node(data, node_context)
+        Validator.call(self, raise_on_invalid: true)
+        data_to_use = nil_input? && default.nil? ? nil : data
+        data_to_use.nil? ? nil : build_node(data, node_context)
       end
 
       def inspect
         %{#{self.class.name}(#{context.source_location.inspect})}
       end
 
-      private
-
       def build_node(data, _node_context)
         data
       end
 
-      class ValidNodeBuilder
-        def self.errors(factory)
-          new(factory).errors
+      class Validator
+        private_class_method :new
+
+        def self.call(*args, **kwargs)
+          new(*args, **kwargs).call
         end
 
-        def self.data(factory)
-          new(factory).data
-        end
-
-        def initialize(factory)
+        def initialize(factory, raise_on_invalid: false)
           @factory = factory
+          @raise_on_invalid = raise_on_invalid
           @validatable = Validation::Validatable.new(factory)
         end
 
-        def errors
+        def call
           return validatable.collection if factory.nil_input?
 
-          TypeChecker.validate_type(validatable, type: factory.input_type)
+          if raise_on_invalid
+            TypeChecker.raise_on_invalid_type(factory.context, type: factory.input_type)
+          else
+            TypeChecker.validate_type(validatable, type: factory.input_type)
+          end
+
           return validatable.collection if validatable.errors.any?
 
-          validate(raise_on_invalid: false)
+          validate
           validatable.collection
         end
 
-        def data
-          return default_value if factory.nil_input?
-
-          TypeChecker.raise_on_invalid_type(factory.context,
-                                            type: factory.input_type)
-          validate(raise_on_invalid: true)
-          factory.data
-        end
-
-        private_class_method :new
-
         private
 
-        attr_reader :factory, :validatable
+        attr_reader :factory, :validatable, :raise_on_invalid
 
-        def default_value
-          if factory.nil_input? && factory.default.nil?
-            nil
-          else
-            factory.data
-          end
-        end
-
-        def validate(raise_on_invalid: false)
+        def validate
           run_validation
 
           return if !raise_on_invalid || validatable.errors.empty?

@@ -9,6 +9,20 @@ RSpec.describe Openapi3Parser::Node::Context do
       expect(instance).to be_a(described_class)
       expect(instance.document_location.to_s).to eq "#/"
     end
+
+    it "sets an input location based on the factory source location" do
+      factory_context = create_node_factory_context({})
+      instance = described_class.root(factory_context)
+
+      expect(instance.input_locations).to match_array(factory_context.source_location)
+    end
+
+    it "only sets an input location if it isn't a reference" do
+      factory_context = create_node_factory_context({ "$ref" => "reference" })
+      instance = described_class.root(factory_context)
+
+      expect(instance.input_locations).to be_empty
+    end
   end
 
   describe ".next_field" do
@@ -20,53 +34,135 @@ RSpec.describe Openapi3Parser::Node::Context do
       expect(instance).to be_a(described_class)
       expect(instance.document_location.to_s).to eq "#/key"
     end
+
+    it "adds an input location if the data is not a reference" do
+      parent_context = create_node_context({})
+      factory_context = create_node_factory_context({})
+      instance = described_class.next_field(parent_context, "key", factory_context)
+
+      expect(instance.input_locations).to include(factory_context.source_location)
+    end
+
+    it "skips an input location if the data is just a reference" do
+      parent_context = create_node_context({})
+      factory_context = create_node_factory_context({ "$ref" => "reference" })
+      instance = described_class.next_field(parent_context, "key", factory_context)
+
+      expect(instance.input_locations).not_to include(factory_context.source_location)
+    end
   end
 
   describe ".resolved_reference" do
-    let(:current_context) do
-      create_node_context({}, pointer_segments: %w[field])
-    end
-
-    let(:reference_factory_context) do
-      source_location = create_source_location(
-        {},
-        document: current_context.document,
-        pointer_segments: %w[data]
+    it "returns a context object with the referenced data merged without $ref" do
+      current_context = create_node_context(
+        { "$ref" => "#/reference", "first_name" => "John" },
+        pointer_segments: %w[field]
       )
 
-      reference_location = create_source_location(
-        {},
-        document: current_context.document,
-        pointer_segments: %w[field $ref]
+      reference_source_location = create_source_location({},
+                                                         document: current_context.document,
+                                                         pointer_segments: %w[reference])
+
+      reference_factory_context = Openapi3Parser::NodeFactory::Context.new(
+        { "first_name" => "Jake", "last_name" => "Smith" },
+        source_location: reference_source_location,
+        reference_locations: [reference_source_location]
       )
 
-      Openapi3Parser::NodeFactory::Context.new(
-        "data",
-        source_location:,
-        reference_locations: [reference_location]
-      )
-    end
-
-    it "returns a context object with the referenced data" do
       instance = described_class.resolved_reference(current_context,
                                                     reference_factory_context)
+      expect(instance.input).to eq(
+        { "first_name" => "John", "last_name" => "Smith" }
+      )
+    end
 
-      expect(instance).to be_a(described_class)
-      expect(instance.input).to eq "data"
+    it "doesn't merge data that is not an object" do
+      current_context = create_node_context(
+        { "$ref" => "#/reference", "another" => "field" },
+        pointer_segments: %w[field]
+      )
+
+      reference_source_location = create_source_location({},
+                                                         document: current_context.document,
+                                                         pointer_segments: %w[reference])
+
+      reference_factory_context = Openapi3Parser::NodeFactory::Context.new(
+        "data",
+        source_location: reference_source_location,
+        reference_locations: [reference_source_location]
+      )
+
+      instance = described_class.resolved_reference(current_context,
+                                                    reference_factory_context)
+      expect(instance.input).to eq("data")
     end
 
     it "maintains the document location of the current context" do
+      current_context = create_node_context(
+        { "$ref" => "#/reference" },
+        pointer_segments: %w[field]
+      )
+
+      reference_source_location = create_source_location({},
+                                                         document: current_context.document,
+                                                         pointer_segments: %w[reference])
+
+      reference_factory_context = Openapi3Parser::NodeFactory::Context.new(
+        {},
+        source_location: reference_source_location,
+        reference_locations: [reference_source_location]
+      )
+
       instance = described_class.resolved_reference(current_context,
                                                     reference_factory_context)
 
       expect(instance.document_location.to_s).to eq "#/field"
     end
 
-    it "sets the source location to the location of the referenced data" do
+    it "sets the source locations to all the reference locations" do
+      current_context = create_node_context(
+        { "$ref" => "#/reference" },
+        pointer_segments: %w[field]
+      )
+
+      reference_source_location = create_source_location({},
+                                                         document: current_context.document,
+                                                         pointer_segments: %w[reference])
+
+      reference_factory_context = Openapi3Parser::NodeFactory::Context.new(
+        {},
+        source_location: reference_source_location,
+        reference_locations: [reference_source_location]
+      )
+
       instance = described_class.resolved_reference(current_context,
                                                     reference_factory_context)
 
-      expect(instance.source_location.to_s).to eq "#/data"
+      expect(instance.source_locations).to eq(
+        [current_context.source_locations.first, reference_source_location]
+      )
+    end
+
+    it "sets the input locations to all the references that defined the data" do
+      current_context = create_node_context(
+        { "$ref" => "#/reference" },
+        pointer_segments: %w[field]
+      )
+
+      reference_source_location = create_source_location({},
+                                                         document: current_context.document,
+                                                         pointer_segments: %w[reference])
+
+      reference_factory_context = Openapi3Parser::NodeFactory::Context.new(
+        {},
+        source_location: reference_source_location,
+        reference_locations: [reference_source_location]
+      )
+
+      instance = described_class.resolved_reference(current_context,
+                                                    reference_factory_context)
+
+      expect(instance.input_locations).to eq([reference_source_location])
     end
   end
 
@@ -83,19 +179,22 @@ RSpec.describe Openapi3Parser::Node::Context do
 
     it "returns true when input and locations match" do
       instance = described_class.new({},
-                                     document_location:,
-                                     source_location:)
+                                     document_location: document_location,
+                                     source_locations: [source_location],
+                                     input_locations: [source_location])
       other = described_class.new({},
-                                  document_location:,
-                                  source_location:)
+                                  document_location: document_location,
+                                  source_locations: [source_location],
+                                  input_locations: [source_location])
 
       expect(instance).to eq(other)
     end
 
     it "returns false when one of these differ" do
       instance = described_class.new({},
-                                     document_location:,
-                                     source_location:)
+                                     document_location: document_location,
+                                     source_locations: [source_location],
+                                     input_locations: [source_location])
 
       other_source_location = create_source_location(
         {},
@@ -104,14 +203,15 @@ RSpec.describe Openapi3Parser::Node::Context do
       )
 
       other = described_class.new({},
-                                  document_location:,
-                                  source_location: other_source_location)
+                                  document_location: document_location,
+                                  source_locations: [other_source_location],
+                                  input_locations: [other_source_location])
 
       expect(instance).not_to eq(other)
     end
   end
 
-  describe "#same_data_and_source?" do
+  describe "#same_data_inputs?" do
     let(:source_location) do
       create_source_location({}, pointer_segments: %w[ref_a])
     end
@@ -128,26 +228,43 @@ RSpec.describe Openapi3Parser::Node::Context do
                              pointer_segments: %w[field_b])
     end
 
-    it "returns true when input and source location match" do
+    it "returns true when input and input locations match" do
       instance = described_class.new({},
-                                     document_location:,
-                                     source_location:)
+                                     document_location: document_location,
+                                     source_locations: [source_location],
+                                     input_locations: [source_location])
       other = described_class.new({},
                                   document_location: other_document_location,
-                                  source_location:)
+                                  source_locations: [source_location],
+                                  input_locations: [source_location])
 
-      expect(instance.same_data_and_source?(other)).to be true
+      expect(instance.same_data_inputs?(other)).to be true
     end
 
-    it "returns false when input and source location doesn't match" do
+    it "returns false when input doesn't match" do
       instance = described_class.new({},
-                                     document_location:,
-                                     source_location:)
+                                     document_location: document_location,
+                                     source_locations: [source_location],
+                                     input_locations: [source_location])
       other = described_class.new({ different: "data" },
                                   document_location: other_document_location,
-                                  source_location:)
+                                  source_locations: [source_location],
+                                  input_locations: [source_location])
 
-      expect(instance.same_data_and_source?(other)).to be false
+      expect(instance.same_data_inputs?(other)).to be false
+    end
+
+    it "returns false when input locations don't match" do
+      instance = described_class.new({},
+                                     document_location: document_location,
+                                     source_locations: [source_location],
+                                     input_locations: [source_location])
+      other = described_class.new({},
+                                  document_location: other_document_location,
+                                  source_locations: [source_location],
+                                  input_locations: [])
+
+      expect(instance.same_data_inputs?(other)).to be false
     end
   end
 

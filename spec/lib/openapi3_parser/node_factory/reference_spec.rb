@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Openapi3Parser::NodeFactory::Reference do
+  # TODO: perhaps a behaves like referenceable node object factory?
+
   def create_instance(input)
     factory_context = create_node_factory_context(
       input,
@@ -88,13 +90,6 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
       )
     end
 
-    def control_factory(instance)
-      # As references need to be registered and this happens in the process
-      # of creating a reference node we need to check reference loop using
-      # a factory from the reference registry
-      instance.context.source.reference_registry.factories.first
-    end
-
     it "returns true when following a chain of references leads to an object" do
       factory_context = create_node_factory_context(
         { "$ref" => "#/contact2" },
@@ -107,7 +102,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
       )
       instance = described_class.new(factory_context, factory)
 
-      expect(instance.resolves?(control_factory(instance))).to be true
+      expect(instance.resolves?([instance.context.source_location])).to be true
     end
 
     it "returns false when following a chain of references leads to a recursive loop" do
@@ -122,7 +117,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
       )
       instance = described_class.new(factory_context, factory)
 
-      expect(instance.resolves?(control_factory(instance))).to be false
+      expect(instance.resolves?([instance.context.source_location])).to be false
     end
   end
 end

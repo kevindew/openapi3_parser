@@ -14,11 +14,11 @@ module Openapi3Parser
 
       mutually_exclusive "example", "examples"
 
-      private
-
-      def build_object(data, context)
-        Node::MediaType.new(data, context)
+      def build_node(data, node_context)
+        Node::MediaType.new(data, node_context)
       end
+
+      private
 
       def schema_factory(context)
         NodeFactory::Schema.build_factory(context)

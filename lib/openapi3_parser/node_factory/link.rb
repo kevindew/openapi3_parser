@@ -19,11 +19,11 @@ module Openapi3Parser
 
       mutually_exclusive "operationRef", "operationId", required: true
 
-      private
-
-      def build_object(data, context)
-        Node::Link.new(data, context)
+      def build_node(data, node_context)
+        Node::Link.new(data, node_context)
       end
+
+      private
 
       def parameters_factory(context)
         NodeFactory::Map.new(context)

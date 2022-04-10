@@ -50,6 +50,10 @@ module Openapi3Parser
 
         validate :items_for_array, :read_only_or_write_only
 
+        def build_node(data, node_context)
+          Node::Schema::V3_0.new(data, node_context)
+        end
+
         private
 
         def items_for_array(validatable)
@@ -64,10 +68,6 @@ module Openapi3Parser
           return if [input["readOnly"], input["writeOnly"]].uniq != [true]
 
           validatable.add_error("readOnly and writeOnly cannot both be true")
-        end
-
-        def build_object(data, context)
-          Node::Schema::V3_0.new(data, context)
         end
 
         def required_factory(context)

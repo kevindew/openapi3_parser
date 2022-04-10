@@ -35,7 +35,7 @@ module Openapi3Parser
         #
         # @return [String, nil]
         def name
-          segments = node_context.source_location.pointer.segments
+          segments = node_context.source_locations.first.pointer.segments
           segments[-1] if segments[-2] == "schemas"
         end
 

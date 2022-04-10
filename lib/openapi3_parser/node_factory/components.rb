@@ -16,11 +16,11 @@ module Openapi3Parser
       field "links", factory: :links_factory
       field "callbacks", factory: :callbacks_factory
 
-      private
-
-      def build_object(data, context)
-        Node::Components.new(data, context)
+      def build_node(data, node_context)
+        Node::Components.new(data, node_context)
       end
+
+      private
 
       def schemas_factory(context)
         NodeFactory::Map.new(
