@@ -14,6 +14,7 @@ module Openapi3Parser
     #                                                     node
     # @attr_reader  [Source::Location]  source_location   The location in a
     #                                                     source file of this
+    # rubocop:disable Metrics/ClassLength
     class Context
       # Create a context for the root of a document
       #
@@ -210,5 +211,6 @@ module Openapi3Parser
         document.openapi_version
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end
