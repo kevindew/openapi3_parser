@@ -18,10 +18,8 @@ module Openapi3Parser
             input_type: String,
             validate: Validation::InputValidator.new(Validators::Email)
 
-      private
-
-      def build_object(data, context)
-        Node::Contact.new(data, context)
+      def build_node(data, node_context)
+        Node::Contact.new(data, node_context)
       end
     end
   end

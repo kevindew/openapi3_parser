@@ -20,10 +20,15 @@ module Openapi3Parser
       # @param  [NodeFactory::Context]  factory_context
       # @return [Node::Context]
       def self.root(factory_context)
-        location = Source::Location.new(factory_context.source, [])
+        document_location = Source::Location.new(factory_context.source, [])
+
+        source_location = factory_context.source_location
+        input_locations = input_location?(factory_context.input) ? [source_location] : []
+
         new(factory_context.input,
-            document_location: location,
-            source_location: factory_context.source_location)
+            document_location: document_location,
+            source_locations: [source_location],
+            input_locations: input_locations)
       end
 
       # Create a context for the child of a previous context
@@ -38,9 +43,16 @@ module Openapi3Parser
           field
         )
 
+        input_locations = if input_location?(factory_context.input)
+                            [factory_context.source_location]
+                          else
+                            []
+                          end
+
         new(factory_context.input,
             document_location:,
-            source_location: factory_context.source_location)
+            source_locations: [factory_context.source_location],
+            input_locations: input_locations)
       end
 
       # Create a context for a the a field that is the result of a reference
@@ -49,36 +61,63 @@ module Openapi3Parser
       # @param  [NodeFactory::Context]  reference_factory_context
       # @return [Node::Context]
       def self.resolved_reference(current_context, reference_factory_context)
-        new(reference_factory_context.input,
+        input_locations = if input_location?(reference_factory_context.input)
+                            current_context.input_locations + [reference_factory_context.source_location]
+                          else
+                            current_context.input_locations
+                          end
+
+        input = merge_reference_input(current_context.input, reference_factory_context.input)
+        new(input,
             document_location: current_context.document_location,
-            source_location: reference_factory_context.source_location)
+            source_locations: current_context.source_locations + [reference_factory_context.source_location],
+            input_locations: input_locations)
       end
 
-      attr_reader :input, :document_location, :source_location
+      def self.merge_reference_input(current_input, reference_input)
+        can_merge = reference_input.respond_to?(:merge) && current_input.respond_to?(:merge)
 
-      # @param                           input
-      # @param  [Source::Location]       document_location
-      # @param  [Source::Location]       source_location
-      def initialize(input, document_location:, source_location:)
+        return reference_input unless can_merge
+
+        input = reference_input.merge(current_input)
+        input.delete("$ref")
+        input
+      end
+
+      def self.input_location?(input)
+        return true unless input.respond_to?(:keys)
+
+        input.keys != ["$ref"]
+      end
+
+      attr_reader :input, :document_location, :source_locations, :input_locations
+
+      # @param                              input
+      # @param  [Source::Location]          document_location
+      # @param  [Array<Source::Location>]   source_locations
+      # @param  [Array<Source::Location>]   input_locations
+      def initialize(input, document_location:, source_locations:, input_locations:)
         @input = input
         @document_location = document_location
-        @source_location = source_location
+        @source_locations = source_locations
+        @input_locations = input_locations
       end
 
       # @param  [Context] other
       # @return [Boolean]
       def ==(other)
         document_location == other.document_location &&
-          same_data_and_source?(other)
+          source_locations == other.source_locations &&
+          same_data_inputs?(other)
       end
 
       # Check that contexts are the same without concern for document location
       #
       # @param  [Context] other
       # @return [Boolean]
-      def same_data_and_source?(other)
+      def same_data_inputs?(other)
         input == other.input &&
-          source_location == other.source_location
+          input_locations == other.input_locations
       end
 
       # The OpenAPI document associated with this context
@@ -88,17 +127,24 @@ module Openapi3Parser
         document_location.source.document
       end
 
-      # The source file used to provide the data for this node
+      # The source files used to provide the data for this node
       #
-      # @return [Source]
-      def source
-        source_location.source
+      # @return [Array<Source>]
+      def sources
+        [source_locations].map(&:source)
+      end
+
+      # The source files used to provide the input for this node
+      #
+      # @return [Array<Source>]
+      def input_sources
+        [input_locations].map(&:source)
       end
 
       # @return [String]
       def inspect
         %{#{self.class.name}(document_location: #{document_location}, } +
-          %{source_location: #{source_location})}
+          %{input_locations: #{input_locations.join(', ')})}
       end
 
       # A string representing the location of the node
@@ -107,7 +153,9 @@ module Openapi3Parser
       def location_summary
         summary = document_location.to_s
 
-        summary += " (#{source_location})" if document_location != source_location
+        if input_locations.length > 1 || document_location != input_locations.first
+          summary += " (#{input_locations.join(', ')})"
+        end
 
         summary
       end

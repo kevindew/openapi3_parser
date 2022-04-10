@@ -11,8 +11,6 @@ module Openapi3Parser
               value_factory: NodeFactory::PathItem)
       end
 
-      private
-
       def build_node(data, node_context)
         Node::Callback.new(data, node_context)
       end

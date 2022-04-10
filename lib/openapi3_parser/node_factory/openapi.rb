@@ -36,11 +36,11 @@ module Openapi3Parser
         false
       end
 
-      private
-
-      def build_object(data, context)
-        Node::Openapi.new(data, context)
+      def build_node(data, node_context)
+        Node::Openapi.new(data, node_context)
       end
+
+      private
 
       def servers_factory(context)
         NodeFactory::Array.new(context,

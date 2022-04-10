@@ -28,7 +28,7 @@ module Openapi3Parser
       end
 
       def resolved_input
-        @resolved_input ||= build_resolved_input
+        @resolved_input ||= ObjectFactory::ResolvedInputBuilder.call(self)
       end
 
       def raw_input
@@ -44,11 +44,16 @@ module Openapi3Parser
       end
 
       def errors
-        @errors ||= ObjectFactory::NodeBuilder.errors(self)
+        @errors ||= ObjectFactory::NodeErrors.call(self)
       end
 
       def node(node_context)
-        build_node(node_context)
+        node_builder = ObjectFactory::NodeBuilder.new(self, node_context)
+        node_builder.build_node
+      end
+
+      def build_node(_data, _node_context)
+        raise Error, "Expected to be implemented in child class"
       end
 
       def can_use_default?
@@ -94,25 +99,6 @@ module Openapi3Parser
           next_context = Context.next_field(context, field, memo[field])
           memo[field] = config.initialize_factory(next_context, self)
         end
-      end
-
-      def build_resolved_input
-        return unless data
-
-        data.each_with_object({}) do |(key, value), memo|
-          next if value.respond_to?(:nil_input?) && value.nil_input?
-
-          memo[key] = if value.respond_to?(:resolved_input)
-                        value.resolved_input
-                      else
-                        value
-                      end
-        end
-      end
-
-      def build_node(node_context)
-        data = ObjectFactory::NodeBuilder.node_data(self, node_context)
-        build_object(data, node_context) if data
       end
     end
   end

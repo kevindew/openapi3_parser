@@ -16,10 +16,8 @@ module Openapi3Parser
       field "attribute", input_type: :boolean, default: false
       field "wrapped", input_type: :boolean, default: false
 
-      private
-
-      def build_object(data, context)
-        Node::Xml.new(data, context)
+      def build_node(data, node_context)
+        Node::Xml.new(data, node_context)
       end
     end
   end
