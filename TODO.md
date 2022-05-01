@@ -50,7 +50,7 @@ For OpenAPI 3.1
 - [x] Support summary field on Info node
 - [ ] Create a maxi OpenAPI 3.1 integration test to collate all the known changes
 - [ ] jsonSchemaDialect should default to OAS one
-- [ ] Allow summary and description in Reference objects
+- [x] Allow summary and description in Reference objects
 - [ ] Add identifier to License node, make mutually exclusive with URL
 - [ ] ServerVariable enum must not be empty
 - [ ] Add pathItems to components

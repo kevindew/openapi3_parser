@@ -8,6 +8,18 @@ info:
   #   identifier: Apache-2.0
 # jsonSchemaDialect: https://spec.openapis.org/oas/3.1/dialect/base
 components:
+  examples:
+    FullExample:
+      summary: Original summary
+      description: Original description
+      value: anything
+    ReferencedExample:
+      summary: Referenced summary
+      description: Referenced Description
+      $ref: "#/components/examples/FullExample"
+    DoubleReferencedExample:
+      summary: Double referenced summary
+      $ref: "#/components/examples/ReferencedExample"
   schemas:
     BasicSchema:
       description: "My basic schema"

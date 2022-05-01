@@ -9,6 +9,12 @@ module Openapi3Parser
       include Referenceable
 
       field "$ref", input_type: String, required: true, factory: :ref_factory
+      field "summary",
+            input_type: String,
+            allowed: ->(context) { context.openapi_version >= "3.1" }
+      field "description",
+            input_type: String,
+            allowed: ->(context) { context.openapi_version >= "3.1" }
 
       attr_reader :factory
 
