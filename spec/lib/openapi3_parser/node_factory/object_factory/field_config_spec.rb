@@ -34,7 +34,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
       instance = described_class.new(factory: :give_me_a_factory)
       context = create_node_factory_context({})
       parent_factory = Class.new
-      factory = instance_double("Openapi3Parser::NodeFactory::Contact")
+      factory = instance_double(Openapi3Parser::NodeFactory::Contact)
       allow(parent_factory)
         .to receive(:give_me_a_factory)
         .with(context)
@@ -45,7 +45,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
     end
 
     it "can be given a callable as a factory" do
-      factory = instance_double("Openapi3Parser::NodeFactory::Contact")
+      factory = instance_double(Openapi3Parser::NodeFactory::Contact)
       callable = ->(_context) { factory }
       instance = described_class.new(factory: callable)
       context = create_node_factory_context({})
