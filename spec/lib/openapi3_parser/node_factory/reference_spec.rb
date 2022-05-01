@@ -120,4 +120,82 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
       expect(instance.resolves?([instance.context.source_location])).to be false
     end
   end
+
+  describe "summary field" do
+    let(:factory) do
+      Openapi3Parser::NodeFactory::OptionalReference.new(
+        Openapi3Parser::NodeFactory::Contact
+      )
+    end
+
+    it "accepts a summary field for OpenAPI >= v3.1" do
+      factory_context = create_node_factory_context(
+        {
+          "$ref" => "#/item",
+          "summary" => "summary contents"
+        },
+        document_input: {
+          "openapi" => "3.1.0",
+          "item" => {}
+        }
+      )
+      expect(described_class.new(factory_context, factory)).to be_valid
+    end
+
+    it "rejects a summary field for OpenAPI < v3.1" do
+      factory_context = create_node_factory_context(
+        {
+          "$ref" => "#/item",
+          "summary" => "summary contents"
+        },
+        document_input: {
+          "openapi" => "3.0.0",
+          "item" => {}
+        }
+      )
+      instance = described_class.new(factory_context, factory)
+
+      expect(instance).not_to be_valid
+      expect(instance).to have_validation_error("#/").with_message("Unexpected fields: summary")
+    end
+  end
+
+  describe "description field" do
+    let(:factory) do
+      Openapi3Parser::NodeFactory::OptionalReference.new(
+        Openapi3Parser::NodeFactory::Contact
+      )
+    end
+
+    it "accepts a description field for OpenAPI >= v3.1" do
+      factory_context = create_node_factory_context(
+        {
+          "$ref" => "#/item",
+          "description" => "description contents"
+        },
+        document_input: {
+          "openapi" => "3.1.0",
+          "item" => {}
+        }
+      )
+      expect(described_class.new(factory_context, factory)).to be_valid
+    end
+
+    it "rejects a description field for OpenAPI < v3.1" do
+      factory_context = create_node_factory_context(
+        {
+          "$ref" => "#/item",
+          "description" => "description contents"
+        },
+        document_input: {
+          "openapi" => "3.0.0",
+          "item" => {}
+        }
+      )
+      instance = described_class.new(factory_context, factory)
+
+      expect(instance).not_to be_valid
+      expect(instance).to have_validation_error("#/").with_message("Unexpected fields: description")
+    end
+  end
 end
