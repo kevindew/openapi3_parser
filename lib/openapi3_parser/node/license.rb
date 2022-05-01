@@ -12,6 +12,11 @@ module Openapi3Parser
       end
 
       # @return [String, nil]
+      def identifier
+        self["identifier"]
+      end
+
+      # @return [String, nil]
       def url
         self["url"]
       end
