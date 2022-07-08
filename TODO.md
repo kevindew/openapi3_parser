@@ -53,11 +53,11 @@ For OpenAPI 3.1
 - [x] Allow summary and description in Reference objects
 - [x] Add identifier to License node, make mutually exclusive with URL
 - [x] ServerVariable enum must not be empty
-- [ ] Add pathItems to components
+- [x] Add pathItems to components
 - [ ] Callbacks can now reference a PathItem - previously required them
 - [ ] Check out whether pathItem references match the rules for relative resolution
 - [ ] Parameter object can have space delimited or pipeDelimited styles
 - [ ] Discriminator object can be extended
-- [ ] mutualTLS as a security scheme
+- [x] mutualTLS as a security scheme
 - [ ] I think strictness of Security Requirement rules has changed
 
