@@ -5,6 +5,8 @@ require "openapi3_parser/node_factory/object"
 module Openapi3Parser
   module NodeFactory
     class Discriminator < NodeFactory::Object
+      allow_extensions { |context| context.openapi_version >= "3.1" }
+
       field "propertyName", input_type: String, required: true
       field "mapping", input_type: Hash,
                        validate: :validate_mapping,
