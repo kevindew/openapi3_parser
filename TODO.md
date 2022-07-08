@@ -52,7 +52,7 @@ For OpenAPI 3.1
 - [ ] jsonSchemaDialect should default to OAS one
 - [x] Allow summary and description in Reference objects
 - [x] Add identifier to License node, make mutually exclusive with URL
-- [ ] ServerVariable enum must not be empty
+- [x] ServerVariable enum must not be empty
 - [ ] Add pathItems to components
 - [ ] Callbacks can now reference a PathItem - previously required them
 - [ ] Check out whether pathItem references match the rules for relative resolution
