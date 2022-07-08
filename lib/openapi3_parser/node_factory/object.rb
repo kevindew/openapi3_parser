@@ -12,6 +12,7 @@ module Openapi3Parser
       def_delegators "self.class",
                      :field_configs,
                      :extension_regex,
+                     :allowed_extensions?,
                      :mutually_exclusive_fields,
                      :allowed_default?,
                      :validations

@@ -57,7 +57,7 @@ For OpenAPI 3.1
 - [ ] Callbacks can now reference a PathItem - previously required them
 - [ ] Check out whether pathItem references match the rules for relative resolution
 - [ ] Parameter object can have space delimited or pipeDelimited styles
-- [ ] Discriminator object can be extended
+- [x] Discriminator object can be extended
 - [x] mutualTLS as a security scheme
 - [ ] I think strictness of Security Requirement rules has changed
 
