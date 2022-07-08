@@ -15,6 +15,9 @@ module Openapi3Parser
       field "securitySchemes", factory: :security_schemes_factory
       field "links", factory: :links_factory
       field "callbacks", factory: :callbacks_factory
+      field "pathItems",
+            factory: :path_items_factory,
+            allowed: ->(context) { context.openapi_version >= "3.1" }
 
       def build_node(data, node_context)
         Node::Components.new(data, node_context)
@@ -60,6 +63,10 @@ module Openapi3Parser
 
       def callbacks_factory(context)
         referenceable_map_factory(context, NodeFactory::Callback)
+      end
+
+      def path_items_factory(context)
+        referenceable_map_factory(context, NodeFactory::PathItem)
       end
 
       def referenceable_map_factory(context, factory)
