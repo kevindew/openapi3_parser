@@ -23,7 +23,7 @@ module Openapi3Parser
         if raise_on_invalid
           location_summary = validatable.context.location_summary
           raise Openapi3Parser::Error::MissingFields,
-                "Missing required fields for "\
+                "Missing required fields for " \
                 "#{location_summary}: #{missing_fields.sentence_join}"
         else
           validatable.add_error(

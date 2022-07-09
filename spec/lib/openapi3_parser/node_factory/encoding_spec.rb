@@ -7,7 +7,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Encoding do
         "contentType" => "image/png, image/jpeg",
         "headers" => {
           "X-Rate-Limit-Limit" => {
-            "description" => "The number of allowed requests in the current "\
+            "description" => "The number of allowed requests in the current " \
                              "period",
             "schema" => { "type" => "integer" }
           }

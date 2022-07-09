@@ -24,7 +24,7 @@ module Openapi3Parser
         if raise_on_invalid
           location_summary = validatable.context.location_summary
           raise Openapi3Parser::Error::UnexpectedFields,
-                "Unexpected fields for #{location_summary}: "\
+                "Unexpected fields for #{location_summary}: " \
                 "#{fields.sentence_join}"
         else
           validatable.add_error(

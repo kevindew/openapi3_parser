@@ -39,7 +39,7 @@ module Openapi3Parser
         return if invalid.empty?
 
         codes = invalid.map { |k| "'#{k}'" }.join(", ")
-        validatable.add_error("Invalid responses keys: #{codes} - default, "\
+        validatable.add_error("Invalid responses keys: #{codes} - default, " \
                               "status codes and status code ranges allowed")
       end
     end

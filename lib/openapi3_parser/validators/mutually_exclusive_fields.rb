@@ -37,7 +37,7 @@ module Openapi3Parser
         if raise_on_invalid
           location_summary = validatable.context.location_summary
           raise Error::MissingFields,
-                "Mutually exclusive fields for "\
+                "Mutually exclusive fields for " \
                 "#{location_summary}: #{required_errors.first}"
         else
           validatable.add_errors(required_errors)
@@ -52,8 +52,8 @@ module Openapi3Parser
         if raise_on_invalid
           location_summary = validatable.context.location_summary
           raise Error::UnexpectedFields,
-                "Mutually exclusive fields for "\
-                "#{location_summary}: "\
+                "Mutually exclusive fields for " \
+                "#{location_summary}: " \
                 "#{exclusive_errors.first}"
         else
           validatable.add_errors(exclusive_errors)

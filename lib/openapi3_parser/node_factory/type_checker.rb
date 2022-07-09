@@ -53,7 +53,7 @@ module Openapi3Parser
         return true if !type || valid_type?(context.input)
 
         raise Error::InvalidType,
-              "Invalid type for #{context.location_summary}: "\
+              "Invalid type for #{context.location_summary}: " \
               "#{field_error_message}"
       end
 
@@ -61,7 +61,7 @@ module Openapi3Parser
         return true if !type || valid_keys?(context.input)
 
         raise Error::InvalidType,
-              "Invalid keys for #{context.location_summary}: "\
+              "Invalid keys for #{context.location_summary}: " \
               "#{keys_error_message}"
       end
 

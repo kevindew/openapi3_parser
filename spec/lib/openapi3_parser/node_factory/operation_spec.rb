@@ -54,7 +54,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Operation do
         },
         "callbacks" => {
           "myWebhook" => {
-            "http://notificationServer.com?transactionId={$request.body#/id}"\
+            "http://notificationServer.com?transactionId={$request.body#/id}" \
             "&email={$request.body#/email}" => {
               "post" => {
                 "requestBody" => {

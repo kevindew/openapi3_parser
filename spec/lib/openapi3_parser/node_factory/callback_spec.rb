@@ -3,7 +3,7 @@
 RSpec.describe Openapi3Parser::NodeFactory::Callback do
   it_behaves_like "node object factory", Openapi3Parser::Node::Callback do
     let(:callback_expression) do
-      "http://notificationServer.com?transactionId={$request.body#/id}"\
+      "http://notificationServer.com?transactionId={$request.body#/id}" \
         "&email={$request.body#/email}"
     end
 
@@ -21,7 +21,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Callback do
             },
             "responses" => {
               "200" => {
-                "description" => "webhook successfully processed and no"\
+                "description" => "webhook successfully processed and no" \
                                  "retries will be performed"
               }
             }

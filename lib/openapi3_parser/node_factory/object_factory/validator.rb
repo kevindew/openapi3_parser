@@ -145,7 +145,7 @@ module Openapi3Parser
 
             location_summary = errors.first.context.location_summary
             raise Error::InvalidData,
-                  "Invalid data for #{location_summary}: "\
+                  "Invalid data for #{location_summary}: " \
                   "#{errors.first.message}"
           end
 
