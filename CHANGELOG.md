@@ -1,3 +1,7 @@
+# Unreleased
+
+- Require a version of commonmarker that is patched for CVE GHSA-4qw4-jpp4-8gvp
+
 # 0.9.2
 
 - No longer require a specific Psych dependency to instead use Ruby stdlib
