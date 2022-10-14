@@ -27,7 +27,8 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.6.0"
 
-  spec.add_dependency "commonmarker", "~> 0.17"
+  # Require version than 0.23.6 as earlier versions are susceptible to GHSA-4qw4-jpp4-8gvp
+  spec.add_dependency "commonmarker", "~> 0.23", ">= 0.23.6"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "byebug", "~> 11.0"
