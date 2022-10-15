@@ -9,8 +9,6 @@ module Openapi3Parser
         super(context, value_factory: NodeFactory::Array)
       end
 
-      private
-
       def build_node(data, node_context)
         Node::SecurityRequirement.new(data, node_context)
       end

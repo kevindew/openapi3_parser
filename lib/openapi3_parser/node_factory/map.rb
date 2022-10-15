@@ -55,6 +55,10 @@ module Openapi3Parser
         %{#{self.class.name}(#{context.source_location.inspect})}
       end
 
+      def build_node(data, node_context)
+        Node::Map.new(data, node_context) if data
+      end
+
       private
 
       def build_data(raw_input)
@@ -83,15 +87,13 @@ module Openapi3Parser
         end
       end
 
-      def build_node(data, node_context)
-        Node::Map.new(data, node_context) if data
-      end
-
       def build_resolved_input
         return unless data
 
         data.transform_values do |value|
-          if value.respond_to?(:resolved_input)
+          if value.respond_to?(:in_recursive_loop?) && value.in_recursive_loop?
+            RecursiveResolvedInput.new(value)
+          elsif value.respond_to?(:resolved_input)
             value.resolved_input
           else
             value

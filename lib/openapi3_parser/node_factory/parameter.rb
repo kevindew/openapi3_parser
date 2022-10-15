@@ -39,11 +39,11 @@ module Openapi3Parser
         end
       end
 
-      private
-
-      def build_object(data, context)
-        Node::Parameter.new(data, context)
+      def build_node(data, node_context)
+        Node::Parameter.new(data, node_context)
       end
+
+      private
 
       def default_style
         return "simple" if %w[path header].include?(context.input["in"])

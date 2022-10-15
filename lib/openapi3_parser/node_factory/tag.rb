@@ -11,10 +11,8 @@ module Openapi3Parser
       field "description", input_type: String
       field "externalDocs", factory: NodeFactory::ExternalDocumentation
 
-      private
-
-      def build_object(data, context)
-        Node::Tag.new(data, context)
+      def build_node(data, node_context)
+        Node::Tag.new(data, node_context)
       end
     end
   end

@@ -18,10 +18,8 @@ module Openapi3Parser
 
       mutually_exclusive "value", "externalValue"
 
-      private
-
-      def build_object(data, context)
-        Node::Example.new(data, context)
+      def build_node(data, node_context)
+        Node::Example.new(data, node_context)
       end
     end
   end

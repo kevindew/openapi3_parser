@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Openapi3Parser::Node::Schema do
+RSpec.describe Openapi3Parser::Node::Schema::V3_0 do
   describe "#name" do
     it "returns the key of the context when the item is defined within components/schemas" do
       node_context = create_node_context(
@@ -33,7 +33,7 @@ RSpec.describe Openapi3Parser::Node::Schema do
       }
 
       factory_context = create_node_factory_context(input)
-      Openapi3Parser::NodeFactory::Schema
+      Openapi3Parser::NodeFactory::Schema::V3_0
         .new(factory_context)
         .node(node_factory_context_to_node_context(factory_context))
     end
@@ -74,7 +74,7 @@ RSpec.describe Openapi3Parser::Node::Schema do
         }
 
         factory_context = create_node_factory_context(input, document_input: document_input)
-        Openapi3Parser::NodeFactory::Schema
+        Openapi3Parser::NodeFactory::Schema::V3_0
           .new(factory_context)
           .node(node_factory_context_to_node_context(factory_context))
       end

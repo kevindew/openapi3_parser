@@ -29,11 +29,11 @@ module Openapi3Parser
               validate: :validate)
       end
 
-      private
-
       def build_node(data, node_context)
         Node::Paths.new(data, node_context)
       end
+
+      private
 
       def validate(validatable)
         paths = validatable.input.keys.grep_v(NodeFactory::EXTENSION_REGEX)

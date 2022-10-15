@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Openapi3Parser::NodeFactory::Schema do
-  it_behaves_like "node object factory", Openapi3Parser::Node::Schema do
+RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_0 do
+  it_behaves_like "node object factory", Openapi3Parser::Node::Schema::V3_0 do
     let(:input) do
       {
         "allOf" => [

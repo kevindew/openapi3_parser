@@ -18,7 +18,8 @@ RSpec.shared_examples "node equality" do |input|
           context.document_location.source,
           %w[different]
         ),
-        source_location: context.source_location
+        source_locations: context.source_locations,
+        input_locations: context.source_locations
       )
       other = described_class.new(input, other_context)
       expect(instance).to eq(other)
@@ -32,16 +33,16 @@ RSpec.shared_examples "node equality" do |input|
 
     it "isn't equal when source is different" do
       instance = described_class.new(input, context)
+      source_locations = [Openapi3Parser::Source::Location.new(context.document_location.source, %w[option_a])]
+
       other_context = Openapi3Parser::Node::Context.new(
         {},
         document_location: Openapi3Parser::Source::Location.new(
           context.document_location.source,
-          %w[different]
+          %w[option_b]
         ),
-        source_location: Openapi3Parser::Source::Location.new(
-          context.document_location.source,
-          %w[different]
-        )
+        source_locations: source_locations,
+        input_locations: source_locations
       )
 
       other = described_class.new(input, other_context)
