@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -evx
+
+bundle install
+
+# Also install gems for alternate gemfiles
+BUNDLE_GEMFILE=gemfiles/commonmarker_high.gemfile bundle install
+BUNDLE_GEMFILE=gemfiles/commonmarker_low.gemfile bundle install

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -ex
+
+# Run ruby tests
+bundle exec rspec
+
+BUNDLE_GEMFILE=gemfiles/commonmarker_high.gemfile bundle exec rspec
+BUNDLE_GEMFILE=gemfiles/commonmarker_low.gemfile bundle exec rspec
