@@ -4,6 +4,7 @@ jobs:
     strategy:
       matrix:
         ruby: [2.6, 2.7, 3.0, 3.1]
+        gemfiles: [Gemfile, gemfiles/commonmarker_low.gemfile, gemfiles/commonmarker_high.gemfile]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
