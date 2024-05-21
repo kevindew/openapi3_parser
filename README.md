@@ -1,6 +1,6 @@
 # OpenAPI 3 Parser
 
-[![Build Status](https://travis-ci.org/kevindew/openapi3_parser.svg?branch=main)](https://travis-ci.org/kevindew/openapi3_parser)
+![ci workflow](https://github.com/kevindew/openapi3_parser/actions/workflows/ci.yml/badge.svg)
 
 This a Ruby based parser/validator for [OpenAPI 3][openapi-3]. It is used to
 convert an OpenAPI file (can be a local file, a URL, a string or even a Ruby
