@@ -13,6 +13,8 @@ module Openapi3Parser
         segments = fragment.split("/").map do |part|
           next if part == ""
 
+          # replace JSON pointer specific encodings
+          part = part.gsub("~1", "/").gsub("~0", "~")
           unescaped = CGI.unescape(part.gsub("%20", "+"))
           unescaped.match?(/\A\d+\z/) ? unescaped.to_i : unescaped
         end
@@ -37,8 +39,11 @@ module Openapi3Parser
       end
 
       def fragment
-        fragment = segments.map { |s| CGI.escape(s.to_s).gsub("+", "%20") }
-                           .join("/")
+        escaped = segments.map do |s|
+          part = s.to_s.gsub("~", "~0").gsub("/", "~1")
+          CGI.escape(part).gsub("+", "%20")
+        end
+        fragment = escaped.join("/")
         "##{absolute ? fragment.prepend('/') : fragment}"
       end
 

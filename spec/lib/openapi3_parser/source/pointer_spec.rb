@@ -26,6 +26,21 @@ RSpec.describe Openapi3Parser::Source::Pointer do
       expect(described_class.from_fragment("#/test%20this/and%2Fthat"))
         .to eq described_class.new(["test this", "and/that"])
     end
+
+    it "copes with an encoded ~ in a pointer" do
+      expect(described_class.from_fragment("#/test~0this"))
+        .to eq described_class.new(["test~this"])
+    end
+
+    it "copes with an encoded / in a pointer" do
+      expect(described_class.from_fragment("#/test~1this"))
+        .to eq described_class.new(["test/this"])
+    end
+
+    it "copes with an encoded ~1 in a pointer" do
+      expect(described_class.from_fragment("#/test~01this"))
+        .to eq described_class.new(["test~1this"])
+    end
   end
 
   describe ".merge_pointers" do
@@ -79,8 +94,13 @@ RSpec.describe Openapi3Parser::Source::Pointer do
     end
 
     it "URI encodes characters that not suitable for URLs" do
-      instance = described_class.new(["with/slash", "with space"])
-      expect(instance.fragment).to eq "#/with%2Fslash/with%20space"
+      instance = described_class.new(["with space"])
+      expect(instance.fragment).to eq "#/with%20space"
+    end
+
+    it "encodes JSON pointer special characters" do
+      instance = described_class.new(["with/slash", "with~tilde", "with~1tilde"])
+      expect(instance.fragment).to eq "#/with~1slash/with~0tilde/with~01tilde"
     end
 
     it "copes with segments that are numbers" do
