@@ -42,7 +42,7 @@ RSpec.describe Openapi3Parser::Node::Context do
 
       Openapi3Parser::NodeFactory::Context.new(
         "data",
-        source_location: source_location,
+        source_location:,
         reference_locations: [reference_location]
       )
     end
@@ -83,19 +83,19 @@ RSpec.describe Openapi3Parser::Node::Context do
 
     it "returns true when input and locations match" do
       instance = described_class.new({},
-                                     document_location: document_location,
-                                     source_location: source_location)
+                                     document_location:,
+                                     source_location:)
       other = described_class.new({},
-                                  document_location: document_location,
-                                  source_location: source_location)
+                                  document_location:,
+                                  source_location:)
 
       expect(instance).to eq(other)
     end
 
     it "returns false when one of these differ" do
       instance = described_class.new({},
-                                     document_location: document_location,
-                                     source_location: source_location)
+                                     document_location:,
+                                     source_location:)
 
       other_source_location = create_source_location(
         {},
@@ -104,7 +104,7 @@ RSpec.describe Openapi3Parser::Node::Context do
       )
 
       other = described_class.new({},
-                                  document_location: document_location,
+                                  document_location:,
                                   source_location: other_source_location)
 
       expect(instance).not_to eq(other)
@@ -130,22 +130,22 @@ RSpec.describe Openapi3Parser::Node::Context do
 
     it "returns true when input and source location match" do
       instance = described_class.new({},
-                                     document_location: document_location,
-                                     source_location: source_location)
+                                     document_location:,
+                                     source_location:)
       other = described_class.new({},
                                   document_location: other_document_location,
-                                  source_location: source_location)
+                                  source_location:)
 
       expect(instance.same_data_and_source?(other)).to be true
     end
 
     it "returns false when input and source location doesn't match" do
       instance = described_class.new({},
-                                     document_location: document_location,
-                                     source_location: source_location)
+                                     document_location:,
+                                     source_location:)
       other = described_class.new({ different: "data" },
                                   document_location: other_document_location,
-                                  source_location: source_location)
+                                  source_location:)
 
       expect(instance.same_data_and_source?(other)).to be false
     end

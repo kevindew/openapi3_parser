@@ -174,7 +174,7 @@ module Openapi3Parser
           else
             TypeChecker.validate_type(validatable,
                                       type: factory.value_input_type,
-                                      context: context)
+                                      context:)
           end
         end
 

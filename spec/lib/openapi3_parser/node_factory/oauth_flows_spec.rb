@@ -24,7 +24,7 @@ RSpec.describe Openapi3Parser::NodeFactory::OauthFlows do
     end
 
     let(:node_factory_context) do
-      create_node_factory_context(input, document_input: document_input)
+      create_node_factory_context(input, document_input:)
     end
   end
 end

@@ -9,9 +9,9 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
                                                pointer_segments: %w[field])
       reference_registry = create_reference_registry(source_location)
       instance = described_class.new(
-        source_location: source_location,
-        object_type: object_type,
-        reference_registry: reference_registry
+        source_location:,
+        object_type:,
+        reference_registry:
       )
 
       expect(instance.errors).to eq []
@@ -19,13 +19,12 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
 
     it "includes an error when a source isn't available" do
       source_location = create_source_location({})
-      allow(source_location.source).to receive(:available?).and_return(false)
-      allow(source_location.source).to receive(:relative_to_root).and_return("../openapi.yml")
+      allow(source_location.source).to receive_messages(available?: false, relative_to_root: "../openapi.yml")
 
       reference_registry = create_reference_registry(source_location)
-      instance = described_class.new(source_location: source_location,
-                                     object_type: object_type,
-                                     reference_registry: reference_registry)
+      instance = described_class.new(source_location:,
+                                     object_type:,
+                                     reference_registry:)
 
       expect(instance.errors).to include("Failed to open source ../openapi.yml")
     end
@@ -34,9 +33,9 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
       source_location = create_source_location({ field: { name: "John" } },
                                                pointer_segments: %w[different])
       reference_registry = create_reference_registry(source_location)
-      instance = described_class.new(source_location: source_location,
-                                     object_type: object_type,
-                                     reference_registry: reference_registry)
+      instance = described_class.new(source_location:,
+                                     object_type:,
+                                     reference_registry:)
 
       expect(instance.errors).to include("#/different is not defined")
     end
@@ -45,9 +44,9 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
       source_location = create_source_location({ field: { unexpected: "Blah" } },
                                                pointer_segments: %w[field])
       reference_registry = create_reference_registry(source_location)
-      instance = described_class.new(source_location: source_location,
-                                     object_type: object_type,
-                                     reference_registry: reference_registry)
+      instance = described_class.new(source_location:,
+                                     object_type:,
+                                     reference_registry:)
 
       expect(instance.errors).to include("#/field does not resolve to a valid object")
     end
@@ -58,9 +57,9 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
       source_location = create_source_location({ field: { name: "John" } },
                                                pointer_segments: %w[field])
       reference_registry = create_reference_registry(source_location)
-      instance = described_class.new(source_location: source_location,
-                                     object_type: object_type,
-                                     reference_registry: reference_registry)
+      instance = described_class.new(source_location:,
+                                     object_type:,
+                                     reference_registry:)
       expect(instance).to be_valid
     end
 
@@ -68,9 +67,9 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
       source_location = create_source_location({ field: { unexpected: "Blah" } },
                                                pointer_segments: %w[field])
       reference_registry = create_reference_registry(source_location)
-      instance = described_class.new(source_location: source_location,
-                                     object_type: object_type,
-                                     reference_registry: reference_registry)
+      instance = described_class.new(source_location:,
+                                     object_type:,
+                                     reference_registry:)
       expect(instance).not_to be_valid
     end
   end
@@ -80,9 +79,9 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
       source_location = create_source_location({ field: { name: "John" } },
                                                pointer_segments: %w[field])
       reference_registry = create_reference_registry(source_location)
-      instance = described_class.new(source_location: source_location,
-                                     object_type: object_type,
-                                     reference_registry: reference_registry)
+      instance = described_class.new(source_location:,
+                                     object_type:,
+                                     reference_registry:)
       expect(instance.factory).to be_a(Openapi3Parser::NodeFactory::Contact)
     end
 
@@ -90,8 +89,8 @@ RSpec.describe Openapi3Parser::Source::ResolvedReference do
       source_location = create_source_location({ field: { name: "John" } },
                                                pointer_segments: %w[field])
       instance = described_class.new(
-        source_location: source_location,
-        object_type: object_type,
+        source_location:,
+        object_type:,
         reference_registry: Openapi3Parser::Document::ReferenceRegistry.new
       )
 

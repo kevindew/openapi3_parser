@@ -39,7 +39,7 @@ module Openapi3Parser
         )
 
         new(factory_context.input,
-            document_location: document_location,
+            document_location:,
             source_location: factory_context.source_location)
       end
 

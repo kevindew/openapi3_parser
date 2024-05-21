@@ -73,7 +73,7 @@ RSpec.describe Openapi3Parser::Node::Schema do
           "referenced_item" => { "type" => "string" }
         }
 
-        factory_context = create_node_factory_context(input, document_input: document_input)
+        factory_context = create_node_factory_context(input, document_input:)
         Openapi3Parser::NodeFactory::Schema
           .new(factory_context)
           .node(node_factory_context_to_node_context(factory_context))

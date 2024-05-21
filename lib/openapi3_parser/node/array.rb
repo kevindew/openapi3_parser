@@ -31,8 +31,8 @@ module Openapi3Parser
       # Iterates through the data of this node, used by Enumerable
       #
       # @return [Object]
-      def each(&block)
-        Placeholder.each(node_data, &block)
+      def each(&)
+        Placeholder.each(node_data, &)
       end
 
       # @param [Any]  other

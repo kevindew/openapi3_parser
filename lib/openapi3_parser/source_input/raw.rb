@@ -35,8 +35,8 @@ module Openapi3Parser
       def resolve_next(reference)
         ResolveNext.call(reference,
                          self,
-                         base_url: base_url,
-                         working_directory: working_directory)
+                         base_url:,
+                         working_directory:)
       end
 
       # @see SourceInput#other

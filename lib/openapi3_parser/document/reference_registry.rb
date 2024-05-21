@@ -58,7 +58,7 @@ module Openapi3Parser
                         reference_factory_context)
         next_context = NodeFactory::Context.resolved_reference(
           reference_factory_context,
-          source_location: source_location
+          source_location:
         )
 
         if unbuilt_factory.is_a?(Class)

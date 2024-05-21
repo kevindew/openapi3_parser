@@ -168,7 +168,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Operation do
     let(:node) do
       node_factory_context = create_node_factory_context(
         input,
-        document_input: document_input,
+        document_input:,
         pointer_segments: %w[paths /test get]
       )
       node_context = node_factory_context_to_node_context(node_factory_context)

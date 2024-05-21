@@ -42,7 +42,7 @@ module Openapi3Parser
                 end
         source_location = Source::Location.next_field(pc.source_location, field)
         new(input,
-            source_location: source_location,
+            source_location:,
             reference_locations: pc.reference_locations)
       end
 
@@ -57,8 +57,8 @@ module Openapi3Parser
 
         data = source_location.data if source_location.source_available?
         new(data,
-            source_location: source_location,
-            reference_locations: reference_locations)
+            source_location:,
+            reference_locations:)
       end
 
       attr_reader :input, :source_location, :reference_locations
@@ -91,7 +91,7 @@ module Openapi3Parser
       # @param  [Boolean]             recursive
       # @return [Source::ResolvedReference]
       def resolve_reference(reference, factory, recursive: false)
-        source.resolve_reference(reference, factory, self, recursive: recursive)
+        source.resolve_reference(reference, factory, self, recursive:)
       end
 
       # Used to show when an recursive reference loop has begun

@@ -32,8 +32,8 @@ module Openapi3Parser
         def mutually_exclusive(*fields, required: false)
           @mutually_exclusive_fields ||= []
           @mutually_exclusive_fields << MutuallyExclusiveField.new(
-            fields: fields,
-            required: required
+            fields:,
+            required:
           )
         end
 

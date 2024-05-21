@@ -32,7 +32,7 @@ module Openapi3Parser
         def call(validatable)
           # This validation isn't actually mentioned in the spec, but it
           # doesn't seem to make sense if this is an empty hash.
-          return validatable.add_error("Expected to have at least 1 item") if validatable.input.size.zero?
+          return validatable.add_error("Expected to have at least 1 item") if validatable.input.empty?
 
           validatable.input.each_key do |key|
             message = Validators::MediaType.call(key)

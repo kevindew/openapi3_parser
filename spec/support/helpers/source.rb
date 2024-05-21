@@ -5,7 +5,7 @@ module Helpers
     def create_source_location(source_input,
                                document: nil,
                                pointer_segments: [])
-      source = create_source(source_input, document: document)
+      source = create_source(source_input, document:)
       Openapi3Parser::Source::Location.new(source, pointer_segments)
     end
 
@@ -30,7 +30,7 @@ module Helpers
         .with(path)
         .and_return(data.to_yaml)
       Openapi3Parser::SourceInput::File
-        .new(path, working_directory: working_directory)
+        .new(path, working_directory:)
     end
 
     def create_raw_source_input(data: {},
@@ -38,8 +38,8 @@ module Helpers
                                 working_directory: nil)
       Openapi3Parser::SourceInput::Raw
         .new(data,
-             base_url: base_url,
-             working_directory: working_directory)
+             base_url:,
+             working_directory:)
     end
 
     def create_url_source_input(data: {},

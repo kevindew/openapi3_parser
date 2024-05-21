@@ -3,22 +3,22 @@
 RSpec.describe Openapi3Parser::Validators::Reference do
   describe "#errors" do
     it "returns an empty array when input is valid" do
-      expect(described_class.new("#/test").errors).to match_array([])
+      expect(described_class.new("#/test").errors).to be_empty
     end
 
     it "has an error when input is not a string" do
       expect(described_class.new(12).errors)
-        .to match_array(["Expected a string"])
+        .to contain_exactly("Expected a string")
     end
 
     it "has an error when input is an invalid URI" do
       expect(described_class.new("not a uri").errors)
-        .to match_array(["Could not parse as a URI"])
+        .to contain_exactly("Could not parse as a URI")
     end
 
     it "has an error when input is an invalid JSON pointer" do
       expect(described_class.new("./test#any-old-fragment").errors)
-        .to match_array(["Invalid JSON pointer, expected a root slash"])
+        .to contain_exactly("Invalid JSON pointer, expected a root slash")
     end
   end
 

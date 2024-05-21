@@ -27,8 +27,8 @@ module Openapi3Parser
         errors.empty?
       end
 
-      def each(&block)
-        errors.each(&block)
+      def each(&)
+        errors.each(&)
       end
 
       # Group errors by those in the same location for the same node

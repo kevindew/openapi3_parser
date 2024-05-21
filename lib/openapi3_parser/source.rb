@@ -59,9 +59,9 @@ module Openapi3Parser
       end
 
       ResolvedReference.new(
-        source_location: source_location,
+        source_location:,
         object_type: unbuilt_factory.object_type,
-        reference_registry: reference_registry
+        reference_registry:
       )
     end
 

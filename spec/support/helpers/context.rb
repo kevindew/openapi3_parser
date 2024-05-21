@@ -24,7 +24,7 @@ module Helpers
       Openapi3Parser::NodeFactory::Context.new(
         input,
         source_location: location,
-        reference_locations: reference_locations
+        reference_locations:
       )
     end
 

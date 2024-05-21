@@ -51,7 +51,7 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
     end
 
     let(:node_factory_context) do
-      create_node_factory_context(input, document_input: document_input)
+      create_node_factory_context(input, document_input:)
     end
   end
 

@@ -16,7 +16,7 @@ module Openapi3Parser
           unescaped = CGI.unescape(part.gsub("%20", "+"))
           unescaped.match?(/\A\d+\z/) ? unescaped.to_i : unescaped
         end
-        new(segments.compact, absolute: absolute)
+        new(segments.compact, absolute:)
       end
 
       def self.merge_pointers(base_pointer, new_pointer)

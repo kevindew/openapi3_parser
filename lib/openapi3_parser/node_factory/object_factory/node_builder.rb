@@ -46,7 +46,7 @@ module Openapi3Parser
         end
 
         def validate(raise_on_invalid:)
-          Validator.call(factory, raise_on_invalid: raise_on_invalid)
+          Validator.call(factory, raise_on_invalid:)
         end
 
         def build_node_data(node_context)

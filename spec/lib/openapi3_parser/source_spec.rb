@@ -112,7 +112,7 @@ RSpec.describe Openapi3Parser::Source do
         create_raw_source_input(data: {}, working_directory: "/dir-1/dir-2")
       )
 
-      instance = create_source(source_input, document: document)
+      instance = create_source(source_input, document:)
       expect(instance.relative_to_root).to eq("../dir-3/dir-4/other.yml")
     end
 

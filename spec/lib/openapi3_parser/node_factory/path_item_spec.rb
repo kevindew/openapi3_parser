@@ -102,7 +102,7 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
 
       it "includes the reference data in the resolved_input" do
         factory_context = create_node_factory_context(
-          input, document_input: document_input
+          input, document_input:
         )
         expect(described_class.new(factory_context).resolved_input).to match(
           hash_including(
@@ -193,7 +193,7 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
   end
 
   def create_node(input, document_input)
-    node_factory_context = create_node_factory_context(input, document_input: document_input)
+    node_factory_context = create_node_factory_context(input, document_input:)
     instance = described_class.new(node_factory_context)
     node_context = node_factory_context_to_node_context(node_factory_context)
     instance.node(node_context)

@@ -34,7 +34,7 @@ module Openapi3Parser
           Validators::RequiredFields.call(
             validatable,
             required_fields: factory.required_fields,
-            raise_on_invalid: raise_on_invalid
+            raise_on_invalid:
           )
         end
 
@@ -43,7 +43,7 @@ module Openapi3Parser
             validatable,
             allow_extensions: factory.allowed_extensions?,
             allowed_fields: factory.allowed_fields,
-            raise_on_invalid: raise_on_invalid
+            raise_on_invalid:
           )
         end
 
@@ -51,7 +51,7 @@ module Openapi3Parser
           Validators::MutuallyExclusiveFields.call(
             validatable,
             mutually_exclusive_fields: factory.mutually_exclusive_fields,
-            raise_on_invalid: raise_on_invalid
+            raise_on_invalid:
           )
         end
 
@@ -112,7 +112,7 @@ module Openapi3Parser
                                          name,
                                          factory.raw_input[name])
             field_validatable = Validation::Validatable.new(factory,
-                                                            context: context)
+                                                            context:)
 
             valid_input_type = field_config.check_input_type(
               field_validatable,

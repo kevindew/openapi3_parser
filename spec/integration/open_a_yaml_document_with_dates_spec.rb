@@ -20,7 +20,7 @@ RSpec.describe "Open a YAML Document with dates" do
 
   before do
     stub_request(:get, "example.com/openapi.yml")
-      .to_return(body: body)
+      .to_return(body:)
   end
 
   it "is not a valid document" do

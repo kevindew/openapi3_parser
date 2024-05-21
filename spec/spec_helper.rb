@@ -6,7 +6,7 @@ SimpleCov.start
 require "openapi3_parser"
 require "webmock/rspec"
 
-files = Dir.glob(File.join(__dir__, "support", "**", "*.rb")).sort
+files = Dir.glob(File.join(__dir__, "support", "**", "*.rb"))
 files.each { |file| require file }
 
 RSpec.configure do |config|

@@ -18,7 +18,7 @@ module Openapi3Parser
       # Used to iterate through hashes or arrays that may contain
       # Placeholder objects where these are resolved to being nodes
       # before iteration
-      def self.each(node_data, &block)
+      def self.each(node_data, &)
         resolved =
           if node_data.respond_to?(:keys)
             node_data.transform_values do |value|
@@ -28,7 +28,7 @@ module Openapi3Parser
             node_data.map { |item| resolve(item) }
           end
 
-        resolved.each(&block)
+        resolved.each(&)
       end
 
       attr_reader :node_factory, :field, :parent_context

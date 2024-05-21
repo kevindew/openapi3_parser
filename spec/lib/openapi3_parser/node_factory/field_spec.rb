@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Openapi3Parser::NodeFactory::Field do
-  it_behaves_like "node factory", ::Integer do
+  it_behaves_like "node factory", Integer do
     let(:node_factory_context) { create_node_factory_context(1) }
   end
 

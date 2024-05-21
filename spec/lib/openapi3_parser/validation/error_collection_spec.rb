@@ -12,8 +12,8 @@ RSpec.describe Openapi3Parser::Validation::ErrorCollection do
                    factory_class: nil)
     node_factory_context = create_node_factory_context(
       {},
-      pointer_segments: pointer_segments,
-      document: document
+      pointer_segments:,
+      document:
     )
     Openapi3Parser::Validation::Error.new(message,
                                           node_factory_context,
@@ -81,13 +81,9 @@ RSpec.describe Openapi3Parser::Validation::ErrorCollection do
                                       error_e])
 
       klass = Openapi3Parser::Validation::ErrorCollection::LocationTypeGroup
-      expect(instance.group_errors).to match_array(
-        [
-          klass.new(error_a.context.source_location, nil, [error_a, error_b]),
-          klass.new(error_c.context.source_location, nil, [error_c]),
-          klass.new(error_d.context.source_location, "Contact", [error_d]),
-          klass.new(error_e.context.source_location, "Info", [error_e])
-        ]
+      expect(instance.group_errors).to contain_exactly(
+        klass.new(error_a.context.source_location, nil,
+                  [error_a, error_b]), klass.new(error_c.context.source_location, nil, [error_c]), klass.new(error_d.context.source_location, "Contact", [error_d]), klass.new(error_e.context.source_location, "Info", [error_e])
       )
     end
   end

@@ -58,28 +58,28 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
 
     it "returns a context instance" do
       instance = described_class.resolved_reference(
-        reference_context, source_location: source_location
+        reference_context, source_location:
       )
       expect(instance).to be_a(described_class)
     end
 
     it "has the resolved reference data" do
       instance = described_class.resolved_reference(
-        reference_context, source_location: source_location
+        reference_context, source_location:
       )
       expect(instance.input).to eq "data"
     end
 
     it "has the resolved reference location" do
       instance = described_class.resolved_reference(
-        reference_context, source_location: source_location
+        reference_context, source_location:
       )
       expect(instance.source_location).to eq source_location
     end
 
     it "is knows the location of the reference" do
       instance = described_class.resolved_reference(
-        reference_context, source_location: source_location
+        reference_context, source_location:
       )
       expect(instance.reference_locations)
         .to eq [reference_context.source_location]
@@ -89,7 +89,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
   describe "#location_summary" do
     it "returns a string representation of the pointer segments" do
       source_location = create_source_location({}, pointer_segments: %w[path to field])
-      instance = described_class.new({}, source_location: source_location)
+      instance = described_class.new({}, source_location:)
       expect(instance.location_summary).to eq "#/path/to/field"
     end
   end
@@ -110,7 +110,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
         }
       }
       source_location = create_source_location(input)
-      instance = described_class.new({}, source_location: source_location)
+      instance = described_class.new({}, source_location:)
       resolved_reference = instance.resolve_reference("#/components/schemas/item",
                                                       Openapi3Parser::NodeFactory::Schema)
       expect(resolved_reference)

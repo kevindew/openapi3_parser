@@ -5,7 +5,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
   let(:factory_context) do
     create_node_factory_context(
       "#/reference",
-      document_input: document_input,
+      document_input:,
       pointer_segments: %w[field $ref]
     )
   end
