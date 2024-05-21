@@ -80,11 +80,15 @@ RSpec.describe Openapi3Parser::Validation::ErrorCollection do
                                       error_d,
                                       error_e])
 
-      klass = Openapi3Parser::Validation::ErrorCollection::LocationTypeGroup
-      expect(instance.group_errors).to contain_exactly(
-        klass.new(error_a.context.source_location, nil,
-                  [error_a, error_b]), klass.new(error_c.context.source_location, nil, [error_c]), klass.new(error_d.context.source_location, "Contact", [error_d]), klass.new(error_e.context.source_location, "Info", [error_e])
-      )
+      group_class = Openapi3Parser::Validation::ErrorCollection::LocationTypeGroup
+
+      expected = [
+        group_class.new(error_a.context.source_location, nil, [error_a, error_b]),
+        group_class.new(error_c.context.source_location, nil, [error_c]),
+        group_class.new(error_d.context.source_location, "Contact", [error_d]),
+        group_class.new(error_e.context.source_location, "Info", [error_e])
+      ]
+      expect(instance.group_errors).to contain_exactly(*expected)
     end
   end
 
