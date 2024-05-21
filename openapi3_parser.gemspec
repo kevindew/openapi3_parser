@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
     f.match(%r{^spec/})
   end
 
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.1"
 
   # Require version than 0.23.6 as earlier versions are susceptible to GHSA-4qw4-jpp4-8gvp
   spec.add_dependency "commonmarker", "~> 0.23", ">= 0.23.6"

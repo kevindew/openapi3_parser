@@ -1,5 +1,6 @@
 # Unreleased
 
+- Drop support for Ruby < 3.1
 - Require a version of commonmarker that is patched for CVE GHSA-4qw4-jpp4-8gvp
 
 # 0.9.2

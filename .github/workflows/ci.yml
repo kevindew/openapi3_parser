@@ -3,21 +3,21 @@ jobs:
   test:
     strategy:
       matrix:
-        ruby: [2.6, 2.7, 3.0, 3.1]
+        ruby: [3.1, 3.2, 3.3]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
           ruby-version: ${{ matrix.ruby }}
       - name: Test Ruby ${{ matrix.ruby }}
         run: bundle exec rake
-        if: matrix.ruby != '2.6'
+        if: matrix.ruby != '3.1'
       - name: Test and publish coverage for Ruby ${{ matrix.ruby }}
         uses: paambaati/codeclimate-action@v2.7.5
         env:
           CC_TEST_REPORTER_ID: 8bc2d8e54331569aeb442094c21cb64a58d6efa0670f65ff00d9ae887f63c0b4
         with:
           coverageCommand: bundle exec rake
-        if: matrix.ruby == '2.6'
+        if: matrix.ruby == '3.1'
