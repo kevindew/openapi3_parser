@@ -9,7 +9,7 @@ module Openapi3Parser
     # @param  [String]  text
     # @return [String]
     def self.to_html(text)
-      CommonMarker.render_doc(text).to_html
+      Commonmarker.to_html(text)
     end
   end
 end
