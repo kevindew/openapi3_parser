@@ -88,7 +88,7 @@ RSpec.describe Openapi3Parser::Validation::ErrorCollection do
         group_class.new(error_d.context.source_location, "Contact", [error_d]),
         group_class.new(error_e.context.source_location, "Info", [error_e])
       ]
-      expect(instance.group_errors).to contain_exactly(*expected)
+      expect(instance.group_errors).to match_array(expected)
     end
   end
 
