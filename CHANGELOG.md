@@ -1,4 +1,4 @@
-# Unreleased
+# 0.10.0
 
 - Support JSON pointer tokens of ~0 and ~1, thanks @kuboon
 - Require Commonmarker > 1, fixing warnings in Ruby > 3.1
