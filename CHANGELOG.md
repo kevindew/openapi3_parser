@@ -1,7 +1,8 @@
 # Unreleased
 
+- Support JSON pointer tokens of ~0 and ~1, thanks @kuboon
+- Require Commonmarker > 1, fixing warnings in Ruby > 3.1
 - Drop support for Ruby < 3.1
-- Require a version of commonmarker that is patched for CVE GHSA-4qw4-jpp4-8gvp
 
 # 0.9.2
 
