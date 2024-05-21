@@ -29,14 +29,4 @@ Gem::Specification.new do |spec|
 
   # Require version than 0.23.6 as earlier versions are susceptible to GHSA-4qw4-jpp4-8gvp
   spec.add_dependency "commonmarker", "~> 0.23", ">= 0.23.6"
-
-  spec.add_development_dependency "bundler"
-  spec.add_development_dependency "byebug", "~> 11.0"
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency "rspec", "~> 3.9"
-  spec.add_development_dependency "rubocop", "~> 1"
-  spec.add_development_dependency "rubocop-rake", "~> 0.5"
-  spec.add_development_dependency "rubocop-rspec", "~> 2"
-  spec.add_development_dependency "simplecov", "~> 0.19"
-  spec.add_development_dependency "webmock", "~> 3.8"
 end
