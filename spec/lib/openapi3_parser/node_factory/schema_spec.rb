@@ -120,6 +120,18 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
     end
   end
 
+  describe "default field" do
+    it "supports a default field of false" do
+      node_factory_context = create_node_factory_context({ "default" => false })
+      node_context = node_factory_context_to_node_context(node_factory_context)
+
+      instance = described_class.new(node_factory_context)
+
+      expect(instance).to be_valid
+      expect(instance.node(node_context).default).to be(false)
+    end
+  end
+
   describe "validating writeOnly and readOnly" do
     it "is invalid when both writeOnly and readOnly are true" do
       instance = described_class.new(

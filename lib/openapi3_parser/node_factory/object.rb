@@ -84,7 +84,7 @@ module Openapi3Parser
 
       def process_data(raw_data)
         field_configs.each_with_object(raw_data.dup) do |(field, config), memo|
-          memo[field] = nil unless memo[field]
+          memo[field] = nil unless memo.key?(field)
           next unless config.factory?
 
           next_context = Context.next_field(context, field, memo[field])
