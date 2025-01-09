@@ -179,11 +179,11 @@ RSpec.describe Openapi3Parser::Node::Context do
 
     it "returns true when input and locations match" do
       instance = described_class.new({},
-                                     document_location: document_location,
+                                     document_location:,
                                      source_locations: [source_location],
                                      input_locations: [source_location])
       other = described_class.new({},
-                                  document_location: document_location,
+                                  document_location:,
                                   source_locations: [source_location],
                                   input_locations: [source_location])
 
@@ -192,7 +192,7 @@ RSpec.describe Openapi3Parser::Node::Context do
 
     it "returns false when one of these differ" do
       instance = described_class.new({},
-                                     document_location: document_location,
+                                     document_location:,
                                      source_locations: [source_location],
                                      input_locations: [source_location])
 
@@ -203,7 +203,7 @@ RSpec.describe Openapi3Parser::Node::Context do
       )
 
       other = described_class.new({},
-                                  document_location: document_location,
+                                  document_location:,
                                   source_locations: [other_source_location],
                                   input_locations: [other_source_location])
 
@@ -230,7 +230,7 @@ RSpec.describe Openapi3Parser::Node::Context do
 
     it "returns true when input and input locations match" do
       instance = described_class.new({},
-                                     document_location: document_location,
+                                     document_location:,
                                      source_locations: [source_location],
                                      input_locations: [source_location])
       other = described_class.new({},
@@ -243,7 +243,7 @@ RSpec.describe Openapi3Parser::Node::Context do
 
     it "returns false when input doesn't match" do
       instance = described_class.new({},
-                                     document_location: document_location,
+                                     document_location:,
                                      source_locations: [source_location],
                                      input_locations: [source_location])
       other = described_class.new({ different: "data" },
@@ -256,7 +256,7 @@ RSpec.describe Openapi3Parser::Node::Context do
 
     it "returns false when input locations don't match" do
       instance = described_class.new({},
-                                     document_location: document_location,
+                                     document_location:,
                                      source_locations: [source_location],
                                      input_locations: [source_location])
       other = described_class.new({},

@@ -40,7 +40,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::OasDialect3_1 do
     end
 
     let(:node_factory_context) do
-      create_node_factory_context(input, document_input: document_input)
+      create_node_factory_context(input, document_input:)
     end
 
     let(:node_context) do

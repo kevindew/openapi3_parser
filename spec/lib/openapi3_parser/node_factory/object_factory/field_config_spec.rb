@@ -75,7 +75,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
 
     it "calls the function when a callable is given" do
       allow(context).to receive(:allowed?).and_return(false)
-      instance = described_class.new(allowed: ->(context) { context.allowed? })
+      instance = described_class.new(allowed: lambda(&:allowed?))
       expect(instance.allowed?(context, factory)).to be(false)
     end
 
@@ -106,7 +106,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
 
     it "calls the function when a callable is given" do
       allow(context).to receive(:required?).and_return(true)
-      instance = described_class.new(required: ->(context) { context.required? })
+      instance = described_class.new(required: lambda(&:required?))
       expect(instance.required?(context, factory)).to be(true)
     end
 

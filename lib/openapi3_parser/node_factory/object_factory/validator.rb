@@ -43,7 +43,7 @@ module Openapi3Parser
 
           Validators::UnexpectedFields.call(
             validatable,
-            extension_regex: extension_regex,
+            extension_regex:,
             allowed_fields: factory.allowed_fields,
             raise_on_invalid:
           )

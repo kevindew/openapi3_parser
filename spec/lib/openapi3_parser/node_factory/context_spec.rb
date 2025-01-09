@@ -130,7 +130,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
       }
       source_location = create_source_location(input)
 
-      instance = described_class.new({}, source_location: source_location)
+      instance = described_class.new({}, source_location:)
       expect(instance.openapi_version).to eq("3.0")
     end
   end
