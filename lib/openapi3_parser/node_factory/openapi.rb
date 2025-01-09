@@ -27,7 +27,7 @@ module Openapi3Parser
 
       validate do |validatable|
         next if validatable.context.openapi_version < "3.1"
-        next if (validatable.input.keys & %w[components paths webhooks]).any?
+        next if validatable.input.keys.intersect?(%w[components paths webhooks])
 
         validatable.add_error("At least one of components, paths and webhooks fields are required")
       end

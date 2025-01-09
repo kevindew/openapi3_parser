@@ -41,7 +41,7 @@ RSpec.shared_examples "node equality" do |input|
           context.document_location.source,
           %w[option_b]
         ),
-        source_locations: source_locations,
+        source_locations:,
         input_locations: source_locations
       )
 

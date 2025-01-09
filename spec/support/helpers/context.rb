@@ -36,7 +36,7 @@ module Helpers
       Openapi3Parser::Node::Context.new(input,
                                         document_location: source_location,
                                         source_locations: [source_location],
-                                        input_locations: input_locations)
+                                        input_locations:)
     end
 
     def create_node_context(input, document_input: {}, pointer_segments: [])
@@ -48,7 +48,7 @@ module Helpers
       Openapi3Parser::Node::Context.new(input,
                                         document_location: location,
                                         source_locations: [location],
-                                        input_locations: input_locations)
+                                        input_locations:)
     end
   end
 end

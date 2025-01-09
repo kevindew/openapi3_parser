@@ -10,7 +10,7 @@ module Openapi3Parser
     #
     # @return [Boolean]
     def <=>(other)
-      super self.class.new(other)
+      super(self.class.new(other))
     end
   end
 end

@@ -27,9 +27,9 @@ module Openapi3Parser
         input_locations = input_location?(factory_context.input) ? [source_location] : []
 
         new(factory_context.input,
-            document_location: document_location,
+            document_location:,
             source_locations: [source_location],
-            input_locations: input_locations)
+            input_locations:)
       end
 
       # Create a context for the child of a previous context
@@ -53,7 +53,7 @@ module Openapi3Parser
         new(factory_context.input,
             document_location:,
             source_locations: [factory_context.source_location],
-            input_locations: input_locations)
+            input_locations:)
       end
 
       # Create a context for a the a field that is the result of a reference
@@ -72,7 +72,7 @@ module Openapi3Parser
         new(input,
             document_location: current_context.document_location,
             source_locations: current_context.source_locations + [reference_factory_context.source_location],
-            input_locations: input_locations)
+            input_locations:)
       end
 
       def self.merge_reference_input(current_input, reference_input)

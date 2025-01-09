@@ -157,7 +157,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
         factory_context = create_node_factory_context(
           { "$ref" => "#/components/schemas/Referenced",
             "last_name" => "Smith" },
-          document_input: document_input
+          document_input:
         )
 
         node_builder = described_class.new(
@@ -173,7 +173,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
         factory_context = create_node_factory_context(
           { "$ref" => "#/components/schemas/Referenced",
             "last_name" => nil },
-          document_input: document_input
+          document_input:
         )
 
         node_builder = described_class.new(
@@ -188,7 +188,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
       it "returns the data without any $ref fields" do
         factory_context = create_node_factory_context(
           { "$ref" => "#/components/schemas/Referenced" },
-          document_input: document_input
+          document_input:
         )
 
         node_builder = described_class.new(
@@ -202,7 +202,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
       it "raises an error if a reference is broken" do
         factory_context = create_node_factory_context(
           { "$ref" => "#/components/schemas/Broken" },
-          document_input: document_input
+          document_input:
         )
 
         node_builder = described_class.new(
