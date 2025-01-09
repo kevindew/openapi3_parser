@@ -15,7 +15,7 @@ jobs:
         run: bundle exec rake
         if: matrix.ruby != '3.1'
       - name: Test and publish coverage for Ruby ${{ matrix.ruby }}
-        uses: paambaati/codeclimate-action@v2.7.5
+        uses: paambaati/codeclimate-action@v9.0.0
         env:
           CC_TEST_REPORTER_ID: 8bc2d8e54331569aeb442094c21cb64a58d6efa0670f65ff00d9ae887f63c0b4
         with:
