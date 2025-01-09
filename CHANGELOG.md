@@ -1,3 +1,8 @@
+# 0.10.1
+
+- Fix values of false being converted to nil -
+  https://github.com/kevindew/openapi3_parser/issues/28
+
 # 0.10.0
 
 - Support JSON pointer tokens of ~0 and ~1, thanks @kuboon
