@@ -6,7 +6,7 @@ Things have got complex with schemas in OpenAPI 3.1
 
 How things might work:
 
-- when a schema factory is created, it determines whether the dialect is suported
+- when a schema factory is created, it determines whether the dialect is supported
 - it then creates a factory based on the dialect
 - if there is a reference in it this is resolved
 - there could be complexities in the resolving process because of the id field - does it become relative to this?
@@ -90,3 +90,17 @@ additionalProperties: single json schema
 
 unevaluatedItems - single schema
 unevaluatedProperties: single schema
+
+
+## Returning to this in 2025
+
+Assumption: it'll be extremely rare for usage of the advanced schema fields like dynamicRefs and dynamicAnchors, let's see what we can implement that meets most use cases and hopefully doesn't crash on complex ones
+
+Current idea is create a Schema::Common which can share methods between both schema objects that are shared, then add distinctions for differences
+
+At point of shutting down on 10th January 2025 I was wondering about how schemas merge. I also decided to defer thinking about referenceable node object factory.
+
+I learnt that merging seems largely undefined in JSON Schema, as far as I can tell and I'm just going with a strategy of most recent field wins.
+
+I've set up a Node::Schema class for common schema methods and Node::Schema::v3_0 and v3_1Up classes for specific changes. Need to flesh out
+tests and then behaviour that differs between them
