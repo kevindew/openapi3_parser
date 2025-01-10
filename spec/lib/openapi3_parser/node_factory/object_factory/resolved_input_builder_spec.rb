@@ -103,7 +103,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::ResolvedInputBuilder 
           }
         )
 
-        factory = Openapi3Parser::NodeFactory::Schema::OasDialect3_1.new(factory_context)
+        factory = Openapi3Parser::NodeFactory::Schema::V3_1.new(factory_context)
 
         expect(described_class.call(factory)).to match(
           {

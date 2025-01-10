@@ -5,7 +5,7 @@ module Openapi3Parser
     module Schema
       def self.factory(context)
         if context.openapi_version >= "3.1"
-          OasDialect3_1
+          V3_1
         else
           NodeFactory::OptionalReference.new(V3_0)
         end

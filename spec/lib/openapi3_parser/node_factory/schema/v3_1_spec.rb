@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe Openapi3Parser::NodeFactory::Schema::OasDialect3_1 do
+RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_1 do
   # TODO: perhaps a behaves like referenceable node object factory?
 
   # Basic c+p of V3_0 Schema test for now
-  it_behaves_like "node object factory", Openapi3Parser::Node::Schema::OasDialect3_1 do
+  it_behaves_like "node object factory", Openapi3Parser::Node::Schema::V3_1 do
     let(:input) do
       {
         "allOf" => [
@@ -47,4 +47,6 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::OasDialect3_1 do
       node_factory_context_to_node_context(node_factory_context)
     end
   end
+
+  it_behaves_like "schema factory"
 end
