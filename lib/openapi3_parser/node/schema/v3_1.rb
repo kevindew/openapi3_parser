@@ -19,6 +19,11 @@ module Openapi3Parser
         def type
           self["type"]
         end
+
+        # @return anything
+        def const
+          self["const"]
+        end
       end
     end
   end
