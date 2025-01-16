@@ -18,6 +18,7 @@ module Openapi3Parser
 
         field "$ref", input_type: String, factory: :ref_factory
         field "type", factory: :type_factory, validate: :validate_type
+        field "const"
 
         def build_node(data, node_context)
           Node::Schema::V3_1.new(data, node_context)
