@@ -9,11 +9,27 @@ module Openapi3Parser
         include Schema::Common
 
         allow_extensions
-        # OpenAPI 3.0 requires a type of String, whereas 3.1 up are String or Array
+        # OpenAPI 3.0 requires a type of String, whereas >= 3.1 is String or Array
         field "type", input_type: String
+
+        validate :items_for_array
 
         def build_node(data, node_context)
           Node::Schema::V3_0.new(data, node_context)
+        end
+
+        private
+
+        # Only the OpenAPI 3.0 spec references the requirement for this
+        # validation [1]. There doesn't seem to be equivalent in JSON Schema
+        # 2020-12
+        #
+        # [1]: https://spec.openapis.org/oas/v3.0.4.html#json-schema-keywords)
+        def items_for_array(validatable)
+          return unless validatable.input["type"] == "array"
+          return unless validatable.factory.resolved_input["items"].nil?
+
+          validatable.add_error("items must be defined for a type of array")
         end
       end
     end

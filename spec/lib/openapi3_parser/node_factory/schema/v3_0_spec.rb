@@ -46,4 +46,30 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_0 do
   end
 
   it_behaves_like "schema factory"
+
+  describe "validating items" do
+    it "is valid when type is 'array' and items are provided" do
+      instance = described_class.new(
+        create_node_factory_context({ "type" => "array", "items" => { "type" => "string" } })
+      )
+      expect(instance).to be_valid
+    end
+
+    it "is valid when type isn't 'array' and items aren't provided" do
+      instance = described_class.new(
+        create_node_factory_context({ "type" => "string" })
+      )
+      expect(instance).to be_valid
+    end
+
+    it "is invalid when type is 'array' and items aren't provided" do
+      instance = described_class.new(
+        create_node_factory_context({ "type" => "array" })
+      )
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/")
+        .with_message("items must be defined for a type of array")
+    end
+  end
 end

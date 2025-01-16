@@ -57,7 +57,7 @@ components:
     MultipleTypes:
       type:
         - string
-        - null
+        - "null"
     # Number:
     #   type: integer
     #   multipleOf: 5

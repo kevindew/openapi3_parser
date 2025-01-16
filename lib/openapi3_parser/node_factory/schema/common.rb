@@ -52,19 +52,12 @@ module Openapi3Parser
           base.field "example"
           base.field "deprecated", input_type: :boolean, default: false
 
-          base.validate :items_for_array, :read_only_or_write_only
+          base.validate :read_only_or_write_only
         end
         # rubocop:enable Metrics/AbcSize
         # rubocop:enable Metrics/MethodLength
 
         private
-
-        def items_for_array(validatable)
-          return unless validatable.input["type"] == "array"
-          return unless validatable.factory.resolved_input["items"].nil?
-
-          validatable.add_error("items must be defined for a type of array")
-        end
 
         def read_only_or_write_only(validatable)
           input = validatable.input
