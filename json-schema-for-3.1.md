@@ -28,7 +28,7 @@ Dealing with the new JSON Schema approach for OpenAPI 3.1.
 
 There is some meta fields:
 
-$ref
+$ref - in 3.0
 $dynamicRef
 $defs
 $schema
@@ -39,52 +39,52 @@ $dynamicAnchor
 
 Then a ton of fields:
 
-type: string
-enum: array
-const: any type
-multipleOf: number
-maximum: number
-exclusiveMaximum: number
-minimum: number
-exclusiveMinimum: number
-maxLength: integer >= 0
-minLength: integer >= 0
-pattern: string
-maxItems: integer >= 0
-minItems: integer >= 0
-uniqueItems: boolean
-maxContains: integer >= 0
-minContains: integer >= 0
-maxProperties: integer >= 0
-minProperties: integer >= 0
+type: string - in 3.0
+enum: array - in 3.0
+const: any type - done
+multipleOf: number - in 3.0
+maximum: number - in 3.0
+exclusiveMaximum: number - in 3.0
+minimum: number - in 3.0
+exclusiveMinimum: number - in 3.0
+maxLength: integer >= 0 - in 3.0
+minLength: integer >= 0 - in 3.0
+pattern: string - in 3.0
+maxItems: integer >= 0 - in 3.0
+minItems: integer >= 0 - in 3.0
+uniqueItems: boolean - in 3.0
+maxContains: integer >= 0 - done
+minContains: integer >= 0 - done
+maxProperties: integer >= 0 - in 3.0
+minProperties: integer >= 0 - in 3.0
 required: array, strings, unique
-dependentRequired: something complex
+dependentRequired: something complex 
 contentEncoding: string
 contentMediaType: string / media type
 contentSchema: schema
-title: string
-description: string
-default: any
-deprecated: boolean (default false)
-readOnly: boolean (default false)
-writeOnly: boolean (default false)
-examples: array
+title: string - in 3.0
+description: string - in 3.0
+default: any - in 3.0
+deprecated: boolean (default false) - in 3.0
+readOnly: boolean (default false) - in 3.0
+writeOnly: boolean (default false) - in 3.0
+examples: array - done
+format: any - in 3.0
 
-
-allOf - non empty array of schemas
-anyOf - non empty array of schemas
-oneOf - non empty array of schemas
-not - schema
+allOf - non empty array of schemas - in 3.0
+anyOf - non empty array of schemas - in 3.0
+oneOf - non empty array of schemas - in 3.0
+not - schema - in 3.0
 
 if - single schema
 then - single schema
 else - single schema
 
 prefixItems: schema
-items: schema
+items: schema - in 3.0
 contains: schema
 
-properties: object, each value json schema
+properties: object, each value json schema - in 3.0
 patternProperties: object each value JSON schema
 additionalProperties: single json schema
 
@@ -103,4 +103,13 @@ At point of shutting down on 10th January 2025 I was wondering about how schemas
 I learnt that merging seems largely undefined in JSON Schema, as far as I can tell and I'm just going with a strategy of most recent field wins.
 
 I've set up a Node::Schema class for common schema methods and Node::Schema::v3_0 and v3_1Up classes for specific changes. Need to flesh out
-tests and then behaviour that differs between them
+tests and then behaviour that differs between them.
+
+Little things:
+- schema integer fields generally are required to be non-negative
+- quite common for arrays to be invalid if not unique (required, type)
+
+JSON Schema specs:
+
+meta: https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-00
+validation: https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-validation-00
