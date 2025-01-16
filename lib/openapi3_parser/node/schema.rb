@@ -137,11 +137,6 @@ module Openapi3Parser
         self["enum"]
       end
 
-      # @return [String, nil]
-      def type
-        self["type"]
-      end
-
       # @return [Node::Array<Schema>, nil]
       def all_of
         self["allOf"]
