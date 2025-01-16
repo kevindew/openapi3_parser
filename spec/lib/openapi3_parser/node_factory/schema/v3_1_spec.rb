@@ -125,4 +125,25 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_1 do
         .with_message("Duplicate entries in type array")
     end
   end
+
+  describe "examples field" do
+    it "is valid with an array with any type values" do
+      instance = described_class.new(
+        create_node_factory_context({ "examples" => [%w[a b], "test", nil] })
+      )
+
+      expect(instance).to be_valid
+    end
+
+    it "is invalid for a type other than array" do
+      instance = described_class.new(
+        create_node_factory_context({ "examples" => "string" })
+      )
+
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/examples")
+        .with_message("Invalid type. Expected Array")
+    end
+  end
 end
