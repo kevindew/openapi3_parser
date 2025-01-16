@@ -19,6 +19,10 @@ module Openapi3Parser
         field "$ref", input_type: String, factory: :ref_factory
         field "type", factory: :type_factory, validate: :validate_type
         field "const"
+        field "maxContains", input_type: Integer
+        field "minContains", input_type: Integer, default: 1
+        # dependentRequired - map with basic validation rules
+        field "examples", factory: NodeFactory::Array
 
         def build_node(data, node_context)
           Node::Schema::V3_1.new(data, node_context)

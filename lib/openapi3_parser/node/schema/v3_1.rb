@@ -20,9 +20,24 @@ module Openapi3Parser
           self["type"]
         end
 
-        # @return anything
+        # @return [Any]
         def const
           self["const"]
+        end
+
+        # @return [Integer, nil]
+        def max_contains
+          self["maxContains"]
+        end
+
+        # @return [Integer]
+        def min_contains
+          self["minContains"]
+        end
+
+        # @return [Node::Array<Any>]
+        def examples
+          self["examples"]
         end
       end
     end
