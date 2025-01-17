@@ -54,6 +54,21 @@ module Openapi3Parser
         def content_schema
           self["contentSchema"]
         end
+
+        # @return [Schema, nil]
+        def if
+          self["if"]
+        end
+
+        # @return [Schema, nil]
+        def then
+          self["then"]
+        end
+
+        # @return [Schema, nil]
+        def else
+          self["else"]
+        end
       end
     end
   end
