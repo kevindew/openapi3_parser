@@ -47,7 +47,7 @@ maximum: number - in 3.0
 exclusiveMaximum: number - in 3.0
 minimum: number - in 3.0
 exclusiveMinimum: number - in 3.0
-maxLength: integer >= 0 - in 3.0
+maxLength: integer >= 0 - in 3.0 (missing >= val)
 minLength: integer >= 0 - in 3.0
 pattern: string - in 3.0
 maxItems: integer >= 0 - in 3.0
@@ -57,11 +57,11 @@ maxContains: integer >= 0 - done
 minContains: integer >= 0 - done
 maxProperties: integer >= 0 - in 3.0
 minProperties: integer >= 0 - in 3.0
-required: array, strings, unique
-dependentRequired: something complex 
-contentEncoding: string
-contentMediaType: string / media type
-contentSchema: schema
+required: array, strings, unique - in 3.0 (missing unique)
+dependentRequired: something complex
+contentEncoding: string - done
+contentMediaType: string / media type - done
+contentSchema: schema - done
 title: string - in 3.0
 description: string - in 3.0
 default: any - in 3.0
@@ -108,6 +108,7 @@ tests and then behaviour that differs between them.
 Little things:
 - schema integer fields generally are required to be non-negative
 - quite common for arrays to be invalid if not unique (required, type)
+- probably want a quick way to get coverage of the methods on nodes
 
 JSON Schema specs:
 

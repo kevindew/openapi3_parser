@@ -39,6 +39,21 @@ module Openapi3Parser
         def examples
           self["examples"]
         end
+
+        # @return [String, nil]
+        def content_encoding
+          self["contentEncoding"]
+        end
+
+        # @return [String, nil]
+        def content_media_type
+          self["contentMediaType"]
+        end
+
+        # @return [Schema, nil]
+        def content_schema
+          self["contentSchema"]
+        end
       end
     end
   end
