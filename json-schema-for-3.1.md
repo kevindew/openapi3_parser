@@ -76,12 +76,13 @@ anyOf - non empty array of schemas - in 3.0
 oneOf - non empty array of schemas - in 3.0
 not - schema - in 3.0
 
-if - single schema
-then - single schema
-else - single schema
+if - single schema - done
+then - single schema - done
+else - single schema - done
+dependentSchemas - map of schemas - somewhat complex, is it related to dependentRequired ?
 
-prefixItems: schema
-items: schema - in 3.0
+prefixItems: array of schema
+items: array of schema - in 3.0
 contains: schema
 
 properties: object, each value json schema - in 3.0

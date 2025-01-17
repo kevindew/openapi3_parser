@@ -29,6 +29,9 @@ module Openapi3Parser
               input_type: String,
               validate: Validation::InputValidator.new(Validators::MediaType)
         field "contentSchema", factory: :referenceable_schema
+        field "if", factory: :referenceable_schema
+        field "then", factory: :referenceable_schema
+        field "else", factory: :referenceable_schema
 
         def build_node(data, node_context)
           Node::Schema::V3_1.new(data, node_context)
