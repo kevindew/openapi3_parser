@@ -2,6 +2,7 @@
 
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/referenceable"
+require "openapi3_parser/validators/media_type"
 
 module Openapi3Parser
   module NodeFactory
@@ -23,6 +24,11 @@ module Openapi3Parser
         field "minContains", input_type: Integer, default: 1
         # dependentRequired - map with basic validation rules
         field "examples", factory: NodeFactory::Array
+        field "contentEncoding", input_type: String
+        field "contentMediaType",
+              input_type: String,
+              validate: Validation::InputValidator.new(Validators::MediaType)
+        field "contentSchema", factory: :referenceable_schema
 
         def build_node(data, node_context)
           Node::Schema::V3_1.new(data, node_context)

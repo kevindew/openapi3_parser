@@ -58,6 +58,27 @@ components:
       type:
         - string
         - "null"
+    ContentEncoding:
+      type: string
+      contentEncoding: base64
+      contentMediaType: image/png
+    ContentSchema:
+      type: string
+      contentMediaType: application/jwt
+      contentSchema:
+        type: array
+        minItems: 2
+        prefixItems:
+          - const:
+              type: JWT
+              alg: HS256
+          - type: object
+            required: [iss, exp]
+            properties:
+              iss:
+                type: string
+              exp:
+                type: string
     # Number:
     #   type: integer
     #   multipleOf: 5

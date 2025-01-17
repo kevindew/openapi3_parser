@@ -146,4 +146,25 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_1 do
         .with_message("Invalid type. Expected Array")
     end
   end
+
+  describe "contentMediaType field" do
+    it "is valid with a media type string" do
+      instance = described_class.new(
+        create_node_factory_context({ "contentMediaType" => "image/png" })
+      )
+
+      expect(instance).to be_valid
+    end
+
+    it "is invalid with a non media type string" do
+      instance = described_class.new(
+        create_node_factory_context({ "contentMediaType" => "not a media type" })
+      )
+
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/contentMediaType")
+        .with_message('"not a media type" is not a valid media type')
+    end
+  end
 end
