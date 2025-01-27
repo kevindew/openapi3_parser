@@ -32,6 +32,7 @@ module Openapi3Parser
         field "if", factory: :referenceable_schema
         field "then", factory: :referenceable_schema
         field "else", factory: :referenceable_schema
+        field "prefixItems", factory: :prefix_items_factory
 
         def build_node(data, node_context)
           Node::Schema::V3_1.new(data, node_context)
@@ -76,6 +77,13 @@ module Openapi3Parser
           else
             validatable.add_error("type must be a string or an array")
           end
+        end
+
+        def prefix_items_factory(context)
+          NodeFactory::Array.new(
+            context,
+            value_factory: NodeFactory::Schema.factory(context)
+          )
         end
       end
     end
