@@ -14,10 +14,8 @@ module Openapi3Parser
           base.field "title", input_type: String
 
           base.field "multipleOf", input_type: Numeric
-          base.field "maximum", input_type: Integer
-          base.field "exclusiveMaximum", input_type: :boolean, default: false
-          base.field "minimum", input_type: Integer
-          base.field "exclusiveMinimum", input_type: :boolean, default: false
+          base.field "maximum", input_type: Numeric
+          base.field "minimum", input_type: Numeric
           base.field "maxLength", input_type: Integer
           base.field "minLength", input_type: Integer, default: 0
           base.field "pattern", input_type: String

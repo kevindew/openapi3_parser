@@ -11,6 +11,16 @@ module Openapi3Parser
         def type
           self["type"]
         end
+
+        # @return [Boolean]
+        def exclusive_maximum?
+          self["exclusiveMaximum"]
+        end
+
+        # @return [Boolean]
+        def exclusive_minimum?
+          self["exclusiveMinimum"]
+        end
       end
     end
   end

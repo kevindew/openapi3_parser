@@ -50,24 +50,14 @@ module Openapi3Parser
         self["multipleOf"]
       end
 
-      # @return [Integer, nil]
+      # @return [Numeric, nil]
       def maximum
         self["maximum"]
       end
 
-      # @return [Boolean]
-      def exclusive_maximum?
-        self["exclusiveMaximum"]
-      end
-
-      # @return [Integer, nil]
+      # @return [Numeric, nil]
       def minimum
         self["minimum"]
-      end
-
-      # @return [Boolean]
-      def exclusive_minimum?
-        self["exclusiveMinimum"]
       end
 
       # @return [Integer, nil]

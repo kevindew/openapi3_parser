@@ -25,6 +25,16 @@ module Openapi3Parser
           self["const"]
         end
 
+        # @return [Numeric]
+        def exclusive_maximum
+          self["exclusiveMaximum"]
+        end
+
+        # @return [Numeric]
+        def exclusive_minimum
+          self["exclusiveMinimum"]
+        end
+
         # @return [Integer, nil]
         def max_contains
           self["maxContains"]
