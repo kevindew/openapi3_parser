@@ -87,10 +87,10 @@ contains: schema - done
 
 properties: object, each value json schema - in 3.0
 patternProperties: object each value JSON schema key regex - done
-additionalProperties: single json schema
+additionalProperties: single json schema (works with the boolean schema value that we don't support)
 
-unevaluatedItems - single schema
-unevaluatedProperties: single schema
+unevaluatedItems - single schema - somewhat complex because of booleanSchemas
+unevaluatedProperties: single schema - as above
 
 
 ## Returning to this in 2025
@@ -111,6 +111,9 @@ Little things:
 - quite common for arrays to be invalid if not unique (required, type)
 - probably want a quick way to get coverage of the methods on nodes
 - could validate that pattern and patternProperties contain regexs
+
+Bigger things:
+- OpenAPI 3.1 supports boolean schemas that are just a true or false value, this code doesn't.
 
 JSON Schema specs:
 
