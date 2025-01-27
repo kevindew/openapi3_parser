@@ -12,6 +12,11 @@ module Openapi3Parser
         # OpenAPI 3.0 requires a type of String, whereas >= 3.1 is String or Array
         field "type", input_type: String
 
+        # JSON Schema 2016 has these exclusive fields as booleans whereas
+        # in JSON Schema 2021 (OpenAPI 3.1) these are numbers
+        field "exclusiveMaximum", input_type: :boolean, default: false
+        field "exclusiveMinimum", input_type: :boolean, default: false
+
         validate :items_for_array
 
         def build_node(data, node_context)

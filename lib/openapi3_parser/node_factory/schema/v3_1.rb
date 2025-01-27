@@ -20,6 +20,8 @@ module Openapi3Parser
         field "$ref", input_type: String, factory: :ref_factory
         field "type", factory: :type_factory, validate: :validate_type
         field "const"
+        field "exclusiveMaximum", input_type: Numeric
+        field "exclusiveMinimum", input_type: Numeric
         field "maxContains", input_type: Integer
         field "minContains", input_type: Integer, default: 1
         # dependentRequired - map with basic validation rules

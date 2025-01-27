@@ -79,13 +79,13 @@ components:
                 type: string
               exp:
                 type: string
-    # Number:
-    #   type: integer
-    #   multipleOf: 5
-    #   maximum: 110
-    #   exclusiveMaximum: 111
-    #   minimum: 10
-    #   exclusiveMinimum: 9
+    Number:
+      type: integer
+      multipleOf: 5
+      maximum: 110
+      exclusiveMaximum: 111
+      minimum: 10
+      exclusiveMinimum: 9
     String:
       type: string
       maxLength: 10

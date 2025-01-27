@@ -44,9 +44,9 @@ enum: array - in 3.0
 const: any type - done
 multipleOf: number - in 3.0
 maximum: number - in 3.0
-exclusiveMaximum: number - in 3.0
+exclusiveMaximum: number - done
 minimum: number - in 3.0
-exclusiveMinimum: number - in 3.0
+exclusiveMinimum: number - done
 maxLength: integer >= 0 - in 3.0 (missing >= val)
 minLength: integer >= 0 - in 3.0
 pattern: string - in 3.0
