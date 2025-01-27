@@ -123,7 +123,7 @@ module Openapi3Parser
           # compare node_context of objects to ensure references aren't treated
           # as equal - only direct properties of this object will pass.
           properties.to_h
-                    .select { |k, _| required.to_a.include?(k) }
+                    .slice(*required.to_a)
                     .any? { |_, schema| schema.node_context == property.node_context }
         else
           required.to_a.include?(property)
