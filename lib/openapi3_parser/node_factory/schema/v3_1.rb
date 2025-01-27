@@ -33,6 +33,7 @@ module Openapi3Parser
         field "then", factory: :referenceable_schema
         field "else", factory: :referenceable_schema
         field "prefixItems", factory: :prefix_items_factory
+        field "contains", factory: :referenceable_schema
 
         def build_node(data, node_context)
           Node::Schema::V3_1.new(data, node_context)
