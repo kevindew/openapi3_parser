@@ -83,7 +83,7 @@ dependentSchemas - map of schemas - somewhat complex, is it related to dependent
 
 prefixItems: array of schema - done
 items: array of schema - in 3.0
-contains: schema
+contains: schema - done
 
 properties: object, each value json schema - in 3.0
 patternProperties: object each value JSON schema

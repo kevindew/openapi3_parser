@@ -74,6 +74,11 @@ module Openapi3Parser
         def prefix_items
           self["prefixItems"]
         end
+
+        # @return [Schema, nil]
+        def contains
+          self["contains"]
+        end
       end
     end
   end
