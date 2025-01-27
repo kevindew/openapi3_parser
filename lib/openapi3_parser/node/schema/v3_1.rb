@@ -69,6 +69,11 @@ module Openapi3Parser
         def else
           self["else"]
         end
+
+        # @return [Node::Array<Schema>]
+        def prefix_items
+          self["prefixItems"]
+        end
       end
     end
   end

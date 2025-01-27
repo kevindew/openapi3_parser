@@ -81,7 +81,7 @@ then - single schema - done
 else - single schema - done
 dependentSchemas - map of schemas - somewhat complex, is it related to dependentRequired ?
 
-prefixItems: array of schema
+prefixItems: array of schema - done
 items: array of schema - in 3.0
 contains: schema
 

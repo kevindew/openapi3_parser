@@ -167,4 +167,36 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_1 do
         .with_message('"not a media type" is not a valid media type')
     end
   end
+
+  describe "prefixItems field" do
+    it "is valid with an array with schema values" do
+      instance = described_class.new(
+        create_node_factory_context({ "prefixItems" => [{ "type" => "string" }] })
+      )
+
+      expect(instance).to be_valid
+    end
+
+    it "is invalid for a type other than array" do
+      instance = described_class.new(
+        create_node_factory_context({ "prefixItems" => "string" })
+      )
+
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/prefixItems")
+        .with_message("Invalid type. Expected Array")
+    end
+
+    it "is invalid for values other than objects" do
+      instance = described_class.new(
+        create_node_factory_context({ "prefixItems" => %w[string] })
+      )
+
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/prefixItems/0")
+        .with_message("Invalid type. Expected Object")
+    end
+  end
 end
