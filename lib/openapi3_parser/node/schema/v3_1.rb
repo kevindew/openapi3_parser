@@ -89,6 +89,11 @@ module Openapi3Parser
         def contains
           self["contains"]
         end
+
+        # @return [Node::Map<String, Schema>]
+        def pattern_properties
+          self["patternProperties"]
+        end
       end
     end
   end

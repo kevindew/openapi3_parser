@@ -86,7 +86,7 @@ items: array of schema - in 3.0
 contains: schema - done
 
 properties: object, each value json schema - in 3.0
-patternProperties: object each value JSON schema
+patternProperties: object each value JSON schema key regex - done
 additionalProperties: single json schema
 
 unevaluatedItems - single schema
@@ -110,6 +110,7 @@ Little things:
 - schema integer fields generally are required to be non-negative
 - quite common for arrays to be invalid if not unique (required, type)
 - probably want a quick way to get coverage of the methods on nodes
+- could validate that pattern and patternProperties contain regexs
 
 JSON Schema specs:
 

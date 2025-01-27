@@ -107,7 +107,11 @@ components:
         type: string
       unevaluatedItems:
         type: string
-     # Add object
+    Object:
+      type: object
+      patternProperties:
+        /^test/:
+          type: string
      # Add content types
      # Add $ref usage (plain, merged, defs)
      # Add compound things: anyOf, oneOf, not, if, then, else

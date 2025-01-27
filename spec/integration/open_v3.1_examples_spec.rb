@@ -38,6 +38,7 @@ RSpec.describe "Open v3.1 examples" do
 
     it "is a valid document" do
       expect(document).to be_valid
+      require "byebug"; byebug # DEBUG @kevindew
     end
 
     it "can access the version" do
