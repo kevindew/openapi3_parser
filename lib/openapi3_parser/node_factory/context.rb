@@ -36,7 +36,7 @@ module Openapi3Parser
       def self.next_field(parent_context, field, given_input = UNDEFINED)
         pc = parent_context
         input = if given_input == UNDEFINED
-                  pc.input.respond_to?(:[]) ? pc.input[field] : nil
+                  pc.input.is_a?(::Hash) ? pc.input[field] : nil
                 else
                   given_input
                 end

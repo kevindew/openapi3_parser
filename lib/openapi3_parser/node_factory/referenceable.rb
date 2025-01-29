@@ -4,13 +4,13 @@ module Openapi3Parser
   module NodeFactory
     module Referenceable
       def in_recursive_loop?
-        return false unless data.respond_to?(:[])
+        return false unless data.is_a?(::Hash)
 
         data["$ref"]&.self_referencing?
       end
 
       def referenced_factory
-        return unless data.respond_to?(:[])
+        return unless data.is_a?(::Hash)
 
         data["$ref"]&.referenced_factory
       end

@@ -75,7 +75,7 @@ module Openapi3Parser
           # most fields are validated during building, however we delete $ref
           # fields so need to validate them separately
           ([initial_factory] + referenced_factories).each do |factory|
-            next unless factory.data.respond_to?(:[])
+            next unless factory.data.is_a?(::Hash)
             next unless factory.data["$ref"].is_a?(NodeFactory::Fields::Reference)
 
             NodeFactory::Field::Validator.call(factory.data["$ref"], raise_on_invalid: true)
