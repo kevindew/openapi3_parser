@@ -50,6 +50,11 @@ module Openapi3Parser
           self["examples"]
         end
 
+        # @return [Node::Map<String, Node::Array<String>>]
+        def dependent_required
+          self["dependentRequired"]
+        end
+
         # @return [String, nil]
         def content_encoding
           self["contentEncoding"]

@@ -79,6 +79,20 @@ components:
                 type: string
               exp:
                 type: string
+    DependentRequired:
+      type: object
+      properties:
+        name:
+          type: string
+        credit_card:
+          type: number
+        billing_address:
+          type: string
+      required:
+        - name
+      dependentRequired:
+        credit_card:
+          - billing_address
     Number:
       type: integer
       multipleOf: 5
@@ -112,6 +126,7 @@ components:
       patternProperties:
         /^test/:
           type: string
+    # Boolean: true
      # Add content types
      # Add $ref usage (plain, merged, defs)
      # Add compound things: anyOf, oneOf, not, if, then, else

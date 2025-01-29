@@ -24,8 +24,8 @@ module Openapi3Parser
         field "exclusiveMinimum", input_type: Numeric
         field "maxContains", input_type: Integer
         field "minContains", input_type: Integer, default: 1
-        # dependentRequired - map with basic validation rules
         field "examples", factory: NodeFactory::Array
+        field "dependentRequired", factory: :dependent_required_factory
         field "contentEncoding", input_type: String
         field "contentMediaType",
               input_type: String,
@@ -81,6 +81,17 @@ module Openapi3Parser
           else
             validatable.add_error("type must be a string or an array")
           end
+        end
+
+        def dependent_required_factory(context)
+          value_factory = lambda do |value_context|
+            NodeFactory::Array.new(value_context, value_input_type: String)
+          end
+
+          NodeFactory::Map.new(
+            context,
+            value_factory:
+          )
         end
 
         def prefix_items_factory(context)

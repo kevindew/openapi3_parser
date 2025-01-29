@@ -58,7 +58,7 @@ minContains: integer >= 0 - done
 maxProperties: integer >= 0 - in 3.0
 minProperties: integer >= 0 - in 3.0
 required: array, strings, unique - in 3.0 (missing unique)
-dependentRequired: something complex
+dependentRequired: something complex done
 contentEncoding: string - done
 contentMediaType: string / media type - done
 contentSchema: schema - done

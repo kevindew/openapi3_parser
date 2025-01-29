@@ -45,10 +45,19 @@ RSpec.describe "Open v3.1 examples" do
     end
 
     it "can access a referenced schema" do
-      expect(document.components.schemas["DoubleReferencedSchema"]["required"])
+      expect(document.components.schemas["DoubleReferencedSchema"].required)
         .to match_array(%w[id name])
-      expect(document.components.schemas["DoubleReferencedSchema"]["description"])
+      expect(document.components.schemas["DoubleReferencedSchema"].description)
         .to eq("My double referenced schema")
+    end
+
+    it "can parse and navigate a dependentRequired field" do
+      schema = document.components.schemas["DependentRequired"]
+
+      expect(schema.dependent_required).to be_a(Openapi3Parser::Node::Map)
+      expect(schema.dependent_required.keys).to match_array(%w[credit_card])
+      expect(schema.dependent_required["credit_card"]).to be_a(Openapi3Parser::Node::Array)
+      expect(schema.dependent_required["credit_card"]).to match_array(%w[billing_address])
     end
   end
 end
