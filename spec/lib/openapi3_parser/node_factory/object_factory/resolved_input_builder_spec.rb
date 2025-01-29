@@ -27,6 +27,12 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::ResolvedInputBuilder 
           field "first_name"
           field "last_name"
 
+          def build_data(raw_input)
+            return raw_input unless raw_input.is_a?(Hash)
+
+            super
+          end
+
           def ref_factory(context)
             Openapi3Parser::NodeFactory::Fields::Reference.new(context, self.class)
           end
@@ -84,6 +90,19 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::ResolvedInputBuilder 
         factory = factory_class.new(factory_context)
 
         expect(described_class.call(factory)).to be_nil
+      end
+
+      it "returns the value if any of the referenced data isn't a hash" do
+        factory_context = create_node_factory_context(
+          { "$ref" => "#/reference_a" },
+          document_input: {
+            "reference_a" => 25
+          }
+        )
+
+        factory = factory_class.new(factory_context)
+
+        expect(described_class.call(factory)).to eq(25)
       end
 
       it "returns a RecursiveResolvedInput object for node data that is in a recursive loop" do

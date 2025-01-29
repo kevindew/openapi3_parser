@@ -34,7 +34,7 @@ module Openapi3Parser
 
         def merge_factory_input(factories)
           input = factories.reverse.inject({}) do |memo, factory|
-            next memo unless factory.data.respond_to?(:[])
+            return factory.data unless factory.data.is_a?(::Hash)
 
             remove_reference = factory.data["$ref"]&.is_a?(NodeFactory::Fields::Reference)
 

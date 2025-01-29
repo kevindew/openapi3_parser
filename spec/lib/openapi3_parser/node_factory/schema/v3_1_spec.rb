@@ -50,6 +50,69 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_1 do
 
   it_behaves_like "schema factory"
 
+  describe "boolean input" do
+    it "is valid for a boolean input" do
+      instance = described_class.new(create_node_factory_context(false))
+
+      expect(instance).to be_valid
+      expect(instance.boolean_input?).to be(true)
+    end
+
+    it "can build a Schema::V3_1 node with a boolean input" do
+      node_factory_context = create_node_factory_context(true)
+      instance = described_class.new(node_factory_context)
+      node_context = node_factory_context_to_node_context(node_factory_context)
+      node = instance.node(node_context)
+
+      expect(node).to be_an_instance_of(Openapi3Parser::Node::Schema::V3_1)
+    end
+
+    it "sets the data attribute to a boolean when that is input" do
+      node_factory_context = create_node_factory_context(true)
+      instance = described_class.new(node_factory_context)
+
+      expect(instance.data).to be(true)
+    end
+
+    it "sets the data attribute to nil when given a type other than boolean or object" do
+      node_factory_context = create_node_factory_context(25)
+      instance = described_class.new(node_factory_context)
+
+      expect(instance.data).to be_nil
+    end
+
+    context "when a referenced schema is a boolean" do
+      let(:document_input) do
+        {
+          "components" => {
+            "schemas" => {
+              "Bool" => true
+            }
+          }
+        }
+      end
+
+      it "is valid" do
+        input = { "$ref" => "#/components/schemas/Bool" }
+        instance = described_class.new(create_node_factory_context(input, document_input:))
+
+        expect(instance).to be_valid
+        expect(instance.boolean_input?).to be(true)
+      end
+
+      it "doesn't merge any fields" do
+        input = {
+          "description" => "A description that will be ignored",
+          "$ref" => "#/components/schemas/Bool"
+        }
+
+        instance = described_class.new(create_node_factory_context(input, document_input:))
+
+        expect(instance.resolved_input).to be(true)
+      end
+    end
+  end
+
   describe "type field" do
     it "is valid for a string input of the 7 allowed types" do
       described_class::JSON_SCHEMA_ALLOWED_TYPES.each do |type|

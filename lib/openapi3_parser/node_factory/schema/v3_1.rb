@@ -39,11 +39,31 @@ module Openapi3Parser
         field "contains", factory: :referenceable_schema
         field "patternProperties", factory: :schema_map_factory
 
+        def boolean_input?
+          [true, false].include?(resolved_input)
+        end
+
+        def errors
+          @errors ||= boolean_input? ? [] : super
+        end
+
+        def node(node_context)
+          return super unless boolean_input?
+
+          Node::Schema::V3_1.new({ "boolean" => resolved_input }, node_context)
+        end
+
         def build_node(data, node_context)
           Node::Schema::V3_1.new(data, node_context)
         end
 
         private
+
+        def build_data(raw_input)
+          return raw_input if [true, false].include?(raw_input)
+
+          super
+        end
 
         def ref_factory(context)
           NodeFactory::Fields::Reference.new(context, self.class)
