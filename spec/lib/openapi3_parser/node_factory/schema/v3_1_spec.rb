@@ -50,6 +50,24 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_1 do
 
   it_behaves_like "schema factory"
 
+  describe "type validation" do
+    it "rejects a non object or boolean input with an appropriate explanation" do
+      instance = described_class.new(create_node_factory_context(15))
+
+      expect(instance).to have_validation_error("#/").with_message("Invalid type. Expected Object or Boolean")
+    end
+
+    it "raises the appropriate error when a non object or boolean input is built" do
+      node_factory_context = create_node_factory_context("blah")
+      instance = described_class.new(node_factory_context)
+      node_context = node_factory_context_to_node_context(node_factory_context)
+
+      expect { instance.node(node_context) }
+        .to raise_error(Openapi3Parser::Error::InvalidType,
+                        "Invalid type for #/: Expected Object or Boolean")
+    end
+  end
+
   describe "boolean input" do
     it "is valid for a boolean input" do
       instance = described_class.new(create_node_factory_context(false))

@@ -7,6 +7,7 @@ require "openapi3_parser/validators/media_type"
 module Openapi3Parser
   module NodeFactory
     module Schema
+      # rubocop:disable Metrics/ClassLength
       class V3_1 < NodeFactory::Object # rubocop:disable Naming/ClassAndModuleCamelCase
         using ArraySentence
         include Referenceable
@@ -44,13 +45,37 @@ module Openapi3Parser
         end
 
         def errors
-          @errors ||= boolean_input? ? [] : super
+          # It's a bit janky that we do this method overloading here to handle
+          # the dual types of a 3.1 Schema. However this is the only node we
+          # have this dual type behaviour. We should do something more clever
+          # in the factories if there is further precedent.
+          @errors ||= if boolean_input?
+                        Validation::ErrorCollection.new
+                      elsif raw_input && !raw_input.is_a?(::Hash)
+                        error = Validation::Error.new(
+                          "Invalid type. Expected Object or Boolean",
+                          context,
+                          self.class
+                        )
+                        Validation::ErrorCollection.new([error])
+                      else
+                        super
+                      end
         end
 
         def node(node_context)
-          return super unless boolean_input?
-
-          Node::Schema::V3_1.new({ "boolean" => resolved_input }, node_context)
+          # as per #errors above, this is a bit of a nasty hack to handle
+          # dual type handling and should be refactored should there be
+          # other nodes with the same needs
+          if boolean_input?
+            Node::Schema::V3_1.new({ "boolean" => resolved_input }, node_context)
+          elsif raw_input && !raw_input.is_a?(::Hash)
+            raise Error::InvalidType,
+                  "Invalid type for #{context.location_summary}: " \
+                  "Expected Object or Boolean"
+          else
+            super
+          end
         end
 
         def build_node(data, node_context)
@@ -122,6 +147,7 @@ module Openapi3Parser
           )
         end
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end
