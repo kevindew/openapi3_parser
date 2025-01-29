@@ -85,6 +85,11 @@ module Openapi3Parser
           self["else"]
         end
 
+        # @return [Node::Map<String, Schema>]
+        def dependent_schemas
+          self["dependentSchemas"]
+        end
+
         # @return [Node::Array<Schema>]
         def prefix_items
           self["prefixItems"]

@@ -34,9 +34,10 @@ module Openapi3Parser
         field "if", factory: :referenceable_schema
         field "then", factory: :referenceable_schema
         field "else", factory: :referenceable_schema
+        field "dependentSchemas", factory: :schema_map_factory
         field "prefixItems", factory: :prefix_items_factory
         field "contains", factory: :referenceable_schema
-        field "patternProperties", factory: :pattern_properties_factory
+        field "patternProperties", factory: :schema_map_factory
 
         def build_node(data, node_context)
           Node::Schema::V3_1.new(data, node_context)
@@ -96,13 +97,6 @@ module Openapi3Parser
 
         def prefix_items_factory(context)
           NodeFactory::Array.new(
-            context,
-            value_factory: NodeFactory::Schema.factory(context)
-          )
-        end
-
-        def pattern_properties_factory(context)
-          NodeFactory::Map.new(
             context,
             value_factory: NodeFactory::Schema.factory(context)
           )

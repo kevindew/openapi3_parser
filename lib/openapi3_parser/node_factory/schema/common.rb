@@ -32,7 +32,7 @@ module Openapi3Parser
           base.field "anyOf", factory: :referenceable_schema_array
           base.field "not", factory: :referenceable_schema
           base.field "items", factory: :referenceable_schema
-          base.field "properties", factory: :properties_factory
+          base.field "properties", factory: :schema_map_factory
           base.field "additionalProperties",
                      validate: :additional_properties_input_type,
                      factory: :additional_properties_factory,
@@ -88,7 +88,7 @@ module Openapi3Parser
           NodeFactory::ExternalDocumentation.new(context)
         end
 
-        def properties_factory(context)
+        def schema_map_factory(context)
           NodeFactory::Map.new(
             context,
             value_factory: NodeFactory::Schema.factory(context)

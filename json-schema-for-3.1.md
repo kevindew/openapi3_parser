@@ -79,7 +79,7 @@ not - schema - in 3.0
 if - single schema - done
 then - single schema - done
 else - single schema - done
-dependentSchemas - map of schemas - somewhat complex, is it related to dependentRequired ?
+dependentSchemas - map of schemas - done
 
 prefixItems: array of schema - done
 items: array of schema - in 3.0

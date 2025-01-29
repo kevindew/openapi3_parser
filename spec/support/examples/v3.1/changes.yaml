@@ -93,6 +93,22 @@ components:
       dependentRequired:
         credit_card:
           - billing_address
+    DependentSchemas:
+      type: object
+      properties:
+        name:
+          type: string
+        credit_card:
+          type: number
+      required:
+        - name
+      dependentSchemas:
+        credit_card:
+          properties:
+            billing_address:
+              type: string
+          required:
+            - billing_address
     Number:
       type: integer
       multipleOf: 5
