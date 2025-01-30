@@ -13,9 +13,15 @@ module Openapi3Parser
         field "type", input_type: String
 
         # JSON Schema 2016 has these exclusive fields as booleans whereas
-        # in JSON Schema 2021 (OpenAPI 3.1) these are numbers
+        # in JSON Schema 2020 (OpenAPI 3.1) these are numbers
         field "exclusiveMaximum", input_type: :boolean, default: false
         field "exclusiveMinimum", input_type: :boolean, default: false
+
+        # JSON Schema 2020 accepts a schema (albeit a more complex one) than
+        # this schema or boolean approach
+        field "additionalProperties", validate: :additional_properties_input_type,
+                                      factory: :additional_properties_factory,
+                                      default: false
 
         validate :items_for_array
 
@@ -35,6 +41,19 @@ module Openapi3Parser
           return unless validatable.factory.resolved_input["items"].nil?
 
           validatable.add_error("items must be defined for a type of array")
+        end
+
+        def additional_properties_input_type(validatable)
+          input = validatable.input
+          return if [true, false].include?(input) || input.is_a?(Hash)
+
+          validatable.add_error("Expected a Boolean or an Object")
+        end
+
+        def additional_properties_factory(context)
+          return context.input if [true, false].include?(context.input)
+
+          referenceable_schema(context)
         end
       end
     end

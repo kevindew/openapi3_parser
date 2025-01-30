@@ -33,10 +33,6 @@ module Openapi3Parser
           base.field "not", factory: :referenceable_schema
           base.field "items", factory: :referenceable_schema
           base.field "properties", factory: :schema_map_factory
-          base.field "additionalProperties",
-                     validate: :additional_properties_input_type,
-                     factory: :additional_properties_factory,
-                     default: false
           base.field "description", input_type: String
           base.field "format", input_type: String
           base.field "default"
@@ -105,19 +101,6 @@ module Openapi3Parser
             default: nil,
             value_factory: NodeFactory::Schema.factory(context)
           )
-        end
-
-        def additional_properties_input_type(validatable)
-          input = validatable.input
-          return if [true, false].include?(input) || input.is_a?(Hash)
-
-          validatable.add_error("Expected a Boolean or an Object")
-        end
-
-        def additional_properties_factory(context)
-          return context.input if [true, false].include?(context.input)
-
-          referenceable_schema(context)
         end
       end
     end

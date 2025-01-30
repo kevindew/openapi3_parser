@@ -72,4 +72,35 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_0 do
         .with_message("items must be defined for a type of array")
     end
   end
+
+  describe "validating additionalProperties" do
+    it "is valid for a boolean" do
+      true_instance = described_class.new(
+        create_node_factory_context({ "additionalProperties" => true })
+      )
+      expect(true_instance).to be_valid
+
+      false_instance = described_class.new(
+        create_node_factory_context({ "additionalProperties" => false })
+      )
+      expect(false_instance).to be_valid
+    end
+
+    it "is valid for a schema" do
+      instance = described_class.new(
+        create_node_factory_context({ "additionalProperties" => { "type" => "object" } })
+      )
+      expect(instance).to be_valid
+    end
+
+    it "is invalid for something different" do
+      instance = described_class.new(
+        create_node_factory_context({ "additionalProperties" => %w[item1 item2] })
+      )
+      expect(instance).not_to be_valid
+      expect(instance)
+        .to have_validation_error("#/additionalProperties")
+        .with_message("Expected a Boolean or an Object")
+    end
+  end
 end

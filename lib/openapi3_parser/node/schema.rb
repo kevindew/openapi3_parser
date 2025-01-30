@@ -157,19 +157,6 @@ module Openapi3Parser
         self["properties"]
       end
 
-      # @return [Boolean]
-      def additional_properties?
-        self["additionalProperties"] != false
-      end
-
-      # @return [Schema, nil]
-      def additional_properties_schema
-        properties = self["additionalProperties"]
-        return if [true, false].include?(properties)
-
-        properties
-      end
-
       # @return [String, nil]
       def description
         self["description"]
