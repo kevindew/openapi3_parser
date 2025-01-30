@@ -15,6 +15,42 @@ module Openapi3Parser
       # these complexities and focuses on the core schema as defined in:
       # https://json-schema.org/draft/2020-12/draft-bhutton-json-schema-validation-01
       class V3_1 < Schema # rubocop:disable Naming/ClassAndModuleCamelCase
+        # Whether this is a schema that is just a boolean value rather
+        # than a schema object
+        #
+        # @return [Boolean]
+        def boolean?
+          !boolean.nil?
+        end
+
+        # Returns a boolean for a boolean schema [1] and nil for one based
+        # on an object
+        #
+        # [1]: https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-00#section-4.3.2
+        #
+        # @return [Boolean, nil]
+        def boolean
+          self["boolean"]
+        end
+
+        # Returns true when this is a boolean schema that has a true value,
+        # returns false for booleans schemas that have a false value or schemas
+        # that are objects.
+        #
+        # @return [Boolean]
+        def true?
+          boolean == true
+        end
+
+        # Returns false when this is a boolean schema that has a false value,
+        # returns false for booleans schemas that have a true value or schemas
+        # that are objects.
+        #
+        # @return [Boolean]
+        def false?
+          boolean == false
+        end
+
         # @return [String, Node::Array<String>, nil]
         def type
           self["type"]
