@@ -140,6 +140,36 @@ module Openapi3Parser
         def pattern_properties
           self["patternProperties"]
         end
+
+        # @return [Schema, nil]
+        def additional_properties
+          self["additionalProperties"]
+        end
+
+        # @return [Boolean]
+        def additional_properties?
+          !additional_properties.false?
+        end
+
+        # @return [Schema, nil]
+        def unevaluated_items
+          self["unevaluatedItems"]
+        end
+
+        # @return [Boolean]
+        def unevaluated_items?
+          !unevaluated_items.false?
+        end
+
+        # @return [Schema, nil]
+        def unevaluated_properties
+          self["unevaluatedProperties"]
+        end
+
+        # @return [Boolean]
+        def unevaluated_properties?
+          !unevaluated_properties.false?
+        end
       end
     end
   end
