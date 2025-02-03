@@ -39,6 +39,9 @@ module Openapi3Parser
         field "prefixItems", factory: :prefix_items_factory
         field "contains", factory: :referenceable_schema
         field "patternProperties", factory: :schema_map_factory
+        field "additionalProperties", factory: :referenceable_schema
+        field "unevaluatedItems", factory: :referenceable_schema
+        field "unevaluatedProperties", factory: :referenceable_schema
 
         def boolean_input?
           [true, false].include?(resolved_input)
