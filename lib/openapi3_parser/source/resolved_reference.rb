@@ -8,7 +8,6 @@ module Openapi3Parser
       extend Forwardable
 
       def_delegators :source_location, :source
-      def_delegators :factory, :resolved_input, :node
 
       attr_reader :source_location, :object_type
 

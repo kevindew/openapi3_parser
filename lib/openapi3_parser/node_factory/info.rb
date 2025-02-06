@@ -11,6 +11,9 @@ module Openapi3Parser
     class Info < NodeFactory::Object
       allow_extensions
       field "title", input_type: String, required: true
+      field "summary",
+            input_type: String,
+            allowed: ->(context) { context.openapi_version >= "3.1" }
       field "description", input_type: String
       field "termsOfService",
             input_type: String,
@@ -19,10 +22,8 @@ module Openapi3Parser
       field "license", factory: NodeFactory::License
       field "version", input_type: String, required: true
 
-      private
-
-      def build_object(data, context)
-        Node::Info.new(data, context)
+      def build_node(data, node_context)
+        Node::Info.new(data, node_context)
       end
     end
   end

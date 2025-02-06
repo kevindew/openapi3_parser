@@ -14,27 +14,46 @@ module Openapi3Parser
       field "openapi", input_type: String, required: true
       field "info", factory: NodeFactory::Info, required: true
       field "servers", factory: :servers_factory
-      field "paths", factory: NodeFactory::Paths, required: true
+      field "paths",
+            factory: NodeFactory::Paths,
+            required: ->(context) { context.openapi_version < "3.1" }
+      field "webhooks",
+            factory: :webhooks_factory,
+            allowed: ->(context) { context.openapi_version >= "3.1" }
       field "components", factory: NodeFactory::Components
       field "security", factory: :security_factory
       field "tags", factory: :tags_factory
       field "externalDocs", factory: NodeFactory::ExternalDocumentation
 
+      validate do |validatable|
+        next if validatable.context.openapi_version < "3.1"
+        next if validatable.input.keys.intersect?(%w[components paths webhooks])
+
+        validatable.add_error("At least one of components, paths and webhooks fields are required")
+      end
+
       def can_use_default?
         false
       end
 
-      private
-
-      def build_object(data, context)
-        Node::Openapi.new(data, context)
+      def build_node(data, node_context)
+        Node::Openapi.new(data, node_context)
       end
+
+      private
 
       def servers_factory(context)
         NodeFactory::Array.new(context,
                                default: [{ "url" => "/" }],
                                use_default_on_empty: true,
                                value_factory: NodeFactory::Server)
+      end
+
+      def webhooks_factory(context)
+        NodeFactory::Map.new(
+          context,
+          value_factory: NodeFactory::OptionalReference.new(NodeFactory::PathItem)
+        )
       end
 
       def security_factory(context)

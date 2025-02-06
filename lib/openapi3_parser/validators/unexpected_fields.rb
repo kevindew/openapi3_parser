@@ -14,11 +14,11 @@ module Openapi3Parser
 
       def call(validatable,
                allowed_fields:,
-               allow_extensions: true,
+               extension_regex: nil,
                raise_on_invalid: true)
         fields = unexpected_fields(validatable.input,
                                    allowed_fields,
-                                   allow_extensions)
+                                   extension_regex)
         return if fields.empty?
 
         if raise_on_invalid
@@ -35,11 +35,11 @@ module Openapi3Parser
 
       private
 
-      def unexpected_fields(input, allowed_fields, allow_extensions)
+      def unexpected_fields(input, allowed_fields, extension_regex)
         extra_keys = input.keys - allowed_fields
-        return extra_keys unless allow_extensions
+        return extra_keys unless extension_regex
 
-        extra_keys.grep_v(NodeFactory::EXTENSION_REGEX)
+        extra_keys.grep_v(extension_regex)
       end
     end
   end

@@ -36,7 +36,7 @@ module Openapi3Parser
       def self.next_field(parent_context, field, given_input = UNDEFINED)
         pc = parent_context
         input = if given_input == UNDEFINED
-                  pc.input.respond_to?(:[]) ? pc.input[field] : nil
+                  pc.input.is_a?(::Hash) ? pc.input[field] : nil
                 else
                   given_input
                 end
@@ -99,6 +99,13 @@ module Openapi3Parser
       # @return [Boolean]
       def self_referencing?
         reference_locations.include?(source_location)
+      end
+
+      # Returns the version of OpenAPI being used
+      #
+      # @return [String]
+      def openapi_version
+        source_location.document.openapi_version
       end
 
       def inspect

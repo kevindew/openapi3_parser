@@ -39,9 +39,11 @@ module Openapi3Parser
         end
 
         def check_unexpected_fields
+          extension_regex = factory.extension_regex if factory.allowed_extensions?(validatable.context)
+
           Validators::UnexpectedFields.call(
             validatable,
-            allow_extensions: factory.allowed_extensions?,
+            extension_regex:,
             allowed_fields: factory.allowed_fields,
             raise_on_invalid:
           )

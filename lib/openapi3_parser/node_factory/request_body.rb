@@ -10,11 +10,11 @@ module Openapi3Parser
       field "content", factory: :content_factory, required: true
       field "required", input_type: :boolean, default: false
 
-      private
-
-      def build_object(data, context)
-        Node::RequestBody.new(data, context)
+      def build_node(data, node_context)
+        Node::RequestBody.new(data, node_context)
       end
+
+      private
 
       def content_factory(context)
         NodeFactory::Map.new(

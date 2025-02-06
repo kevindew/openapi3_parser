@@ -55,15 +55,65 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::FieldConfig do
     end
   end
 
-  describe "#required?" do
-    it "returns true when the class is initialised with required" do
-      instance = described_class.new(required: true)
-      expect(instance.required?).to be(true)
+  describe "#allowed?" do
+    let(:context) { create_node_factory_context({ "name" => "Mike" }) }
+    let(:factory) { Openapi3Parser::NodeFactory::Contact.new(context) }
+
+    it "returns true when an allowed value isn't provided" do
+      expect(described_class.new.allowed?(context, factory)).to be(true)
     end
 
-    it "returns false when the class is initialised without required" do
-      instance = described_class.new
-      expect(instance.required?).to be(false)
+    it "returns a value when one is provided" do
+      instance = described_class.new(allowed: false)
+      expect(instance.allowed?(context, factory)).to be(false)
+    end
+
+    it "converts non boolean values into booleans" do
+      instance = described_class.new(allowed: nil)
+      expect(instance.allowed?(context, factory)).to be(false)
+    end
+
+    it "calls the function when a callable is given" do
+      allow(context).to receive(:allowed?).and_return(false)
+      instance = described_class.new(allowed: lambda(&:allowed?))
+      expect(instance.allowed?(context, factory)).to be(false)
+    end
+
+    it "calls the method on the factory when a symbol is given" do
+      allow(factory).to receive(:my_factory_allowed).and_return(false)
+      instance = described_class.new(allowed: :my_factory_allowed)
+      expect(instance.allowed?(context, factory)).to be(false)
+    end
+  end
+
+  describe "#required?" do
+    let(:context) { create_node_factory_context({ "name" => "Mike" }) }
+    let(:factory) { Openapi3Parser::NodeFactory::Contact.new(context) }
+
+    it "returns false when a required value isn't provided" do
+      expect(described_class.new.required?(context, factory)).to be(false)
+    end
+
+    it "returns a value when one is provided" do
+      instance = described_class.new(required: true)
+      expect(instance.required?(context, factory)).to be(true)
+    end
+
+    it "converts non boolean values into booleans" do
+      instance = described_class.new(required: nil)
+      expect(instance.required?(context, factory)).to be(false)
+    end
+
+    it "calls the function when a callable is given" do
+      allow(context).to receive(:required?).and_return(true)
+      instance = described_class.new(required: lambda(&:required?))
+      expect(instance.required?(context, factory)).to be(true)
+    end
+
+    it "calls the method on the factory when a symbol is given" do
+      allow(factory).to receive(:my_factory_required).and_return(true)
+      instance = described_class.new(required: :my_factory_required)
+      expect(instance.required?(context, factory)).to be(true)
     end
   end
 

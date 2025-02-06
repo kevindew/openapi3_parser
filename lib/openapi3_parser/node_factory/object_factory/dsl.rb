@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "openapi3_parser/node_factory"
 require "openapi3_parser/node_factory/object_factory/field_config"
 
 module Openapi3Parser
@@ -17,16 +18,25 @@ module Openapi3Parser
           @field_configs ||= {}
         end
 
-        def allow_extensions
-          @allow_extensions = true
+        def allow_extensions(regex: EXTENSION_REGEX, &block)
+          @extension_regex = regex
+          @allowed_extensions = block || true
         end
 
-        def allowed_extensions?
-          if instance_variable_defined?(:@allow_extensions)
-            @allow_extensions == true
-          else
-            false
-          end
+        def allowed_extensions?(context)
+          @allowed_extensions ||= nil
+
+          allowed = if @allowed_extensions.respond_to?(:call)
+                      @allowed_extensions.call(context)
+                    else
+                      @allowed_extensions
+                    end
+
+          !!allowed
+        end
+
+        def extension_regex
+          @extension_regex ||= nil
         end
 
         def mutually_exclusive(*fields, required: false)

@@ -15,10 +15,8 @@ module Openapi3Parser
             input_type: String,
             validate: Validation::InputValidator.new(Validators::Url)
 
-      private
-
-      def build_object(data, context)
-        Node::ExternalDocumentation.new(data, context)
+      def build_node(data, node_context)
+        Node::ExternalDocumentation.new(data, node_context)
       end
     end
   end

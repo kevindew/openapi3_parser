@@ -112,9 +112,26 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
       source_location = create_source_location(input)
       instance = described_class.new({}, source_location:)
       resolved_reference = instance.resolve_reference("#/components/schemas/item",
-                                                      Openapi3Parser::NodeFactory::Schema)
+                                                      Openapi3Parser::NodeFactory::Schema::V3_0)
       expect(resolved_reference)
         .to be_a(Openapi3Parser::Source::ResolvedReference)
+    end
+  end
+
+  describe "#openapi_version" do
+    it "returns the document's OpenAPI version" do
+      input = {
+        "openapi" => "3.0.0",
+        "info" => {
+          "title" => "Test",
+          "version" => "1.0"
+        },
+        "paths" => {}
+      }
+      source_location = create_source_location(input)
+
+      instance = described_class.new({}, source_location:)
+      expect(instance.openapi_version).to eq("3.0")
     end
   end
 end

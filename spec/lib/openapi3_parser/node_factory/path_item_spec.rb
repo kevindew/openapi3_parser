@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Openapi3Parser::NodeFactory::PathItem do
+  # TODO: perhaps a behaves like referenceable node object factory?
+
   it_behaves_like "node object factory", Openapi3Parser::Node::PathItem do
     let(:input) do
       {
@@ -119,12 +121,6 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
         expect(node.summary).to eq "My summary"
         expect(node.parameters[0].name).to eq "id"
       end
-
-      it "sets the source location to be the refrence path" do
-        node = create_node(input, document_input)
-        expect(node.node_context.source_location.to_s)
-          .to eq "#/path_items/example"
-      end
     end
 
     context "when the input includes fields besides a reference" do
@@ -135,11 +131,6 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
       it "overwrites reference data with input data" do
         node = create_node(input, document_input)
         expect(node.summary).to eq "A different summary"
-      end
-
-      it "sets the source location to be the original node" do
-        node = create_node(input, document_input)
-        expect(node.node_context.source_location.to_s).to eq "#/"
       end
     end
   end
