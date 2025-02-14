@@ -9,7 +9,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
       pointer_segments: %w[field $ref]
     )
   end
-  let(:document_input) { {} }
+  let(:document_input) { { "openapi" => "3.0.0" } }
 
   describe "#resolved_input" do
     it "raises an error because a reference itself isn't resolved" do
@@ -33,8 +33,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
     let(:instance) { described_class.new(factory_context, factory_class) }
 
     context "when the reference can be resolved" do
-      let(:document_input) do
-        { "reference" => { "name" => "Joe" } }
+      before do
+        document_input["reference"] = { "name" => "joe" }
       end
 
       it "is valid" do
@@ -43,8 +43,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Fields::Reference do
     end
 
     context "when the reference can't be resolved" do
-      let(:document_input) do
-        { "reference" => { "url" => "invalid url" } }
+      before do
+        document_input["reference"] = { "url" => "invalid url" }
       end
 
       it "is invalid" do

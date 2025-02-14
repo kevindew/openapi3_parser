@@ -128,6 +128,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
     context "when the factory includes a reference to other nodes" do
       let(:document_input) do
         {
+          "openapi" => "3.0.0",
           "components" => {
             "schemas" => {
               "Referenced" => {
@@ -246,6 +247,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
         factory_context = create_node_factory_context(
           { "$ref" => "#/components/schemas/Reference" },
           document_input: {
+            "openapi" => "3.0.0",
             "components" => {
               "schemas" => {
                 "Reference" => {
@@ -282,6 +284,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::NodeBuilder do
       factory_context = create_node_factory_context(
         { "$ref" => "#/Referenced" },
         document_input: {
+          "openapi" => "3.0.0",
           "Referenced" => {
             "name" => "Joe"
           }

@@ -9,11 +9,12 @@ module Openapi3Parser
   # @attr_reader  [OpenapiVersion]  openapi_version
   # @attr_reader  [Source]          root_source
   # @attr_reader  [Array<String>]   warnings
+  # @attr_reader  [Boolean]         emit_warnings
   class Document
     extend Forwardable
     include Enumerable
 
-    attr_reader :openapi_version, :root_source, :warnings
+    attr_reader :openapi_version, :root_source, :warnings, :emit_warnings
 
     # A collection of the openapi versions that are supported
     SUPPORTED_OPENAPI_VERSIONS = %w[3.0 3.1].freeze
@@ -78,10 +79,15 @@ module Openapi3Parser
                    :security, :tags, :external_docs, :extension, :[], :each,
                    :keys
 
-    # @param [SourceInput] source_input
-    def initialize(source_input)
+    # @param [SourceInput]  source_input
+    # @param [Boolean]      emit_warnings   Whether to call Kernel.warn when
+    #                                       warnings are output, best set to
+    #                                       false when parsing specification
+    #                                       files you've not authored
+    def initialize(source_input, emit_warnings: true)
       @reference_registry = ReferenceRegistry.new
       @root_source = Source.new(source_input, self, reference_registry)
+      @emit_warnings = emit_warnings
       @warnings = []
       @openapi_version = determine_openapi_version(root_source.data["openapi"])
       @build_in_progress = false
@@ -169,6 +175,7 @@ module Openapi3Parser
     end
 
     def add_warning(text)
+      warn("Warning: #{text}") if emit_warnings
       @warnings << text
     end
 
@@ -192,12 +199,12 @@ module Openapi3Parser
       if version
         add_warning(
           "Unsupported OpenAPI version (#{version}), treating as a " \
-          "#{DEFAULT_OPENAPI_VERSION} document"
+          "#{DEFAULT_OPENAPI_VERSION} document."
         )
       else
         add_warning(
           "Unspecified OpenAPI version, treating as a " \
-          "#{DEFAULT_OPENAPI_VERSION} document"
+          "#{DEFAULT_OPENAPI_VERSION} document."
         )
       end
 

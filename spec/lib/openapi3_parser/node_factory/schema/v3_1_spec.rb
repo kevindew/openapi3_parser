@@ -21,6 +21,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_1 do
 
     let(:document_input) do
       {
+        "openapi" => "3.1.0",
         "components" => {
           "schemas" => {
             "Pet" => {
@@ -102,6 +103,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_1 do
     context "when a referenced schema is a boolean" do
       let(:document_input) do
         {
+          "openapi" => "3.1.0",
           "components" => {
             "schemas" => {
               "Bool" => true

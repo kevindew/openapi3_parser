@@ -2,14 +2,14 @@
 
 module Helpers
   module Source
-    def create_source_location(source_input,
+    def create_source_location(source_input = { "openapi" => "3.0.0" },
                                document: nil,
                                pointer_segments: [])
       source = create_source(source_input, document:)
       Openapi3Parser::Source::Location.new(source, pointer_segments)
     end
 
-    def create_source(source_input, document: nil)
+    def create_source(source_input = { "openapi" => "3.0.0" }, document: nil)
       unless source_input.is_a?(Openapi3Parser::SourceInput)
         source_input = Openapi3Parser::SourceInput::Raw.new(source_input)
       end
@@ -22,7 +22,7 @@ module Helpers
       end
     end
 
-    def create_file_source_input(data: {},
+    def create_file_source_input(data: { "openapi" => "3.0.0" },
                                  path: "/path/to/openapi.yaml",
                                  working_directory: nil)
       allow(File)
@@ -42,7 +42,7 @@ module Helpers
              working_directory:)
     end
 
-    def create_url_source_input(data: {},
+    def create_url_source_input(data: { "openapi" => "3.0.0" },
                                 url: "https://example.com/openapi.yaml")
       stub_request(:get, url)
         .to_return(body: data.to_yaml, status: 200)

@@ -35,37 +35,48 @@ RSpec.describe Openapi3Parser::Document do
     end
 
     context "when no OpenAPI version is provided" do
-      let(:instance) do
-        described_class.new(
-          raw_source_input(source_data.merge("openapi" => nil))
-        )
-      end
+      let(:input) { raw_source_input(source_data.merge("openapi" => nil)) }
 
       it "treats the version as the default for the library" do
-        expect(instance.openapi_version)
-          .to eq(Openapi3Parser::Document::DEFAULT_OPENAPI_VERSION)
+        instance = nil
+        expect { instance = described_class.new(input) }.to output.to_stderr
+        expect(instance.openapi_version).to eq(Openapi3Parser::Document::DEFAULT_OPENAPI_VERSION)
       end
 
       it "has a warning" do
-        expect(instance.warnings).to include(/Unspecified OpenAPI version/)
+        instance = nil
+        warning = /Unspecified OpenAPI version/
+        expect { instance = described_class.new(input) }
+          .to output(warning).to_stderr
+        expect(instance.warnings).to include(warning)
+      end
+
+      it "doesn't output to stderr when emit_warnings is false" do
+        expect { described_class.new(input, emit_warnings: false) }
+          .not_to output.to_stderr
       end
     end
 
     context "when an unsupported OpenAPI version is provided" do
-      let(:instance) do
-        described_class.new(
-          raw_source_input(source_data.merge("openapi" => "2.0.0"))
-        )
-      end
+      let(:input) { raw_source_input(source_data.merge("openapi" => "2.0.0")) }
 
       it "treats the version as the default for the library" do
-        expect(instance.openapi_version)
-          .to eq(Openapi3Parser::Document::DEFAULT_OPENAPI_VERSION)
+        instance = nil
+        expect { instance = described_class.new(input) }.to output.to_stderr
+        expect(instance.openapi_version).to eq(Openapi3Parser::Document::DEFAULT_OPENAPI_VERSION)
       end
 
       it "has a warning" do
-        expect(instance.warnings)
-          .to include(/Unsupported OpenAPI version #{Regexp.escape('(2.0.0)')}/)
+        instance = nil
+        warning = /Unsupported OpenAPI version #{Regexp.escape('(2.0.0)')}/
+        expect { instance = described_class.new(input) }
+          .to output(warning).to_stderr
+        expect(instance.warnings).to include(warning)
+      end
+
+      it "doesn't output to stderr when emit_warnings is false" do
+        expect { described_class.new(input, emit_warnings: false) }
+          .not_to output.to_stderr
       end
     end
   end
@@ -131,7 +142,7 @@ RSpec.describe Openapi3Parser::Document do
     end
 
     it "returns errors for invalid source data" do
-      instance = described_class.new(raw_source_input({}))
+      instance = described_class.new(raw_source_input({ "openapi" => "3.0.0" }))
       expect(instance.errors).not_to be_empty
     end
 

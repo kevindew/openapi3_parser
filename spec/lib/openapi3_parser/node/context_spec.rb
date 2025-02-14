@@ -168,11 +168,11 @@ RSpec.describe Openapi3Parser::Node::Context do
 
   describe "#==" do
     let(:document_location) do
-      create_source_location({}, pointer_segments: %w[field_a])
+      create_source_location({ "openapi" => "3.0.0" }, pointer_segments: %w[field_a])
     end
 
     let(:source_location) do
-      create_source_location({},
+      create_source_location({ "openapi" => "3.0.0" },
                              document: document_location.source.document,
                              pointer_segments: %w[ref_a])
     end
@@ -213,17 +213,17 @@ RSpec.describe Openapi3Parser::Node::Context do
 
   describe "#same_data_inputs?" do
     let(:source_location) do
-      create_source_location({}, pointer_segments: %w[ref_a])
+      create_source_location({ openapi: "3.0.0" }, pointer_segments: %w[ref_a])
     end
 
     let(:document_location) do
-      create_source_location({},
+      create_source_location({ openapi: "3.0.0" },
                              document: source_location.source.document,
                              pointer_segments: %w[field_a])
     end
 
     let(:other_document_location) do
-      create_source_location({},
+      create_source_location({ openapi: "3.0.0" },
                              document: source_location.source.document,
                              pointer_segments: %w[field_b])
     end
@@ -305,7 +305,7 @@ RSpec.describe Openapi3Parser::Node::Context do
     end
 
     it "returns nil when there isn't a parent (for example at root)" do
-      instance = create_node_context({}, document_input: {})
+      instance = create_node_context({}, document_input: { "openapi" => "3.0.0" })
       expect(instance.parent_node).to be_nil
     end
   end

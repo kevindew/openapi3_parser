@@ -3,7 +3,7 @@
 module Helpers
   module Context
     def create_node_factory_context(input,
-                                    document_input: {},
+                                    document_input: { "openapi" => "3.0.0" },
                                     document: nil,
                                     pointer_segments: [],
                                     reference_pointer_fragments: [])
@@ -39,7 +39,9 @@ module Helpers
                                         input_locations:)
     end
 
-    def create_node_context(input, document_input: {}, pointer_segments: [])
+    def create_node_context(input,
+                            document_input: { "openapi" => "3.0.0" },
+                            pointer_segments: [])
       source_input = Openapi3Parser::SourceInput::Raw.new(document_input)
       document = Openapi3Parser::Document.new(source_input)
       location = Openapi3Parser::Source::Location.new(document.root_source, pointer_segments)

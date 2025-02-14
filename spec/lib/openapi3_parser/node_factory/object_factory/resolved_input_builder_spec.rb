@@ -43,6 +43,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::ResolvedInputBuilder 
         factory_context = create_node_factory_context(
           { "$ref" => "#/reference_a" },
           document_input: {
+            "openapi" => "3.0.0",
             "reference_a" => { "$ref" => "#/reference_b", "last_name" => "Smith" },
             "reference_b" => { "first_name" => "John", "last_name" => "Doe" }
           }
@@ -57,6 +58,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::ResolvedInputBuilder 
         factory_context = create_node_factory_context(
           { "$ref" => "#/reference_a" },
           document_input: {
+            "openapi" => "3.0.0",
             "reference_a" => { "first_name" => "John", "last_name" => "Smith" }
           }
         )
@@ -69,6 +71,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::ResolvedInputBuilder 
         factory_context = create_node_factory_context(
           { "$ref" => "#/reference_a", "last_name" => nil },
           document_input: {
+            "openapi" => "3.0.0",
             "reference_a" => { "first_name" => "John", "last_name" => "Smith" }
           }
         )
@@ -82,6 +85,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::ResolvedInputBuilder 
         factory_context = create_node_factory_context(
           { "$ref" => "#/reference_a" },
           document_input: {
+            "openapi" => "3.0.0",
             "reference_a" => { "$ref" => "#/reference_b" },
             "reference_b" => { "$ref" => "#/reference_a" }
           }
@@ -96,6 +100,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::ResolvedInputBuilder 
         factory_context = create_node_factory_context(
           { "$ref" => "#/reference_a" },
           document_input: {
+            "openapi" => "3.0.0",
             "reference_a" => 25
           }
         )
@@ -109,6 +114,7 @@ RSpec.describe Openapi3Parser::NodeFactory::ObjectFactory::ResolvedInputBuilder 
         factory_context = create_node_factory_context(
           { "$ref" => "#/components/schemas/Reference" },
           document_input: {
+            "openapi" => "3.0.0",
             "components" => {
               "schemas" => {
                 "Reference" => {

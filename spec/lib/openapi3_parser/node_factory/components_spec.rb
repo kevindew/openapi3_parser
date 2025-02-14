@@ -101,7 +101,8 @@ RSpec.describe Openapi3Parser::NodeFactory::Components do
 
     let(:node_factory_context) do
       create_node_factory_context(input,
-                                  document_input: { "components" => input })
+                                  document_input: { "openapi" => "3.0.0",
+                                                    "components" => input })
     end
   end
 

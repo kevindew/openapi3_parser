@@ -87,6 +87,7 @@ RSpec.describe Openapi3Parser::NodeFactory::PathItem do
   describe "merging contents with a reference" do
     let(:document_input) do
       {
+        "openapi" => "3.0.0",
         "path_items" => {
           "example" => {
             "summary" => "My summary",

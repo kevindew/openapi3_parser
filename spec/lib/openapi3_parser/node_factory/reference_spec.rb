@@ -6,7 +6,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
   def create_instance(input)
     factory_context = create_node_factory_context(
       input,
-      document_input: { contact: {} }
+      document_input: { "openapi" => "3.0.0", "contact" => {} }
     )
     factory = Openapi3Parser::NodeFactory::Contact
     described_class.new(factory_context, factory)
@@ -94,6 +94,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
       factory_context = create_node_factory_context(
         { "$ref" => "#/contact2" },
         document_input: {
+          openapi: "3.0.0",
           contact1: { "$ref" => "#/contact2" },
           contact2: { "$ref" => "#/contact3" },
           contact3: {}
@@ -109,6 +110,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
       factory_context = create_node_factory_context(
         { "$ref" => "#/contact2" },
         document_input: {
+          openapi: "3.0.0",
           contact1: { "$ref" => "#/contact2" },
           contact2: { "$ref" => "#/contact3" },
           contact3: { "$ref" => "#/contact1" }
