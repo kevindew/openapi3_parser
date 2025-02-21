@@ -38,6 +38,10 @@ module Openapi3Parser
     #   The value of the info field on the OpenAPI document
     #   @see Node::Openapi#info
     #   @return [Node::Info]
+    # @!method jsonSchemaDialect
+    #   The value of the jsonSchemaDialect field on the OpenAPI document
+    #   @see Node::Openapi#json_schema_dialect
+    #   @return [String, nil]
     # @!method servers
     #   The value of the servers field on the OpenAPI document
     #   @see Node::Openapi#servers
@@ -75,9 +79,9 @@ module Openapi3Parser
     #   Iterate through the attributes of the root object
     # @!method keys
     #   Access keys of the root object
-    def_delegators :root, :openapi, :info, :servers, :paths, :components,
-                   :security, :tags, :external_docs, :extension, :[], :each,
-                   :keys
+    def_delegators :root, :openapi, :info, :json_schema_dialect, :servers,
+                   :paths, :components, :security, :tags, :external_docs,
+                   :extension, :[], :each, :keys
 
     # @param [SourceInput]  source_input
     # @param [Boolean]      emit_warnings   Whether to call Kernel.warn when
@@ -175,7 +179,7 @@ module Openapi3Parser
     end
 
     def add_warning(text)
-      warn("Warning: #{text}") if emit_warnings
+      warn("Warning: #{text} - disable these by opening a document with emit_warnings: false") if emit_warnings
       @warnings << text
     end
 

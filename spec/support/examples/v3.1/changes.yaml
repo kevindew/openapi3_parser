@@ -3,10 +3,10 @@ info:
   title: Examples of changes in OpenAPI 3.1
   summary: 3.1 introduced a summary field to the Info node
   version: 1.0.0
-  # license:
-  #   name: Apache 2.0
-  #   identifier: Apache-2.0
-# jsonSchemaDialect: https://spec.openapis.org/oas/3.1/dialect/base
+  license:
+    name: Apache 2.0
+    identifier: Apache-2.0
+jsonSchemaDialect: https://spec.openapis.org/oas/3.1/dialect/base
 components:
   examples:
     FullExample:

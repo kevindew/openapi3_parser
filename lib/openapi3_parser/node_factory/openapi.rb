@@ -16,6 +16,7 @@ module Openapi3Parser
       field "jsonSchemaDialect",
             default: "https://spec.openapis.org/oas/3.1/dialect/base",
             input_type: String,
+            validate: Validation::InputValidator.new(Validators::Uri),
             allowed: ->(context) { context.openapi_version >= "3.1" }
       field "servers", factory: :servers_factory
       field "paths",

@@ -165,10 +165,26 @@ RSpec.describe Openapi3Parser::NodeFactory::Openapi do
         .to have_validation_error("#/")
         .with_message("At least one of components, paths and webhooks fields are required")
     end
+
+    it "accepts a jsonSchemaDialect field" do
+      factory_context = create_node_factory_context(
+        minimal_openapi_definition.merge({ "openapi" => "3.1.0",
+                                           "jsonSchemaDialect" => "uri://to/dialect" }),
+        document_input: { "openapi" => "3.1.0" }
+      )
+
+      instance = described_class.new(factory_context)
+      expect(instance).to be_valid
+    end
+
+    it "defaults to the OAS 3.1 jsonSchemaDialect" do
+      node = create_node(minimal_openapi_definition.merge({ "openapi" => "3.1.0" }))
+      expect(node.json_schema_dialect).to eq("https://spec.openapis.org/oas/3.1/dialect/base")
+    end
   end
 
   def create_node(input)
-    node_factory_context = create_node_factory_context(input)
+    node_factory_context = create_node_factory_context(input, document_input: { openapi: input["openapi"] })
     instance = described_class.new(node_factory_context)
     node_context = node_factory_context_to_node_context(node_factory_context)
     instance.node(node_context)
