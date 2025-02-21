@@ -2,7 +2,7 @@
 
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/validation/input_validator"
-require "openapi3_parser/validators/url"
+require "openapi3_parser/validators/uri"
 
 module Openapi3Parser
   module NodeFactory
@@ -13,7 +13,7 @@ module Openapi3Parser
       field "url",
             required: true,
             input_type: String,
-            validate: Validation::InputValidator.new(Validators::Url)
+            validate: Validation::InputValidator.new(Validators::Uri)
 
       def build_node(data, node_context)
         Node::ExternalDocumentation.new(data, node_context)

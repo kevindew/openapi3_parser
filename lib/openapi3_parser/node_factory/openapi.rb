@@ -13,6 +13,10 @@ module Openapi3Parser
 
       field "openapi", input_type: String, required: true
       field "info", factory: NodeFactory::Info, required: true
+      field "jsonSchemaDialect",
+            default: "https://spec.openapis.org/oas/3.1/dialect/base",
+            input_type: String,
+            allowed: ->(context) { context.openapi_version >= "3.1" }
       field "servers", factory: :servers_factory
       field "paths",
             factory: NodeFactory::Paths,

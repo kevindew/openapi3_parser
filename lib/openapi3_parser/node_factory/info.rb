@@ -4,7 +4,7 @@ require "openapi3_parser/node_factory/contact"
 require "openapi3_parser/node_factory/license"
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/validation/input_validator"
-require "openapi3_parser/validators/url"
+require "openapi3_parser/validators/uri"
 
 module Openapi3Parser
   module NodeFactory
@@ -17,7 +17,7 @@ module Openapi3Parser
       field "description", input_type: String
       field "termsOfService",
             input_type: String,
-            validate: Validation::InputValidator.new(Validators::Url)
+            validate: Validation::InputValidator.new(Validators::Uri)
       field "contact", factory: NodeFactory::Contact
       field "license", factory: NodeFactory::License
       field "version", input_type: String, required: true
