@@ -133,6 +133,122 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_1 do
     end
   end
 
+  describe "validating JSON schema dialect" do
+    let(:global_json_schema_dialect) { nil }
+    let(:document_input) do
+      {
+        "openapi" => "3.1.0",
+        "jsonSchemaDialect" => global_json_schema_dialect
+      }
+    end
+    let(:document) do
+      source_input = Openapi3Parser::SourceInput::Raw.new(document_input)
+      Openapi3Parser::Document.new(source_input)
+    end
+
+    before { allow(document).to receive(:unsupported_schema_dialect) }
+
+    context "when the $schema value is the OAS base one" do
+      it "doesn't flag the schema as an unsupported dialect" do
+        node_factory_context = create_node_factory_context(
+          { "$schema" => described_class::OAS_DIALECT },
+          document:
+        )
+
+        instance = described_class.new(node_factory_context)
+        instance.valid?
+
+        expect(document).not_to have_received(:unsupported_schema_dialect)
+      end
+    end
+
+    context "when the $schema value is not the OAS base one" do
+      it "flags the schema as an unsupported dialect" do
+        node_factory_context = create_node_factory_context(
+          { "$schema" => "https://example.com/schema" },
+          document:
+        )
+
+        instance = described_class.new(node_factory_context)
+        instance.valid?
+
+        expect(document)
+          .to have_received(:unsupported_schema_dialect)
+          .with("https://example.com/schema")
+      end
+
+      it "has a validation error if the schema dialect is not a valid URI" do
+        node_factory_context = create_node_factory_context(
+          { "$schema" => "not a URI" },
+          document:
+        )
+
+        instance = described_class.new(node_factory_context)
+
+        expect(instance)
+          .to have_validation_error("#/%24schema")
+          .with_message('"not a URI" is not a valid URI')
+      end
+    end
+
+    context "when the $schema value is a non string" do
+      it "runs to_s to report it as an unsupported_schema_dialect" do
+        node_factory_context = create_node_factory_context(
+          { "$schema" => [] },
+          document:
+        )
+
+        instance = described_class.new(node_factory_context)
+        instance.valid?
+
+        expect(document)
+          .to have_received(:unsupported_schema_dialect)
+          .with("[]")
+      end
+
+      it "has a validation error" do
+        node_factory_context = create_node_factory_context(
+          { "$schema" => [] },
+          document:
+        )
+
+        instance = described_class.new(node_factory_context)
+
+        expect(instance)
+          .to have_validation_error("#/%24schema")
+          .with_message("Invalid type. Expected String")
+      end
+    end
+
+    context "when the $schema value is empty and the document has the OAS base one" do
+      let(:global_json_schema_dialect) { described_class::OAS_DIALECT }
+
+      it "doesn't flag the schema as an unsupported dialect" do
+        node_factory_context = create_node_factory_context({}, document:)
+
+        instance = described_class.new(node_factory_context)
+        instance.valid?
+
+        expect(document).not_to have_received(:unsupported_schema_dialect)
+      end
+    end
+
+    context "when the $schema value is empty and the document has a none OAS base one" do
+      let(:global_json_schema_dialect) { "https://example.com/schema" }
+
+      it "doesn't flag the schema as an unsupported dialect" do
+        node_factory_context = create_node_factory_context({}, document:)
+
+        instance = described_class.new(node_factory_context)
+        instance.valid?
+
+        expect(document)
+          .to have_received(:unsupported_schema_dialect)
+          .with(global_json_schema_dialect)
+      end
+    end
+  end
+
   describe "type field" do
     it "is valid for a string input of the 7 allowed types" do
       described_class::JSON_SCHEMA_ALLOWED_TYPES.each do |type|

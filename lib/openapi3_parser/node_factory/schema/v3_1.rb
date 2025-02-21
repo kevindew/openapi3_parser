@@ -2,6 +2,7 @@
 
 require "openapi3_parser/node_factory/object"
 require "openapi3_parser/node_factory/referenceable"
+require "openapi3_parser/node_factory/schema/common"
 require "openapi3_parser/validators/media_type"
 
 module Openapi3Parser
@@ -13,12 +14,16 @@ module Openapi3Parser
         include Referenceable
         include Schema::Common
         JSON_SCHEMA_ALLOWED_TYPES = %w[null boolean object array number string integer].freeze
+        OAS_DIALECT = "https://spec.openapis.org/oas/3.1/dialect/base"
 
         # Allows any extension as per:
         # https://github.com/OAI/OpenAPI-Specification/blob/a1facce1b3621df3630cb692e9fbe18a7612ea6d/versions/3.1.0.md#fixed-fields-20
         allow_extensions(regex: /.*/)
 
         field "$ref", input_type: String, factory: :ref_factory
+        field "$schema",
+              input_type: String,
+              validate: Validation::InputValidator.new(Validators::Uri)
         field "type", factory: :type_factory, validate: :validate_type
         field "const"
         field "exclusiveMaximum", input_type: Numeric
@@ -42,6 +47,17 @@ module Openapi3Parser
         field "additionalProperties", factory: :referenceable_schema
         field "unevaluatedItems", factory: :referenceable_schema
         field "unevaluatedProperties", factory: :referenceable_schema
+
+        validate do |validatable|
+          # if we do more with supporting $schema we probably want it to be
+          # a value in the context object so it can cascade appropariately
+          document = validatable.context.source_location.document
+          dialect = validatable.input["$schema"] || document.resolved_input_at("#/jsonSchemaDialect")
+
+          next if dialect.nil? || dialect == OAS_DIALECT
+
+          document.unsupported_schema_dialect(dialect.to_s)
+        end
 
         def boolean_input?
           [true, false].include?(resolved_input)

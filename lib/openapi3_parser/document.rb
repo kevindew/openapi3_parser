@@ -10,11 +10,12 @@ module Openapi3Parser
   # @attr_reader  [Source]          root_source
   # @attr_reader  [Array<String>]   warnings
   # @attr_reader  [Boolean]         emit_warnings
+  # rubocop:disable Metrics/ClassLength
   class Document
     extend Forwardable
     include Enumerable
 
-    attr_reader :openapi_version, :root_source, :warnings, :emit_warnings
+    attr_reader :openapi_version, :root_source, :emit_warnings
 
     # A collection of the openapi versions that are supported
     SUPPORTED_OPENAPI_VERSIONS = %w[3.0 3.1].freeze
@@ -92,7 +93,8 @@ module Openapi3Parser
       @reference_registry = ReferenceRegistry.new
       @root_source = Source.new(source_input, self, reference_registry)
       @emit_warnings = emit_warnings
-      @warnings = []
+      @build_warnings = []
+      @unsupported_schema_dialects = Set.new
       @openapi_version = determine_openapi_version(root_source.data["openapi"])
       @build_in_progress = false
       @built = false
@@ -162,15 +164,35 @@ module Openapi3Parser
       look_up_pointer(pointer, relative_to, root)
     end
 
+    # An array of any warnings enountered in the initialisation / validation
+    # of the document. Reflects warnings related to this gems ability to parse
+    # the document.
+    #
+    # @return [Array<String>]
+    def warnings
+      @warnings ||= begin
+        factory.errors # ensure factory has completed validation
+        @build_warnings.freeze
+      end
+    end
+
     # @return [String]
     def inspect
       %{#{self.class.name}(openapi_version: #{openapi_version}, } +
         %{root_source: #{root_source.inspect})}
     end
 
+    #  :nodoc:
+    def unsupported_schema_dialect(schema_dialect)
+      return if @build_warnings.frozen? || unsupported_schema_dialects.include?(schema_dialect)
+
+      unsupported_schema_dialects << schema_dialect
+      add_warning("Unsupported schema dialect (#{schema_dialect}), it may not parse or validate correctly.")
+    end
+
     private
 
-    attr_reader :reference_registry, :built, :build_in_progress
+    attr_reader :reference_registry, :built, :build_in_progress, :unsupported_schema_dialects, :build_warnings
 
     def look_up_pointer(pointer, relative_pointer, subject)
       merged_pointer = Source::Pointer.merge_pointers(relative_pointer,
@@ -179,8 +201,8 @@ module Openapi3Parser
     end
 
     def add_warning(text)
-      warn("Warning: #{text} - disable these by opening a document with emit_warnings: false") if emit_warnings
-      @warnings << text
+      warn("Warning: #{text} Disable these warnings by opening a document with emit_warnings: false.") if emit_warnings
+      @build_warnings << text
     end
 
     def build
@@ -190,7 +212,6 @@ module Openapi3Parser
       context = NodeFactory::Context.root(root_source.data, root_source)
       @factory = NodeFactory::Openapi.new(context)
       reference_registry.freeze
-      @warnings.freeze
       @build_in_progress = false
       @built = true
     end
@@ -225,4 +246,5 @@ module Openapi3Parser
       reference_registry.factories.reject { |f| f.context.source.root? }
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

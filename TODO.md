@@ -46,10 +46,10 @@ For OpenAPI 3.1
 - [x] Support webhooks
 - [x] No longer require responses field on an Operation node
 - [x] Require OpenAPI node to have webhooks, paths or components
-- [ ] Support the switch to a fixed schema dialect
+- [x] Support the switch to a fixed schema dialect
 - [x] Support summary field on Info node
 - [ ] Create a maxi OpenAPI 3.1 integration test to collate all the known changes
-- [ ] jsonSchemaDialect should default to OAS one
+- [x] jsonSchemaDialect should default to OAS one
 - [x] Allow summary and description in Reference objects
 - [x] Add identifier to License node, make mutually exclusive with URL
 - [x] ServerVariable enum must not be empty

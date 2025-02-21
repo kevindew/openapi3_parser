@@ -51,6 +51,16 @@ module Openapi3Parser
           boolean == false
         end
 
+        # The schema dialect in usage, only https://spec.openapis.org/oas/3.1/dialect/base
+        # is officially supported so others will receive a warning, but as
+        # long they don't have different data types for keywords they'll be
+        # mostly usable.
+        #
+        # @return [String]
+        def json_schema_dialect
+          self["$schema"] || node_context.document.json_schema_dialect
+        end
+
         # @return [String, Node::Array<String>, nil]
         def type
           self["type"]

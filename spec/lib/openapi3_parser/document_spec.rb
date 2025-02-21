@@ -223,4 +223,67 @@ RSpec.describe Openapi3Parser::Document do
         .to eq("1.0.0")
     end
   end
+
+  describe "#warnings" do
+    it "returns a frozen array" do
+      instance = described_class.new(raw_source_input(source_data))
+      expect(instance.warnings).to be_frozen
+    end
+
+    it "has warnings from the input" do
+      source_data.merge!({
+                           "openapi" => "3.1.0",
+                           "components" => {
+                             "schemas" => {
+                               "SchemaThatWillGenerateWarning" => { "$schema" => "https://example.com/unsupported-dialect" }
+                             }
+                           }
+                         })
+
+      instance = described_class.new(raw_source_input(source_data))
+      warnings = nil
+      # expect a warn to be emit
+      expect { warnings = instance.warnings }.to output.to_stderr
+      expect(warnings).to include(/Unsupported schema dialect/)
+    end
+  end
+
+  describe "#unsupported_schema_dialect" do
+    let(:schema_dialect) { "path/to/dialect" }
+    let(:warning) { "Unsupported schema dialect (#{schema_dialect}), it may not parse or validate correctly." }
+
+    it "adds a warning and outputs it" do
+      instance = described_class.new(raw_source_input(source_data))
+      expect { instance.unsupported_schema_dialect(schema_dialect) }
+        .to output(/Unsupported schema dialect/).to_stderr
+
+      expect(instance.warnings).to include(warning)
+    end
+
+    it "adds a warning without outputting it if emit_warnings is false" do
+      instance = described_class.new(raw_source_input(source_data), emit_warnings: false)
+      expect { instance.unsupported_schema_dialect(schema_dialect) }
+        .not_to output.to_stderr
+
+      expect(instance.warnings).to include(warning)
+    end
+
+    it "does nothing if the schema dialect has already been registered" do
+      instance = described_class.new(raw_source_input(source_data), emit_warnings: false)
+      instance.unsupported_schema_dialect(schema_dialect)
+
+      expect { instance.unsupported_schema_dialect(schema_dialect) }
+        .not_to(change { instance.warnings.count })
+    end
+
+    it "does nothing if warnings have already been frozen" do
+      instance = described_class.new(raw_source_input(source_data), emit_warnings: false)
+      instance.unsupported_schema_dialect(schema_dialect)
+      # accessing warnings will ensure it's frozen
+      expect(instance.warnings).to be_frozen
+
+      expect { instance.unsupported_schema_dialect("other") }
+        .not_to(change { instance.warnings.count })
+    end
+  end
 end
