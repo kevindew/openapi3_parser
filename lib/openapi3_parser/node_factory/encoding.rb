@@ -13,11 +13,11 @@ module Openapi3Parser
       field "explode", input_type: :boolean, default: :default_explode
       field "allowReserved", input_type: :boolean, default: false
 
-      private
-
-      def build_object(data, context)
-        Node::Encoding.new(data, context)
+      def build_node(data, node_context)
+        Node::Encoding.new(data, node_context)
       end
+
+      private
 
       def headers_factory(context)
         factory = NodeFactory::OptionalReference.new(NodeFactory::Header)

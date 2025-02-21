@@ -34,6 +34,7 @@ RSpec.describe Openapi3Parser::NodeFactory::MediaType do
 
     let(:document_input) do
       {
+        "openapi" => "3.0.0",
         "components" => {
           "schemas" => {
             "Pet" => {

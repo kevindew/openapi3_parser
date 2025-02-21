@@ -11,11 +11,11 @@ module Openapi3Parser
       field "content", factory: :content_factory
       field "links", factory: :links_factory
 
-      private
-
-      def build_object(data, context)
-        Node::Response.new(data, context)
+      def build_node(data, node_context)
+        Node::Response.new(data, node_context)
       end
+
+      private
 
       def headers_factory(context)
         factory = NodeFactory::OptionalReference.new(NodeFactory::Header)

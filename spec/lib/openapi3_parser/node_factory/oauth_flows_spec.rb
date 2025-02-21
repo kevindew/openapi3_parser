@@ -12,6 +12,7 @@ RSpec.describe Openapi3Parser::NodeFactory::OauthFlows do
 
     let(:document_input) do
       {
+        "openapi" => "3.0.0",
         "myReference" => {
           "authorizationUrl" => "https://example.com/api/oauth/dialog",
           "tokenUrl" => "https://example.com/api/oauth/token",

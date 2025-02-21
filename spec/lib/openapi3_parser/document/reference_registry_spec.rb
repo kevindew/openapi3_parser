@@ -3,7 +3,7 @@
 RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
   describe "#register" do
     let(:source_location) do
-      create_source_location({ contact: { name: "John Smith" } },
+      create_source_location({ openapi: "3.0.0", contact: { name: "John Smith" } },
                              pointer_segments: %w[contact])
     end
 
@@ -64,7 +64,7 @@ RSpec.describe Openapi3Parser::Document::ReferenceRegistry do
   describe "#factory" do
     let(:object_type) { "Openapi3Parser::NodeFactory::Contact" }
     let(:source_location) do
-      create_source_location({ contact: { name: "John Smith" } },
+      create_source_location({ openapi: "3.0.0", contact: { name: "John Smith" } },
                              pointer_segments: %w[contact])
     end
 

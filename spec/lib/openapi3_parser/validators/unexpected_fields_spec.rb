@@ -27,23 +27,22 @@ RSpec.describe Openapi3Parser::Validators::UnexpectedFields do
       end
     end
 
-    describe "allow_extensions option" do
+    describe "extension_regex option" do
       let(:validatable) do
         create_validatable({ "x-extension" => "my extension",
                              "x-extension-2" => "my other extension" })
       end
 
-      it "defaults to allowing extensions" do
+      it "defaults to disallowing extensions" do
+        validatable = create_validatable({ "extension" => "my extension" })
         expect { described_class.call(validatable, allowed_fields: []) }
-          .not_to raise_error
+          .to raise_error(Openapi3Parser::Error::UnexpectedFields, "Unexpected fields for #/: extension")
       end
 
-      it "raises an error when allow_extensions is false" do
-        expect { described_class.call(validatable, allowed_fields: [], allow_extensions: false) }
-          .to raise_error(
-            Openapi3Parser::Error::UnexpectedFields,
-            "Unexpected fields for #/: x-extension and x-extension-2"
-          )
+      it "accepts a regex of the pattern of extension that will be accepted" do
+        validatable = create_validatable({ "x-extension" => "my extension" })
+        expect { described_class.call(validatable, allowed_fields: [], extension_regex: /^x-.*/) }
+          .not_to raise_error
       end
     end
 

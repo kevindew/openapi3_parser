@@ -16,11 +16,11 @@ module Openapi3Parser
       field "flows", factory: :flows_factory
       field "openIdConnectUrl", input_type: String
 
-      private
-
-      def build_object(data, context)
+      def build_node(data, context)
         Node::SecurityScheme.new(data, context)
       end
+
+      private
 
       def flows_factory(context)
         NodeFactory::OauthFlows.new(context)

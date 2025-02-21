@@ -11,15 +11,15 @@ module Openapi3Parser
       field "clientCredentials", factory: :oauth_flow_factory
       field "authorizationCode", factory: :oauth_flow_factory
 
+      def build_node(data, node_context)
+        Node::OauthFlows.new(data, node_context)
+      end
+
       private
 
       def oauth_flow_factory(context)
         NodeFactory::OptionalReference.new(NodeFactory::OauthFlow)
                                       .call(context)
-      end
-
-      def build_object(data, context)
-        Node::OauthFlows.new(data, context)
       end
     end
   end

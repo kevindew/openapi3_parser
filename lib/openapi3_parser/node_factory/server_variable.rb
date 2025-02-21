@@ -10,6 +10,10 @@ module Openapi3Parser
       field "default", input_type: String, required: true
       field "description", input_type: String
 
+      def build_node(data, node_context)
+        Node::ServerVariable.new(data, node_context)
+      end
+
       private
 
       def enum_factory(context)
@@ -20,13 +24,9 @@ module Openapi3Parser
           validate: lambda do |validatable|
             return if validatable.input.any?
 
-            validatable.add_error("Expected atleast one value")
+            validatable.add_error("Expected at least one value")
           end
         )
-      end
-
-      def build_object(data, context)
-        Node::ServerVariable.new(data, context)
       end
     end
   end

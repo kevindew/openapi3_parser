@@ -3,24 +3,26 @@
 RSpec.describe Openapi3Parser::Source do
   describe "#data" do
     it "deep-freezes the data" do
-      instance = create_source({ "info" => { "version" => "1.0.0" } })
+      instance = create_source({ "openapi" => "3.0.0",
+                                 "info" => { "version" => "1.0.0" } })
       expect(instance.data).to be_frozen
       expect(instance.data["info"]).to be_frozen
     end
 
     it "normalises symbol keys to strings" do
-      instance = create_source({ key: "value" })
-      expect(instance.data).to eq({ "key" => "value" })
+      instance = create_source({ openapi: "3.0.0" })
+      expect(instance.data).to eq({ "openapi" => "3.0.0" })
     end
 
     it "normalises array like data" do
-      instance = create_source({ "key" => Set.new([1, 2, 3]) })
-      expect(instance.data).to eq({ "key" => [1, 2, 3] })
+      instance = create_source({ "openapi" => "3.0.0",
+                                 "key" => Set.new([1, 2, 3]) })
+      expect(instance.data["key"]).to eq([1, 2, 3])
     end
   end
 
   describe "#resolve_reference" do
-    let(:instance) { create_source({}) }
+    let(:instance) { create_source }
     let(:reference) { "#/reference" }
     let(:unbuilt_factory) { Openapi3Parser::NodeFactory::Contact }
     let(:context) { create_node_factory_context({}) }
@@ -51,7 +53,7 @@ RSpec.describe Openapi3Parser::Source do
   end
 
   describe "#resolve_source" do
-    let(:instance) { create_source({}) }
+    let(:instance) { create_source }
 
     it "returns current source when a reference is relative" do
       reference = Openapi3Parser::Source::Reference.new("#/test")
@@ -70,7 +72,7 @@ RSpec.describe Openapi3Parser::Source do
   end
 
   describe "#data_at_pointer" do
-    let(:source_input) { { "info" => { "version" => "1.0.0" } } }
+    let(:source_input) { { "openapi" => "3.0.0", "info" => { "version" => "1.0.0" } } }
     let(:instance) { create_source(source_input) }
 
     it "returns the data at a given pointer" do
@@ -89,7 +91,7 @@ RSpec.describe Openapi3Parser::Source do
   end
 
   describe "#has_pointer?" do
-    let(:source_input) { { "info" => { "version" => "1.0.0" } } }
+    let(:source_input) { { "openapi" => "3.0.0", "info" => { "version" => "1.0.0" } } }
     let(:instance) { create_source(source_input) }
 
     it "returns true when there is data at a pointer" do
@@ -109,7 +111,7 @@ RSpec.describe Openapi3Parser::Source do
       )
 
       document = Openapi3Parser::Document.new(
-        create_raw_source_input(data: {}, working_directory: "/dir-1/dir-2")
+        create_raw_source_input(data: { "openapi" => "3.0.0" }, working_directory: "/dir-1/dir-2")
       )
 
       instance = create_source(source_input, document:)
@@ -117,7 +119,7 @@ RSpec.describe Openapi3Parser::Source do
     end
 
     it "returns an empty string when called on the root source" do
-      root_source = create_source({})
+      root_source = create_source
       expect(root_source.relative_to_root).to eq("")
     end
   end

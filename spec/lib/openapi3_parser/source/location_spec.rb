@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Openapi3Parser::Source::Location do
-  # let(:source) { create_source({}) }
-  # let(:document) { source.document }
-  # let(:pointer_segments) { %w[field] }
-  # let(:instance) { described_class.new(source, pointer_segments) }
-
   describe ".next_field" do
     it "returns a source location relatively appened to a segment" do
-      source = create_source({})
+      source = create_source({ "openapi" => "3.0.0" })
       location = described_class.new(source, %w[field])
       next_field = described_class.next_field(location, "next")
 
@@ -17,7 +12,7 @@ RSpec.describe Openapi3Parser::Source::Location do
   end
 
   describe "#==" do
-    let(:source) { create_source({}) }
+    let(:source) { create_source({ "openapi" => "3.0.0" }) }
     let(:pointer_segments) { %w[field] }
     let(:instance) { described_class.new(source, pointer_segments) }
 
@@ -36,7 +31,7 @@ RSpec.describe Openapi3Parser::Source::Location do
 
   describe "#to_s" do
     it "returns a fragment for a root source" do
-      instance = described_class.new(create_source({}), %w[path to segment])
+      instance = described_class.new(create_source({ "openapi" => "3.0.0" }), %w[path to segment])
       expect(instance.to_s).to eq "#/path/to/segment"
     end
 
@@ -54,7 +49,7 @@ RSpec.describe Openapi3Parser::Source::Location do
 
   describe "#data" do
     it "returns the data referenced at the pointer" do
-      source = create_source({ field: 1234 })
+      source = create_source({ openapi: "3.0.0", field: 1234 })
       instance = described_class.new(source, %w[field])
       expect(instance.data).to eq 1234
     end
@@ -62,13 +57,13 @@ RSpec.describe Openapi3Parser::Source::Location do
 
   describe "#pointer_defined?" do
     it "returns true when the pointer references defined data" do
-      source = create_source({ field: 1234 })
+      source = create_source({ openapi: "3.0.0", field: 1234 })
       instance = described_class.new(source, %w[field])
       expect(instance.pointer_defined?).to be true
     end
 
     it "returns false when the pointer references undefined data" do
-      source = create_source({ field: 1234 })
+      source = create_source({ openapi: "3.0.0", field: 1234 })
       instance = described_class.new(source, %w[not-field])
       expect(instance.pointer_defined?).to be false
     end
@@ -78,7 +73,7 @@ RSpec.describe Openapi3Parser::Source::Location do
     let(:url) { "http://example.com/test" }
     let(:source) do
       create_source(Openapi3Parser::SourceInput::Url.new(url),
-                    document: create_source({}).document)
+                    document: create_source({ "openapi" => "3.0.0" }).document)
     end
 
     it "returns true when a source can be opened" do

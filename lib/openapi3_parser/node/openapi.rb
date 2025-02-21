@@ -17,14 +17,26 @@ module Openapi3Parser
         self["info"]
       end
 
+      # The default jsonSchemaDialect for this document
+      #
+      # @return [String, nil]
+      def json_schema_dialect
+        self["jsonSchemaDialect"]
+      end
+
       # @return [Node::Array<Server>]
       def servers
         self["servers"]
       end
 
-      # @return [Paths]
+      # @return [Paths, nil]
       def paths
         self["paths"]
+      end
+
+      # @return [Node::Map<String, Path>, nil]
+      def webhooks
+        self["webhooks"]
       end
 
       # @return [Components]

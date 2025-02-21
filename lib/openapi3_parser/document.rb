@@ -6,17 +6,18 @@ module Openapi3Parser
   # Document is the root construct of a created OpenAPI Document and can be
   # used to navigate the contents of a document or to check it's validity.
   #
-  # @attr_reader  [String]        openapi_version
-  # @attr_reader  [Source]        root_source
-  # @attr_reader  [Array<String>] warnings
+  # @attr_reader  [OpenapiVersion]  openapi_version
+  # @attr_reader  [Source]          root_source
+  # @attr_reader  [Array<String>]   warnings
+  # @attr_reader  [Boolean]         emit_warnings
   class Document
     extend Forwardable
     include Enumerable
 
-    attr_reader :openapi_version, :root_source, :warnings
+    attr_reader :openapi_version, :root_source, :warnings, :emit_warnings
 
     # A collection of the openapi versions that are supported
-    SUPPORTED_OPENAPI_VERSIONS = %w[3.0].freeze
+    SUPPORTED_OPENAPI_VERSIONS = %w[3.0 3.1].freeze
 
     # The version of OpenAPI that will be used by default for
     # validation/construction
@@ -37,6 +38,10 @@ module Openapi3Parser
     #   The value of the info field on the OpenAPI document
     #   @see Node::Openapi#info
     #   @return [Node::Info]
+    # @!method jsonSchemaDialect
+    #   The value of the jsonSchemaDialect field on the OpenAPI document
+    #   @see Node::Openapi#json_schema_dialect
+    #   @return [String, nil]
     # @!method servers
     #   The value of the servers field on the OpenAPI document
     #   @see Node::Openapi#servers
@@ -74,14 +79,19 @@ module Openapi3Parser
     #   Iterate through the attributes of the root object
     # @!method keys
     #   Access keys of the root object
-    def_delegators :root, :openapi, :info, :servers, :paths, :components,
-                   :security, :tags, :external_docs, :extension, :[], :each,
-                   :keys
+    def_delegators :root, :openapi, :info, :json_schema_dialect, :servers,
+                   :paths, :components, :security, :tags, :external_docs,
+                   :extension, :[], :each, :keys
 
-    # @param [SourceInput] source_input
-    def initialize(source_input)
+    # @param [SourceInput]  source_input
+    # @param [Boolean]      emit_warnings   Whether to call Kernel.warn when
+    #                                       warnings are output, best set to
+    #                                       false when parsing specification
+    #                                       files you've not authored
+    def initialize(source_input, emit_warnings: true)
       @reference_registry = ReferenceRegistry.new
       @root_source = Source.new(source_input, self, reference_registry)
+      @emit_warnings = emit_warnings
       @warnings = []
       @openapi_version = determine_openapi_version(root_source.data["openapi"])
       @build_in_progress = false
@@ -169,6 +179,7 @@ module Openapi3Parser
     end
 
     def add_warning(text)
+      warn("Warning: #{text} - disable these by opening a document with emit_warnings: false") if emit_warnings
       @warnings << text
     end
 
@@ -187,21 +198,21 @@ module Openapi3Parser
     def determine_openapi_version(version)
       minor_version = (version || "").split(".").first(2).join(".")
 
-      if SUPPORTED_OPENAPI_VERSIONS.include?(minor_version)
-        minor_version
-      elsif version
+      return OpenapiVersion.new(minor_version) if SUPPORTED_OPENAPI_VERSIONS.include?(minor_version)
+
+      if version
         add_warning(
           "Unsupported OpenAPI version (#{version}), treating as a " \
-          "#{DEFAULT_OPENAPI_VERSION} document"
+          "#{DEFAULT_OPENAPI_VERSION} document."
         )
-        DEFAULT_OPENAPI_VERSION
       else
         add_warning(
           "Unspecified OpenAPI version, treating as a " \
-          "#{DEFAULT_OPENAPI_VERSION} document"
+          "#{DEFAULT_OPENAPI_VERSION} document."
         )
-        DEFAULT_OPENAPI_VERSION
       end
+
+      OpenapiVersion.new(DEFAULT_OPENAPI_VERSION)
     end
 
     def factory

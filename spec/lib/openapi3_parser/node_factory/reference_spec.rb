@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe Openapi3Parser::NodeFactory::Reference do
+  # TODO: perhaps a behaves like referenceable node object factory?
+
   def create_instance(input)
     factory_context = create_node_factory_context(
       input,
-      document_input: { contact: {} }
+      document_input: { "openapi" => "3.0.0", "contact" => {} }
     )
     factory = Openapi3Parser::NodeFactory::Contact
     described_class.new(factory_context, factory)
@@ -88,17 +90,11 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
       )
     end
 
-    def control_factory(instance)
-      # As references need to be registered and this happens in the process
-      # of creating a reference node we need to check reference loop using
-      # a factory from the reference registry
-      instance.context.source.reference_registry.factories.first
-    end
-
     it "returns true when following a chain of references leads to an object" do
       factory_context = create_node_factory_context(
         { "$ref" => "#/contact2" },
         document_input: {
+          openapi: "3.0.0",
           contact1: { "$ref" => "#/contact2" },
           contact2: { "$ref" => "#/contact3" },
           contact3: {}
@@ -107,13 +103,14 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
       )
       instance = described_class.new(factory_context, factory)
 
-      expect(instance.resolves?(control_factory(instance))).to be true
+      expect(instance.resolves?([instance.context.source_location])).to be true
     end
 
     it "returns false when following a chain of references leads to a recursive loop" do
       factory_context = create_node_factory_context(
         { "$ref" => "#/contact2" },
         document_input: {
+          openapi: "3.0.0",
           contact1: { "$ref" => "#/contact2" },
           contact2: { "$ref" => "#/contact3" },
           contact3: { "$ref" => "#/contact1" }
@@ -122,7 +119,85 @@ RSpec.describe Openapi3Parser::NodeFactory::Reference do
       )
       instance = described_class.new(factory_context, factory)
 
-      expect(instance.resolves?(control_factory(instance))).to be false
+      expect(instance.resolves?([instance.context.source_location])).to be false
+    end
+  end
+
+  describe "summary field" do
+    let(:factory) do
+      Openapi3Parser::NodeFactory::OptionalReference.new(
+        Openapi3Parser::NodeFactory::Contact
+      )
+    end
+
+    it "accepts a summary field for OpenAPI >= v3.1" do
+      factory_context = create_node_factory_context(
+        {
+          "$ref" => "#/item",
+          "summary" => "summary contents"
+        },
+        document_input: {
+          "openapi" => "3.1.0",
+          "item" => {}
+        }
+      )
+      expect(described_class.new(factory_context, factory)).to be_valid
+    end
+
+    it "rejects a summary field for OpenAPI < v3.1" do
+      factory_context = create_node_factory_context(
+        {
+          "$ref" => "#/item",
+          "summary" => "summary contents"
+        },
+        document_input: {
+          "openapi" => "3.0.0",
+          "item" => {}
+        }
+      )
+      instance = described_class.new(factory_context, factory)
+
+      expect(instance).not_to be_valid
+      expect(instance).to have_validation_error("#/").with_message("Unexpected fields: summary")
+    end
+  end
+
+  describe "description field" do
+    let(:factory) do
+      Openapi3Parser::NodeFactory::OptionalReference.new(
+        Openapi3Parser::NodeFactory::Contact
+      )
+    end
+
+    it "accepts a description field for OpenAPI >= v3.1" do
+      factory_context = create_node_factory_context(
+        {
+          "$ref" => "#/item",
+          "description" => "description contents"
+        },
+        document_input: {
+          "openapi" => "3.1.0",
+          "item" => {}
+        }
+      )
+      expect(described_class.new(factory_context, factory)).to be_valid
+    end
+
+    it "rejects a description field for OpenAPI < v3.1" do
+      factory_context = create_node_factory_context(
+        {
+          "$ref" => "#/item",
+          "description" => "description contents"
+        },
+        document_input: {
+          "openapi" => "3.0.0",
+          "item" => {}
+        }
+      )
+      instance = described_class.new(factory_context, factory)
+
+      expect(instance).not_to be_valid
+      expect(instance).to have_validation_error("#/").with_message("Unexpected fields: description")
     end
   end
 end

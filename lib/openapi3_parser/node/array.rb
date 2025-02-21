@@ -40,7 +40,7 @@ module Openapi3Parser
       # @return [Boolean]
       def ==(other)
         other.instance_of?(self.class) &&
-          node_context.same_data_and_source?(other.node_context)
+          node_context.same_data_inputs?(other.node_context)
       end
 
       # Used to access a node relative to this node

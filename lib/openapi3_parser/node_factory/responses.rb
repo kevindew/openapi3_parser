@@ -24,11 +24,11 @@ module Openapi3Parser
               validate: :validate_keys)
       end
 
-      private
-
       def build_node(data, node_context)
         Node::Responses.new(data, node_context)
       end
+
+      private
 
       def validate_keys(validatable)
         invalid = validatable.input.keys.reject do |key|

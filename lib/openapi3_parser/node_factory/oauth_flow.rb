@@ -11,10 +11,8 @@ module Openapi3Parser
       field "refreshUrl", input_type: String
       field "scopes", input_type: Hash
 
-      private
-
-      def build_object(data, context)
-        Node::OauthFlow.new(data, context)
+      def build_node(data, node_context)
+        Node::OauthFlow.new(data, node_context)
       end
     end
   end

@@ -19,36 +19,20 @@ module Openapi3Parser
         end
 
         def resolved_input
-          return unless resolved_reference
-
-          if context.self_referencing?
-            RecursiveResolvedInput.new(resolved_reference.factory)
-          else
-            resolved_reference.resolved_input
-          end
+          raise Openapi3Parser::Error, "References can't have a resolved input"
         end
 
         def referenced_factory
           resolved_reference&.factory
         end
 
+        def node(_node_context)
+          raise Openapi3Parser::Error, "Reference fields can't be built as a node"
+        end
+
         private
 
         attr_reader :reference, :factory, :resolved_reference
-
-        def build_node(_data, node_context)
-          if resolved_reference.nil?
-            # this shouldn't happen unless dependant code changes
-            raise Openapi3Parser::Error,
-                  "can't build node without a resolved reference"
-          end
-
-          reference_context = Node::Context.resolved_reference(
-            node_context, resolved_reference.factory.context
-          )
-
-          resolved_reference.node(reference_context)
-        end
 
         def validate(validatable)
           if !reference_validator.valid?
@@ -61,7 +45,7 @@ module Openapi3Parser
         end
 
         def reference_resolves?
-          return true unless referenced_factory.is_a?(NodeFactory::Reference)
+          return true unless referenced_factory.respond_to?(:resolves?)
 
           referenced_factory.resolves?
         end
@@ -76,24 +60,6 @@ module Openapi3Parser
           context.resolve_reference(reference,
                                     factory,
                                     recursive: context.self_referencing?)
-        end
-
-        # Used in the place of a hash for resolved input so the value can
-        # be looked up at runtime avoiding a recursive loop.
-        class RecursiveResolvedInput
-          extend Forwardable
-          include Enumerable
-
-          def_delegators :value, :each, :[], :keys
-          attr_reader :factory
-
-          def initialize(factory)
-            @factory = factory
-          end
-
-          def value
-            @factory.resolved_input
-          end
         end
       end
     end

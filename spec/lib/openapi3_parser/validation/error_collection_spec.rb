@@ -2,7 +2,7 @@
 
 RSpec.describe Openapi3Parser::Validation::ErrorCollection do
   let(:base_document) do
-    source_input = Openapi3Parser::SourceInput::Raw.new({})
+    source_input = Openapi3Parser::SourceInput::Raw.new({ "openapi" => "3.0.0" })
     Openapi3Parser::Document.new(source_input)
   end
 
