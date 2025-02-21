@@ -5,6 +5,7 @@ require "openapi3_parser/node_factory/info"
 require "openapi3_parser/node_factory/paths"
 require "openapi3_parser/node_factory/components"
 require "openapi3_parser/node_factory/external_documentation"
+require "openapi3_parser/node_factory/schema/v3_1"
 
 module Openapi3Parser
   module NodeFactory
@@ -14,7 +15,7 @@ module Openapi3Parser
       field "openapi", input_type: String, required: true
       field "info", factory: NodeFactory::Info, required: true
       field "jsonSchemaDialect",
-            default: "https://spec.openapis.org/oas/3.1/dialect/base",
+            default: Schema::V3_1::OAS_DIALECT,
             input_type: String,
             validate: Validation::InputValidator.new(Validators::Uri),
             allowed: ->(context) { context.openapi_version >= "3.1" }

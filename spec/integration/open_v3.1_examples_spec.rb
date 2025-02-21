@@ -33,6 +33,33 @@ RSpec.describe "Open v3.1 examples" do
     end
   end
 
+  context "when using the schema dialects example" do
+    let(:path) { File.join(__dir__, "..", "support", "examples", "v3.1", "schema-dialects-example.yaml") }
+
+    it "is valid but outputs warnings" do
+      expect { document.valid? }.to output.to_stderr
+      expect(document).to be_valid
+    end
+
+    it "only warns once per dialect" do
+      expect { document.warnings }.to output.to_stderr
+    end
+
+    it "defaults to using the the jsonSchemaDialect value" do
+      expect { document.warnings }.to output.to_stderr
+      expect(document.components.schemas["DefaultDialect"].json_schema_dialect)
+        .to eq(document.json_schema_dialect)
+    end
+
+    it "can return the other schema dialects" do
+      expect { document.warnings }.to output.to_stderr
+      expect(document.components.schemas["DefinedDialect"].json_schema_dialect)
+        .to eq("https://spec.openapis.org/oas/3.1/dialect/base")
+      expect(document.components.schemas["CustomDialect1"].json_schema_dialect)
+        .to eq("https://example.com/custom-dialect")
+    end
+  end
+
   context "when using the schema I created to demonstrate changes" do
     let(:path) { File.join(__dir__, "..", "support", "examples", "v3.1", "changes.yaml") }
 
