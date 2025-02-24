@@ -11,6 +11,7 @@ module Openapi3Parser
 
       def_delegators "self.class",
                      :field_configs,
+                     :extension_regex,
                      :allowed_extensions?,
                      :mutually_exclusive_fields,
                      :allowed_default?,
@@ -28,7 +29,7 @@ module Openapi3Parser
       end
 
       def resolved_input
-        @resolved_input ||= build_resolved_input
+        @resolved_input ||= ObjectFactory::ResolvedInputBuilder.call(self)
       end
 
       def raw_input
@@ -44,11 +45,16 @@ module Openapi3Parser
       end
 
       def errors
-        @errors ||= ObjectFactory::NodeBuilder.errors(self)
+        @errors ||= ObjectFactory::NodeErrors.call(self)
       end
 
       def node(node_context)
-        build_node(node_context)
+        node_builder = ObjectFactory::NodeBuilder.new(self, node_context)
+        node_builder.build_node
+      end
+
+      def build_node(_data, _node_context)
+        raise Error, "Expected to be implemented in child class"
       end
 
       def can_use_default?
@@ -60,12 +66,12 @@ module Openapi3Parser
       end
 
       def allowed_fields
-        field_configs.keys
+        allowed_field_configs.keys
       end
 
       def required_fields
-        field_configs.each_with_object([]) do |(key, config), memo|
-          memo << key if config.required?
+        allowed_field_configs.each_with_object([]) do |(key, config), memo|
+          memo << key if config.required?(context, self)
         end
       end
 
@@ -75,6 +81,10 @@ module Openapi3Parser
 
       private
 
+      def allowed_field_configs
+        field_configs.select { |_, fc| fc.allowed?(context, self) }
+      end
+
       def build_data(raw_input)
         use_default = nil_input? || !raw_input.is_a?(::Hash)
         return if use_default && default.nil?
@@ -83,32 +93,13 @@ module Openapi3Parser
       end
 
       def process_data(raw_data)
-        field_configs.each_with_object(raw_data.dup) do |(field, config), memo|
+        allowed_field_configs.each_with_object(raw_data.dup) do |(field, config), memo|
           memo[field] = nil unless memo.key?(field)
           next unless config.factory?
 
           next_context = Context.next_field(context, field, memo[field])
           memo[field] = config.initialize_factory(next_context, self)
         end
-      end
-
-      def build_resolved_input
-        return unless data
-
-        data.each_with_object({}) do |(key, value), memo|
-          next if value.respond_to?(:nil_input?) && value.nil_input?
-
-          memo[key] = if value.respond_to?(:resolved_input)
-                        value.resolved_input
-                      else
-                        value
-                      end
-        end
-      end
-
-      def build_node(node_context)
-        data = ObjectFactory::NodeBuilder.node_data(self, node_context)
-        build_object(data, node_context) if data
       end
     end
   end

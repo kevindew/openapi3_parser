@@ -39,3 +39,25 @@ These are the steps defined to reach 1.0. Assistance is very welcome.
 - [ ] Support validating a Server URL based on default values
 - [ ] Validate paths to check path parameters within them appear in paths
       see: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#fixed-fields-10
+
+For OpenAPI 3.1
+
+- [x] Conditional nodes
+- [x] Support webhooks
+- [x] No longer require responses field on an Operation node
+- [x] Require OpenAPI node to have webhooks, paths or components
+- [x] Support the switch to a fixed schema dialect
+- [x] Support summary field on Info node
+- [ ] Create a maxi OpenAPI 3.1 integration test to collate all the known changes
+- [x] jsonSchemaDialect should default to OAS one
+- [x] Allow summary and description in Reference objects
+- [x] Add identifier to License node, make mutually exclusive with URL
+- [x] ServerVariable enum must not be empty
+- [x] Add pathItems to components
+- [ ] Callbacks can now reference a PathItem - previously required them
+- [ ] Check out whether pathItem references match the rules for relative resolution
+- [ ] Parameter object can have space delimited or pipeDelimited styles
+- [x] Discriminator object can be extended
+- [x] mutualTLS as a security scheme
+- [ ] I think strictness of Security Requirement rules has changed
+

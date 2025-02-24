@@ -24,10 +24,8 @@ module Openapi3Parser
 
       field "content", factory: :content_factory
 
-      private
-
-      def build_object(data, context)
-        Node::Header.new(data, context)
+      def build_node(data, node_context)
+        Node::Header.new(data, node_context)
       end
     end
   end

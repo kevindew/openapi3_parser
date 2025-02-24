@@ -10,11 +10,11 @@ module Openapi3Parser
       field "description", input_type: String
       field "variables", factory: :variables_factory
 
-      private
-
-      def build_object(data, context)
-        Node::Server.new(data, context)
+      def build_node(data, node_context)
+        Node::Server.new(data, node_context)
       end
+
+      private
 
       def variables_factory(context)
         NodeFactory::Map.new(

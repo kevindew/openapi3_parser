@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Openapi3Parser::NodeFactory::Schema do
-  it_behaves_like "node object factory", Openapi3Parser::Node::Schema do
+RSpec.describe Openapi3Parser::NodeFactory::Schema::V3_0 do
+  it_behaves_like "node object factory", Openapi3Parser::Node::Schema::V3_0 do
     let(:input) do
       {
         "allOf" => [
@@ -18,6 +18,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
 
     let(:document_input) do
       {
+        "openapi" => "3.0.0",
         "components" => {
           "schemas" => {
             "Pet" => {
@@ -45,54 +46,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
     end
   end
 
-  it_behaves_like "default field", field: "nullable", defaults_to: false do
-    let(:node_factory_context) do
-      create_node_factory_context({ "nullable" => nullable })
-    end
-
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
-  end
-
-  it_behaves_like "default field",
-                  field: "readOnly",
-                  defaults_to: false,
-                  var_name: :read_only do
-    let(:node_factory_context) do
-      create_node_factory_context({ "readOnly" => read_only })
-    end
-
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
-  end
-
-  it_behaves_like "default field",
-                  field: "writeOnly",
-                  defaults_to: false,
-                  var_name: :write_only do
-    let(:node_factory_context) do
-      create_node_factory_context({ "writeOnly" => write_only })
-    end
-
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
-  end
-
-  it_behaves_like "default field",
-                  field: "deprecated",
-                  defaults_to: false,
-                  var_name: :deprecated do
-    let(:node_factory_context) do
-      create_node_factory_context({ "deprecated" => deprecated })
-    end
-
-    let(:node_context) do
-      node_factory_context_to_node_context(node_factory_context)
-    end
-  end
+  it_behaves_like "schema factory"
 
   describe "validating items" do
     it "is valid when type is 'array' and items are provided" do
@@ -117,42 +71,6 @@ RSpec.describe Openapi3Parser::NodeFactory::Schema do
       expect(instance)
         .to have_validation_error("#/")
         .with_message("items must be defined for a type of array")
-    end
-  end
-
-  describe "default field" do
-    it "supports a default field of false" do
-      node_factory_context = create_node_factory_context({ "default" => false })
-      node_context = node_factory_context_to_node_context(node_factory_context)
-
-      instance = described_class.new(node_factory_context)
-
-      expect(instance).to be_valid
-      expect(instance.node(node_context).default).to be(false)
-    end
-  end
-
-  describe "validating writeOnly and readOnly" do
-    it "is invalid when both writeOnly and readOnly are true" do
-      instance = described_class.new(
-        create_node_factory_context({ "writeOnly" => true, "readOnly" => true })
-      )
-      expect(instance).not_to be_valid
-      expect(instance)
-        .to have_validation_error("#/")
-        .with_message("readOnly and writeOnly cannot both be true")
-    end
-
-    it "is valid when one of writeOnly and readOnly are true" do
-      write_only = described_class.new(
-        create_node_factory_context({ "writeOnly" => true })
-      )
-      expect(write_only).to be_valid
-
-      read_only = described_class.new(
-        create_node_factory_context({ "readOnly" => true })
-      )
-      expect(read_only).to be_valid
     end
   end
 

@@ -6,17 +6,19 @@ module Openapi3Parser
   # Document is the root construct of a created OpenAPI Document and can be
   # used to navigate the contents of a document or to check it's validity.
   #
-  # @attr_reader  [String]        openapi_version
-  # @attr_reader  [Source]        root_source
-  # @attr_reader  [Array<String>] warnings
+  # @attr_reader  [OpenapiVersion]  openapi_version
+  # @attr_reader  [Source]          root_source
+  # @attr_reader  [Array<String>]   warnings
+  # @attr_reader  [Boolean]         emit_warnings
+  # rubocop:disable Metrics/ClassLength
   class Document
     extend Forwardable
     include Enumerable
 
-    attr_reader :openapi_version, :root_source, :warnings
+    attr_reader :openapi_version, :root_source, :emit_warnings
 
     # A collection of the openapi versions that are supported
-    SUPPORTED_OPENAPI_VERSIONS = %w[3.0].freeze
+    SUPPORTED_OPENAPI_VERSIONS = %w[3.0 3.1].freeze
 
     # The version of OpenAPI that will be used by default for
     # validation/construction
@@ -37,6 +39,10 @@ module Openapi3Parser
     #   The value of the info field on the OpenAPI document
     #   @see Node::Openapi#info
     #   @return [Node::Info]
+    # @!method jsonSchemaDialect
+    #   The value of the jsonSchemaDialect field on the OpenAPI document
+    #   @see Node::Openapi#json_schema_dialect
+    #   @return [String, nil]
     # @!method servers
     #   The value of the servers field on the OpenAPI document
     #   @see Node::Openapi#servers
@@ -74,15 +80,21 @@ module Openapi3Parser
     #   Iterate through the attributes of the root object
     # @!method keys
     #   Access keys of the root object
-    def_delegators :root, :openapi, :info, :servers, :paths, :components,
-                   :security, :tags, :external_docs, :extension, :[], :each,
-                   :keys
+    def_delegators :root, :openapi, :info, :json_schema_dialect, :servers,
+                   :paths, :components, :security, :tags, :external_docs,
+                   :extension, :[], :each, :keys
 
-    # @param [SourceInput] source_input
-    def initialize(source_input)
+    # @param [SourceInput]  source_input
+    # @param [Boolean]      emit_warnings   Whether to call Kernel.warn when
+    #                                       warnings are output, best set to
+    #                                       false when parsing specification
+    #                                       files you've not authored
+    def initialize(source_input, emit_warnings: true)
       @reference_registry = ReferenceRegistry.new
       @root_source = Source.new(source_input, self, reference_registry)
-      @warnings = []
+      @emit_warnings = emit_warnings
+      @build_warnings = []
+      @unsupported_schema_dialects = Set.new
       @openapi_version = determine_openapi_version(root_source.data["openapi"])
       @build_in_progress = false
       @built = false
@@ -152,15 +164,35 @@ module Openapi3Parser
       look_up_pointer(pointer, relative_to, root)
     end
 
+    # An array of any warnings enountered in the initialisation / validation
+    # of the document. Reflects warnings related to this gems ability to parse
+    # the document.
+    #
+    # @return [Array<String>]
+    def warnings
+      @warnings ||= begin
+        factory.errors # ensure factory has completed validation
+        @build_warnings.freeze
+      end
+    end
+
     # @return [String]
     def inspect
       %{#{self.class.name}(openapi_version: #{openapi_version}, } +
         %{root_source: #{root_source.inspect})}
     end
 
+    #  :nodoc:
+    def unsupported_schema_dialect(schema_dialect)
+      return if @build_warnings.frozen? || unsupported_schema_dialects.include?(schema_dialect)
+
+      unsupported_schema_dialects << schema_dialect
+      add_warning("Unsupported schema dialect (#{schema_dialect}), it may not parse or validate correctly.")
+    end
+
     private
 
-    attr_reader :reference_registry, :built, :build_in_progress
+    attr_reader :reference_registry, :built, :build_in_progress, :unsupported_schema_dialects, :build_warnings
 
     def look_up_pointer(pointer, relative_pointer, subject)
       merged_pointer = Source::Pointer.merge_pointers(relative_pointer,
@@ -169,7 +201,8 @@ module Openapi3Parser
     end
 
     def add_warning(text)
-      @warnings << text
+      warn("Warning: #{text} Disable these warnings by opening a document with emit_warnings: false.") if emit_warnings
+      @build_warnings << text
     end
 
     def build
@@ -179,7 +212,6 @@ module Openapi3Parser
       context = NodeFactory::Context.root(root_source.data, root_source)
       @factory = NodeFactory::Openapi.new(context)
       reference_registry.freeze
-      @warnings.freeze
       @build_in_progress = false
       @built = true
     end
@@ -187,21 +219,21 @@ module Openapi3Parser
     def determine_openapi_version(version)
       minor_version = (version || "").split(".").first(2).join(".")
 
-      if SUPPORTED_OPENAPI_VERSIONS.include?(minor_version)
-        minor_version
-      elsif version
+      return OpenapiVersion.new(minor_version) if SUPPORTED_OPENAPI_VERSIONS.include?(minor_version)
+
+      if version
         add_warning(
           "Unsupported OpenAPI version (#{version}), treating as a " \
-          "#{DEFAULT_OPENAPI_VERSION} document"
+          "#{DEFAULT_OPENAPI_VERSION} document."
         )
-        DEFAULT_OPENAPI_VERSION
       else
         add_warning(
           "Unspecified OpenAPI version, treating as a " \
-          "#{DEFAULT_OPENAPI_VERSION} document"
+          "#{DEFAULT_OPENAPI_VERSION} document."
         )
-        DEFAULT_OPENAPI_VERSION
       end
+
+      OpenapiVersion.new(DEFAULT_OPENAPI_VERSION)
     end
 
     def factory
@@ -214,4 +246,5 @@ module Openapi3Parser
       reference_registry.factories.reject { |f| f.context.source.root? }
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

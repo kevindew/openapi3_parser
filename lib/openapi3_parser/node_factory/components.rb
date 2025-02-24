@@ -15,15 +15,22 @@ module Openapi3Parser
       field "securitySchemes", factory: :security_schemes_factory
       field "links", factory: :links_factory
       field "callbacks", factory: :callbacks_factory
+      field "pathItems",
+            factory: :path_items_factory,
+            allowed: ->(context) { context.openapi_version >= "3.1" }
+
+      def build_node(data, node_context)
+        Node::Components.new(data, node_context)
+      end
 
       private
 
-      def build_object(data, context)
-        Node::Components.new(data, context)
-      end
-
       def schemas_factory(context)
-        referenceable_map_factory(context, NodeFactory::Schema)
+        NodeFactory::Map.new(
+          context,
+          value_factory: NodeFactory::Schema.factory(context),
+          validate: Validation::InputValidator.new(Validators::ComponentKeys)
+        )
       end
 
       def responses_factory(context)
@@ -56,6 +63,10 @@ module Openapi3Parser
 
       def callbacks_factory(context)
         referenceable_map_factory(context, NodeFactory::Callback)
+      end
+
+      def path_items_factory(context)
+        referenceable_map_factory(context, NodeFactory::PathItem)
       end
 
       def referenceable_map_factory(context, factory)

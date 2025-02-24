@@ -53,7 +53,7 @@ module Openapi3Parser
       # @return [Boolean]
       def ==(other)
         other.instance_of?(self.class) &&
-          node_context.same_data_and_source?(other.node_context)
+          node_context.same_data_inputs?(other.node_context)
       end
 
       # Iterates through the data of this node, used by Enumerable

@@ -2,7 +2,7 @@
 
 RSpec.describe Openapi3Parser::NodeFactory::Context do
   describe ".root" do
-    let(:input) { {} }
+    let(:input) { { "openapi" => "3.0.0" } }
     let(:source) { create_source(input) }
 
     it "returns a context instance" do
@@ -21,7 +21,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
   end
 
   describe ".next_field" do
-    let(:input) { { "key" => "value" } }
+    let(:input) { { "openapi" => "3.0.0", "key" => "value" } }
     let(:parent_context) do
       create_node_factory_context(input, document_input: input)
     end
@@ -48,7 +48,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
   end
 
   describe ".resolved_reference" do
-    let(:input) { "data" }
+    let(:input) { { "openapi" => "3.0.0" } }
     let(:source_location) { create_source_location(input) }
 
     let(:reference_context) do
@@ -67,7 +67,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
       instance = described_class.resolved_reference(
         reference_context, source_location:
       )
-      expect(instance.input).to eq "data"
+      expect(instance.input).to eq(input)
     end
 
     it "has the resolved reference location" do
@@ -88,7 +88,7 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
 
   describe "#location_summary" do
     it "returns a string representation of the pointer segments" do
-      source_location = create_source_location({}, pointer_segments: %w[path to field])
+      source_location = create_source_location({ "openapi" => "3.0.0" }, pointer_segments: %w[path to field])
       instance = described_class.new({}, source_location:)
       expect(instance.location_summary).to eq "#/path/to/field"
     end
@@ -112,9 +112,26 @@ RSpec.describe Openapi3Parser::NodeFactory::Context do
       source_location = create_source_location(input)
       instance = described_class.new({}, source_location:)
       resolved_reference = instance.resolve_reference("#/components/schemas/item",
-                                                      Openapi3Parser::NodeFactory::Schema)
+                                                      Openapi3Parser::NodeFactory::Schema::V3_0)
       expect(resolved_reference)
         .to be_a(Openapi3Parser::Source::ResolvedReference)
+    end
+  end
+
+  describe "#openapi_version" do
+    it "returns the document's OpenAPI version" do
+      input = {
+        "openapi" => "3.0.0",
+        "info" => {
+          "title" => "Test",
+          "version" => "1.0"
+        },
+        "paths" => {}
+      }
+      source_location = create_source_location(input)
+
+      instance = described_class.new({}, source_location:)
+      expect(instance.openapi_version).to eq("3.0")
     end
   end
 end

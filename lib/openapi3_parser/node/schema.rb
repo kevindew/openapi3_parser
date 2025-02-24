@@ -4,7 +4,9 @@ require "openapi3_parser/node/object"
 
 module Openapi3Parser
   module Node
-    # @see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#schemaObject
+    # Base class for common behaviour between Schema objects of different
+    # OpenAPI versions. It is expected to be treated as an abstract class
+    #
     # rubocop:disable Metrics/ClassLength
     class Schema < Node::Object
       # This is used to provide a name for the schema based on it's position in
@@ -34,7 +36,7 @@ module Openapi3Parser
       #
       # @return [String, nil]
       def name
-        segments = node_context.source_location.pointer.segments
+        segments = node_context.source_locations.first.pointer.segments
         segments[-1] if segments[-2] == "schemas"
       end
 
@@ -48,24 +50,14 @@ module Openapi3Parser
         self["multipleOf"]
       end
 
-      # @return [Integer, nil]
+      # @return [Numeric, nil]
       def maximum
         self["maximum"]
       end
 
-      # @return [Boolean]
-      def exclusive_maximum?
-        self["exclusiveMaximum"]
-      end
-
-      # @return [Integer, nil]
+      # @return [Numeric, nil]
       def minimum
         self["minimum"]
-      end
-
-      # @return [Boolean]
-      def exclusive_minimum?
-        self["exclusiveMinimum"]
       end
 
       # @return [Integer, nil]
@@ -119,7 +111,7 @@ module Openapi3Parser
       # @param [String, Schema] property
       # @return [Boolean]
       def requires?(property)
-        if property.is_a?(Schema)
+        if property.is_a?(self.class)
           # compare node_context of objects to ensure references aren't treated
           # as equal - only direct properties of this object will pass.
           properties.to_h
@@ -133,11 +125,6 @@ module Openapi3Parser
       # @return [Node::Array<Object>, nil]
       def enum
         self["enum"]
-      end
-
-      # @return [String, nil]
-      def type
-        self["type"]
       end
 
       # @return [Node::Array<Schema>, nil]
@@ -168,19 +155,6 @@ module Openapi3Parser
       # @return [Map<String, Schema>]
       def properties
         self["properties"]
-      end
-
-      # @return [Boolean]
-      def additional_properties?
-        self["additionalProperties"] != false
-      end
-
-      # @return [Schema, nil]
-      def additional_properties_schema
-        properties = self["additionalProperties"]
-        return if [true, false].include?(properties)
-
-        properties
       end
 
       # @return [String, nil]

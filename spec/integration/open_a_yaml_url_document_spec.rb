@@ -6,7 +6,7 @@ RSpec.describe "Open a YAML Document via URL" do
 
   before do
     path = File.join(
-      __dir__, "..", "support", "examples", "petstore-expanded.yaml"
+      __dir__, "..", "support", "examples", "v3.0", "petstore-expanded.yaml"
     )
     stub_request(:get, "example.com/openapi.yml")
       .to_return(body: File.read(path))
